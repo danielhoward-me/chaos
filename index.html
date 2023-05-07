@@ -16,40 +16,69 @@
 		</div>
 		<h3 style="text-align: center;">Settings</h3>
 
-		<h6>Shape Type:</h6>
-		<div class="type-selection">
-			<div class="card">
-				<div class="card-body">
-					<h6 class="card-title">Triangle</h6>
-					<button class="btn btn-primary stretched-link">Select</a>
+		<div data-setup-stage="1">
+			<h6>Shape Type:</h6>
+			<div class="settings-stage type-selection">
+				<div class="card text-white bg-primary">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/triangle.svg">
+						<h6 class="card-title">Triangle</h6>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/square.svg">
+						<h6 class="card-title">Square</h6>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/pentagon.svg">
+						<h6 class="card-title">Pentagon</h6>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/hexagon.svg">
+						<h6 class="card-title">Hexagon</h6>
+					</div>
+				</div>
+				<div class="card">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/custom.svg">
+						<h6 class="card-title">Custom</h6>
+					</div>
 				</div>
 			</div>
-			<div class="card">
-				<div class="card-body">
-					<h6 class="card-title">Square</h6>
-					<button class="btn btn-primary stretched-link">Select</a>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-body">
-					<h6 class="card-title">Pentagon</h6>
-					<button class="btn btn-primary stretched-link">Select</a>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-body">
-					<h6 class="card-title">Hexagon</h6>
-					<button class="btn btn-primary stretched-link">Select</a>
-				</div>
-			</div>
-			<div class="card">
-				<div class="card-body">
-					<h6 class="card-title">Custom</h6>
-					<button class="btn btn-primary stretched-link">Select</a>
+			<small class="form-text text-muted">All the preset shapes are normal regular shapes</small>
+		</div>
+
+		<hr/>
+
+		<div data-setup-stage="2">
+			<h6>Shape Settings:</h6>
+			<div class="settings-stage">
+				<div class="input-group hidden" id="regularShapeSettings">
+					<span class="input-group-text"><span id="shapeTypeText"></span> Side Length</span>
+					<input
+						class="form-control" type="number" id="regularShapeSideLength"
+						value="50" min="1"
+						oninput="$('regularShapeSideLengthRange').value = this.value"
+					/>
+					<input
+						tabindex="-1" type="range" class="form-range" id="regularShapeSideLengthRange"
+						value="50" min="10" max="500" step="1"
+						oninput="$('regularShapeSideLength').value = this.value"
+					/>
 				</div>
 			</div>
 		</div>
-		<small class="form-text text-muted">All the preset shapes are normal regular shapes</small>
+
+		<hr/>
+
+		<div data-setup-stage="3">
+
+		</div>
 	</div>
 	<div class="settings-base open-settings-box" onclick="toggleSettings()">
 		<i class="bi bi-gear-fill"></i>
@@ -59,6 +88,7 @@
 	
 	<script src="/static/js/points.js"></script>
 	<script src="/static/js/app.js"></script>
+	<script src="/static/js/setup.js"></script>
 	<script src="/static/js/canvas.js"></script>
 </body>
 </html>

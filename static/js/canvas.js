@@ -70,38 +70,41 @@ function convertCanvasPointToGraphPoint(canvasPoint) {
 	];
 }
 
-let mousedown = false;
+let mouseDown = false;
 function handleMouseDrag(event) {
-	if (!mousedown) return;
+	if (!mouseDown) return;
 
 	topLeftPoint[0] -= event.movementX * scale;
 	topLeftPoint[1] += event.movementY * scale;
 }
 window.addEventListener('mousemove', handleMouseDrag);
-canvas.addEventListener('mousedown', () => mousedown = true);
-window.addEventListener('mouseup', () => mousedown = false);
+canvas.addEventListener('mousedown', () => mouseDown = true);
+window.addEventListener('mouseup', () => mouseDown = false);
 
+let lastTouch;
 function handleTouchStart(event) {
 	if (event.touches.length !== 1) return;
 
-	const touch = event.touches[0];
-	touch.target.lastTouch = touch;
+	lastTouch = event.touches[0];
 }
 function handleTouchDrag(event) {
-	if (event.touches.length !== 1) return;
+	if (!lastTouch || event.touches.length !== 1) return;
 
 	const touch = event.touches[0];
-	const lastTouch = touch.target.lastTouch;
 
 	if (lastTouch) {
 		topLeftPoint[0] -= (touch.clientX - lastTouch.clientX) * scale;
 		topLeftPoint[1] += (touch.clientY - lastTouch.clientY) * scale;
 	}
 
-	touch.target.lastTouch = touch;
+	lastTouch = touch;
+}
+function handleTouchEnd(event) {
+	lastTouch = null;
 }
 canvas.addEventListener('touchstart', handleTouchStart);
 window.addEventListener('touchmove', handleTouchDrag);
+window.addEventListener('touchend', handleTouchEnd);
 
 function handleZoom(event) {
 	event.preventDefault();
