@@ -1,10 +1,10 @@
 const ctx = canvas.getContext('2d');
 
-let scale = 0.5;
+let scale = 1;
 let gridLineFrequency = 50;
 const topLeftPoint = [
-	scale * -canvas.width/2,
-	scale * canvas.height/2
+	scale * (-(canvas.width + (canvas.width <= 768 ? 0 : 430)))/2,
+	scale * canvas.height/(canvas.width <= 768 ? 4 : 2)
 ];
 
 let assets = [];
@@ -78,7 +78,7 @@ function handleMouseDrag(event) {
 	topLeftPoint[1] += event.movementY * scale;
 }
 window.addEventListener('mousemove', handleMouseDrag);
-window.addEventListener('mousedown', () => mousedown = true);
+canvas.addEventListener('mousedown', () => mousedown = true);
 window.addEventListener('mouseup', () => mousedown = false);
 
 function handleTouchStart(event) {
@@ -100,15 +100,8 @@ function handleTouchDrag(event) {
 
 	touch.target.lastTouch = touch;
 }
-function handleTouchEnd(event) {
-	if (event.touches.length !== 0) return;
-
-	const touch = event.touches[0];
-	touch.target.lastTouch = null;
-}
-window.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchstart', handleTouchStart);
 window.addEventListener('touchmove', handleTouchDrag);
-window.addEventListener('touchend', handleTouchEnd);
 
 function handleZoom(event) {
 	event.preventDefault();
@@ -133,7 +126,7 @@ function handleZoom(event) {
 	topLeftPoint[0] -= newMousePosition[0] - beforeMousePosition[0];
 	topLeftPoint[1] -= newMousePosition[1] - beforeMousePosition[1];
 }
-window.addEventListener('wheel', handleZoom, {passive: false});
+canvas.addEventListener('wheel', handleZoom, {passive: false});
 
 function addPoint(coord, radius) {
 	assets.push({coord, radius});
