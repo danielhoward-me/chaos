@@ -29,7 +29,7 @@ const stageInputs = {
 	},
 };
 
-const stageCount = 3;
+const stageCount = 4;
 let setupStage = 1;
 
 let shapePoints = [];
@@ -51,6 +51,8 @@ function clearShapePoints() {
 }
 
 function setSetupStage(stage) {
+	if (stage === setupStage) return;
+
 	stageInputs[setupStage]?.onStageExit?.();
 
 	for (let stageI = 1; stageI <= stageCount; stageI++) {
@@ -103,7 +105,7 @@ function resetStageInputs(stage) {
 }
 
 window.addEventListener('load', () => {
-	setSetupStage(1);
+	setSetupStage(0);
 });
 
 // Stage 1 (shape type)
@@ -165,10 +167,13 @@ shapes.forEach((shape) => {
 		setShapeSelected(shape);
 		setShapeSettingsViewable(regularShape);
 		clearShapePoints();
-		setSetupStage(2);
 
 		if (regularShape) {
+			// Trigger input event to update shape
 			stageInputs[2].elements.regularSideLength.element.dispatchEvent(new Event('input'));
+			setSetupStage(3);
+		} else {
+			setSetupStage(2);
 		}
 	});
 });
@@ -195,6 +200,9 @@ function setShapeSettingsViewable(isRegular) {
 
 recordPointsButton.addEventListener('click', () => {
 	setRecordPointsButtonActive(!listeningForPoints);
+	if (!listeningForPoints && shapePoints.length >= 3) {
+		setSetupStage(3);
+	}
 });
 
 canvas.addEventListener('click', (event) => {
@@ -211,5 +219,9 @@ function setRecordPointsButtonActive(active) {
 
 	recordPointsText.innerText = active ? 'Stop' : 'Start';
 	recordPointsButton.classList[active ? 'add' : 'remove']('btn-danger');
-	recordPointsButton.classList[active ? 'remove' : 'add']('btn-primary');
+	recordPointsButton.classList[active ? 'remove' : 'add']('btn-success');
+}
+function clearRecordedShape() {
+	clearShapePoints();
+	setSetupStage(2);
 }

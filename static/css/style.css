@@ -14,11 +14,9 @@ body {
 	height: 100%;
 	cursor: grab;
 }
-.canvas:active {
-	cursor: grabbing;
-}
-*:has(> .canvas:active) {
+*:has(> .canvas:active) * {
 	user-select: none;
+	cursor: grabbing;
 }
 
 .settings-base {

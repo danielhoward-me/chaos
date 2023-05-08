@@ -72,20 +72,9 @@
 					/>
 				</div>
 				<div class="input-group hidden shape-setting-group" id="irregularShapeSettings">
-					<button class="btn btn-primary" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
-					<button class="btn btn-outline-danger" onclick="clearShapePoints()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
+					<button class="btn btn-success" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
+					<button class="btn btn-danger" onclick="clearRecordedShape()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
 				</div>
-				<div>
-					<button class="btn btn-primary" onclick="setSetupStage(3)"><i class="bi bi-arrow-return-right"></i> Continue</button>
-				</div>
-			</div>
-		</div>
-
-		<hr/>
-
-		<div data-setup-stage="3">
-			<h6><i class="bi bi-3-circle-fill"></i> Points Settings:</h6>
-			<div class="settings-stage">
 				<div class="input-group">
 					<span class="input-group-text">Points Count</span>
 					<input
@@ -102,11 +91,29 @@
 			</div>
 		</div>
 
+		<hr/>
+
+		<div data-setup-stage="3">
+			<h6><i class="bi bi-3-circle-fill"></i> Generate Points:</h6>
+			<div class="settings-stage">
+				<button class="btn btn-primary" id="generatePoints"><i class="bi bi-play-fill"></i> Generate Points</button>
+			</div>
+		</div>
+
+		<hr/>
+
+		<div data-setup-stage="4">
+			<h6><i class="bi bi-4-circle-fill"></i> Playback Settings:</h6>
+			<div class="settings-stage">
+				
+			</div>
+		</div>
+
 		<br/>
 
 		<div style="text-align: center;">
 			<div class="btn-group">
-				<button type="button" class="btn btn-success" onclick="help()"><i class="bi bi-info-circle"></i> Help</button>
+				<button type="button" class="btn btn-primary" onclick="help()"><i class="bi bi-info-circle"></i> Help</button>
 				<button type="button" class="btn btn-danger" onclick="setSetupStage(0)"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
