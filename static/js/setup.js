@@ -7,7 +7,7 @@ const stageInputs = {
 	},
 };
 
-const stageCount = 2;
+const stageCount = 3;
 let setupStage = 1;
 
 function setSetupStage(stage) {

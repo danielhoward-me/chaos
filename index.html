@@ -4,9 +4,9 @@
 	<meta charset="UTF-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
-	<title>Fragmental Designer</title>
+	<title>Sierpinski Triangle Drawer</title>
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
-	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootsrap-icons-1.3.0.css">
+	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.10.5.min.css">
 	<link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
@@ -17,7 +17,7 @@
 		<h3 style="text-align: center;">Settings</h3>
 
 		<div data-setup-stage="1">
-			<h6>Shape Type:</h6>
+			<h6><i class="bi bi-1-circle-fill"></i> Shape Type:</h6>
 			<div class="settings-stage type-selection">
 				<div class="card text-white bg-primary">
 					<div class="card-body">
@@ -56,7 +56,7 @@
 		<hr/>
 
 		<div data-setup-stage="2">
-			<h6>Shape Settings:</h6>
+			<h6><i class="bi bi-2-circle-fill"></i> Shape Settings:</h6>
 			<div class="settings-stage">
 				<div class="input-group hidden" id="regularShapeSettings">
 					<span class="input-group-text"><span id="shapeTypeText"></span> Side Length</span>
@@ -80,7 +80,22 @@
 		<hr/>
 
 		<div data-setup-stage="3">
-
+			<h6><i class="bi bi-3-circle-fill"></i> Points Settings:</h6>
+			<div class="settings-stage">
+				<div class="input-group">
+					<span class="input-group-text">Points Count</span>
+					<input
+						class="form-control" type="number" id="pointsCount"
+						value="1000" min="1"
+						oninput="$('pointsCountRange').value = this.value"
+					/>
+					<input
+						tabindex="-1" type="range" class="form-range" id="pointsCountRange"
+						value="1000" min="1" max="100000" step="100"
+						oninput="$('pointsCount').value = this.value"
+					/>
+				</div>
+			</div>
 		</div>
 	</div>
 	<div class="settings-base open-settings-box" onclick="toggleSettings()">
