@@ -36,8 +36,9 @@ function setStageEnabled(stageContainer, enabled) {
 
 	const classFunction = enabled ? 'remove' : 'add';
 	stageContainer.classList[classFunction]('text-muted');
-	stageContainer.querySelectorAll('*').forEach((button) => {
-		button.classList[classFunction]('text-muted');
+	stageContainer.querySelectorAll('*').forEach((element) => {
+		if (element.tagName === 'BUTTON') return;
+		element.classList[classFunction]('text-muted');
 	});
 }
 
