@@ -1,8 +1,26 @@
 const stageInputs = {
+	1: {
+		onStageReset: () => {
+			setShapeSelected(null);
+		},
+	},
 	2: {
-		regularSideLength: {
-			element: $('regularShapeSideLength'),
-			defaultValue: 50,
+		elements: {
+			regularSideLength: {
+				element: $('regularShapeSideLength'),
+				defaultValue: 50,
+			},
+		},
+		onStageReset: () => {
+			setShapeSettingsViewable(null);
+		},
+	},
+	3: {
+		elements: {
+			pointsCount: {
+				element: $('pointsCount'),
+				defaultValue: 1000,
+			},
 		},
 	},
 };
@@ -20,6 +38,13 @@ function setSetupStage(stage) {
 		if (!enabled) {
 			resetStageInputs(stageI);
 		}
+	}
+
+	// 0 is the same as reseting everything
+	// so we need to reenable the first stage
+	if (stage === 0) {
+		const container = getSetupStageContainer(1);
+		setStageEnabled(container, true);
 	}
 
 	setupStage = stage;
@@ -46,7 +71,7 @@ function resetStageInputs(stage) {
 	const stageData = stageInputs[stage];
 	if (!stageData) return;
 
-	Object.values(stageData).forEach((inputData) => {
+	Object.values(stageData.elements || []).forEach((inputData) => {
 		inputData.element.value = inputData.defaultValue;
 		inputData.element.dispatchEvent(new Event('input'));
 	});
@@ -56,3 +81,45 @@ function resetStageInputs(stage) {
 window.addEventListener('load', () => {
 	setSetupStage(1);
 });
+
+// Stage 1 (shape type)
+const regularShapes = [
+	'triangle',
+	'square',
+	'pentagon',
+	'hexagon',
+];
+const shapeTypes = Array.from(document.querySelectorAll('.type-selection .card'));
+
+function setSingleShapeSelected(shapeType, selected) {
+	const classFunction = selected ? 'add' : 'remove';
+	shapeType.classList[classFunction]('text-white');
+	shapeType.classList[classFunction]('bg-primary');
+}
+
+function setShapeSelected(shapeType) {
+	shapeTypes.forEach((shape) => {
+		setSingleShapeSelected(shape, shapeType === shape);
+	});
+}
+
+document.querySelectorAll('.type-selection .card').forEach((type) => {
+	type.addEventListener('click', () => {
+		setShapeSelected(type);
+
+		const shape = type.dataset.shapeType;
+		setShapeSettingsViewable(regularShapes.includes(shape));
+
+		setSetupStage(2);
+	});
+});
+
+// Stage 2 (Shape Settings)
+const regularShapeSettings = $('regularShapeSettings');
+const irregularShapeSettings = $('irregularShapeSettings');
+
+function setShapeSettingsViewable(isRegular) {
+	let hideAll = isRegular === null;
+	regularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'remove' : 'add')]('hidden');
+	irregularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'add' : 'remove')]('hidden');
+}

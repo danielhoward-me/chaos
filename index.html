@@ -19,31 +19,31 @@
 		<div data-setup-stage="1">
 			<h6><i class="bi bi-1-circle-fill"></i> Shape Type:</h6>
 			<div class="settings-stage type-selection">
-				<div class="card text-white bg-primary">
+				<div data-shape-type="triangle" class="card">
 					<div class="card-body">
 						<img class="card-img-top type-image" src="/static/img/triangle.svg">
 						<h6 class="card-title">Triangle</h6>
 					</div>
 				</div>
-				<div class="card">
+				<div data-shape-type="square" class="card">
 					<div class="card-body">
 						<img class="card-img-top type-image" src="/static/img/square.svg">
 						<h6 class="card-title">Square</h6>
 					</div>
 				</div>
-				<div class="card">
+				<div data-shape-type="pentagon" class="card">
 					<div class="card-body">
 						<img class="card-img-top type-image" src="/static/img/pentagon.svg">
 						<h6 class="card-title">Pentagon</h6>
 					</div>
 				</div>
-				<div class="card">
+				<div data-shape-type="hexagon" class="card">
 					<div class="card-body">
 						<img class="card-img-top type-image" src="/static/img/hexagon.svg">
 						<h6 class="card-title">Hexagon</h6>
 					</div>
 				</div>
-				<div class="card">
+				<div data-shape-type="custom" class="card">
 					<div class="card-body">
 						<img class="card-img-top type-image" src="/static/img/custom.svg">
 						<h6 class="card-title">Custom</h6>
@@ -91,10 +91,19 @@
 					/>
 					<input
 						tabindex="-1" type="range" class="form-range" id="pointsCountRange"
-						value="1000" min="1" max="100000" step="100"
+						value="1000" min="1" max="100000" step="1"
 						oninput="$('pointsCount').value = this.value"
 					/>
 				</div>
+			</div>
+		</div>
+
+		<br/>
+
+		<div style="text-align: center;">
+			<div class="btn-group">
+				<button type="button" class="btn btn-success" onclick="help()"><i class="bi bi-info-circle"></i> Help</button>
+				<button type="button" class="btn btn-danger" onclick="setSetupStage(0)"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
 	</div>
