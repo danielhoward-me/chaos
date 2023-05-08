@@ -83,38 +83,59 @@ canvas.addEventListener('mousedown', () => mouseDown = true);
 window.addEventListener('mouseup', () => mouseDown = false);
 
 let lastTouch;
+let lastZoomLength;
 function handleTouchStart(event) {
-	if (event.touches.length !== 1) return;
-
 	lastTouch = event.touches[0];
 }
 function handleTouchDrag(event) {
-	if (graphMovementDisabled || !lastTouch || event.touches.length !== 1) return;
+	if (graphMovementDisabled || !lastTouch) return;
 
-	const touch = event.touches[0];
+	event.preventDefault();
 
-	if (lastTouch) {
-		topLeftPoint[0] -= (touch.clientX - lastTouch.clientX) * scale;
-		topLeftPoint[1] += (touch.clientY - lastTouch.clientY) * scale;
+	switch (event.touches.length) {
+	case 1:
+		const touch = event.touches[0];
+	
+		if (lastTouch) {
+			topLeftPoint[0] -= (touch.clientX - lastTouch.clientX) * scale;
+			topLeftPoint[1] += (touch.clientY - lastTouch.clientY) * scale;
+		}
+	
+		lastTouch = touch;
+		break;
+	case 2:
+		const touch1 = event.touches[0];
+		const touch2 = event.touches[1];
+		// No need to sqrt as it is used in ratio
+		const zoomLength = Math.pow(touch1.clientX - touch2.clientX, 2) + Math.pow(touch1.clientY - touch2.clientY, 2);
+
+		if (lastZoomLength) {
+			handleZoom([(touch1.clientX + touch2.clientX)/2, (touch1.clientY + touch2.clientY)/2], (lastZoomLength - zoomLength) / 100);
+		}
+
+		lastZoomLength = zoomLength;
 	}
-
-	lastTouch = touch;
 }
 function handleTouchEnd(event) {
 	lastTouch = null;
+	lastZoomLength = null;
 }
 canvas.addEventListener('touchstart', handleTouchStart);
 window.addEventListener('touchmove', handleTouchDrag);
 window.addEventListener('touchend', handleTouchEnd);
 
-function handleZoom(event) {
+function handleWheelZoom(event) {
 	event.preventDefault();
+	handleZoom([event.clientX, event.clientY], event.deltaY);
+}
+canvas.addEventListener('wheel', handleWheelZoom, {passive: false});
 
-	const beforeMousePosition = convertCanvasPointToGraphPoint([event.clientX, event.clientY]);
+function handleZoom(center, deltaY) {
+	console.log(deltaY);
+	const beforeMousePosition = convertCanvasPointToGraphPoint(center);
 
-	const change = event.deltaY;
-	const initialMultiplier = 1 + Math.abs(event.deltaY / 200);
-	const multiplier = change < 0 ? 1/initialMultiplier : initialMultiplier;
+	const initialMultiplier = 1 + Math.abs(deltaY / 200);
+	const multiplier = deltaY < 0 ? 1/initialMultiplier : initialMultiplier;
 
 	scale *= multiplier;
 
@@ -125,12 +146,11 @@ function handleZoom(event) {
 	}
 
 	// Shift the top left point so that the mouse is still over the same point
-	const newMousePosition = convertCanvasPointToGraphPoint([event.clientX, event.clientY]);
+	const newMousePosition = convertCanvasPointToGraphPoint(center);
 
 	topLeftPoint[0] -= newMousePosition[0] - beforeMousePosition[0];
 	topLeftPoint[1] -= newMousePosition[1] - beforeMousePosition[1];
 }
-canvas.addEventListener('wheel', handleZoom, {passive: false});
 
 function addAsset(asset) {
 	assets.push(asset);

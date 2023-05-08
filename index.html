@@ -58,7 +58,7 @@
 		<div data-setup-stage="2">
 			<h6><i class="bi bi-2-circle-fill"></i> Shape Settings:</h6>
 			<div class="settings-stage">
-				<div class="input-group hidden" id="regularShapeSettings">
+				<div class="input-group hidden shape-setting-group" id="regularShapeSettings">
 					<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span> Side Length</span>
 					<input
 						class="form-control" type="number" id="regularShapeSideLength"
@@ -71,9 +71,12 @@
 						oninput="updateInputWithRange(this, 'regularShapeSideLength', true)"
 					/>
 				</div>
-				<div class="input-group hidden" id="irregularShapeSettings">
+				<div class="input-group hidden shape-setting-group" id="irregularShapeSettings">
 					<button class="btn btn-primary" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
 					<button class="btn btn-outline-danger" onclick="clearShapePoints()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
+				</div>
+				<div>
+					<button class="btn btn-primary" onclick="setSetupStage(3)"><i class="bi bi-arrow-return-right"></i> Continue</button>
 				</div>
 			</div>
 		</div>

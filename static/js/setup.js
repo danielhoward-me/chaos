@@ -80,7 +80,7 @@ function setStageEnabled(stageContainer, enabled) {
 	const classFunction = enabled ? 'remove' : 'add';
 	stageContainer.classList[classFunction]('text-muted');
 	stageContainer.querySelectorAll('*').forEach((element) => {
-		if (element.tagName === 'BUTTON') return;
+		if ((['BUTTON', 'I']).includes(element.tagName)) return;
 		element.classList[classFunction]('text-muted');
 	});
 }
@@ -152,6 +152,7 @@ shapes.forEach((shape) => {
 		const regularShape = shapeType in regularShapeHandlers;
 
 		setShapeSelected(shape);
+		setRecordPointsButtonActive(false);
 		setShapeSettingsViewable(regularShape);
 		clearShapePoints();
 		setSetupStage(2);
@@ -183,12 +184,7 @@ function setShapeSettingsViewable(isRegular) {
 }
 
 recordPointsButton.addEventListener('click', () => {
-	listeningForPoints = !listeningForPoints;
-	setGraphMovementDisabled(listeningForPoints, 'crosshair');
-
-	recordPointsText.innerText = listeningForPoints ? 'Stop' : 'Start';
-	recordPointsButton.classList[listeningForPoints ? 'add' : 'remove']('btn-danger');
-	recordPointsButton.classList[listeningForPoints ? 'remove' : 'add']('btn-primary');
+	setRecordPointsButtonActive(!listeningForPoints);
 });
 
 canvas.addEventListener('click', (event) => {
@@ -197,3 +193,13 @@ canvas.addEventListener('click', (event) => {
 	const graphPoint = convertCanvasPointToGraphPoint([event.offsetX, event.offsetY]);
 	addShapePoints(graphPoint);
 });
+
+function setRecordPointsButtonActive(active) {
+	listeningForPoints = active;
+
+	setGraphMovementDisabled(active, 'crosshair');
+
+	recordPointsText.innerText = active ? 'Stop' : 'Start';
+	recordPointsButton.classList[active ? 'add' : 'remove']('btn-danger');
+	recordPointsButton.classList[active ? 'remove' : 'add']('btn-primary');
+}

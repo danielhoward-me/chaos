@@ -89,6 +89,10 @@ body {
 	width: 100px;
 }
 
+.shape-setting-group {
+	margin-bottom: 10px;
+}
+
 @media screen and (max-width: 768px) {
 	.settings-box {
 		width: calc(100vw - 30px);
