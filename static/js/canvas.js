@@ -15,6 +15,9 @@ const majorGridLineColour = 'rgba(0, 0, 0, 0.5)';
 
 function drawFrame() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
+	ctx.lineWidth = 1;
+	ctx.strokeStyle = 'black';
+	ctx.fillstyle = 'black';
 
 	drawGridLine(topLeftPoint[0], topLeftPoint[1], canvas.width, canvas.height, false);
 	drawGridLine(topLeftPoint[1], topLeftPoint[0], canvas.height, canvas.width, true);
@@ -131,7 +134,6 @@ function handleWheelZoom(event) {
 canvas.addEventListener('wheel', handleWheelZoom, {passive: false});
 
 function handleZoom(center, deltaY) {
-	console.log(deltaY);
 	const beforeMousePosition = convertCanvasPointToGraphPoint(center);
 
 	const initialMultiplier = 1 + Math.abs(deltaY / 200);

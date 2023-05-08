@@ -15,6 +15,9 @@ const stageInputs = {
 			setShapeSettingsViewable(null);
 			clearShapePoints();
 		},
+		onStageExit: () => {
+			setRecordPointsButtonActive(false);
+		},
 	},
 	3: {
 		elements: {
@@ -39,6 +42,7 @@ function addShapePoints(...points) {
 		type: 'polygon',
 		points: shapePoints,
 		stroke: true,
+		lineWidth: 2,
 	});
 }
 function clearShapePoints() {
@@ -47,6 +51,8 @@ function clearShapePoints() {
 }
 
 function setSetupStage(stage) {
+	stageInputs[setupStage]?.onStageExit?.();
+
 	for (let stageI = 1; stageI <= stageCount; stageI++) {
 		const container = getSetupStageContainer(stageI);
 		const enabled = stageI <= stage;
@@ -104,17 +110,22 @@ window.addEventListener('load', () => {
 const regularShapeHandlers = {
 	'triangle': (sideLength) => {
 		const shapeHeight = sideLength * Math.cos(Math.PI / 6);
-		const belowY = (sideLength * Math.tan(Math.PI / 6)) / 2;
+		const halfHeight = shapeHeight / 2;
 		const xOffset = sideLength / 2;
-		const yOffset = (shapeHeight / 2) - belowY;
 		addShapePoints(
-			[0, (shapeHeight - belowY) - yOffset],
-			[xOffset, -belowY - yOffset],
-			[-xOffset, -belowY - yOffset],
+			[0, halfHeight],
+			[xOffset, -halfHeight],
+			[-xOffset, -halfHeight],
 		);
 	},
 	'square': (sideLength) => {
-		
+		const halfLength = sideLength / 2;
+		addShapePoints(
+			[-halfLength, -halfLength],
+			[halfLength, -halfLength],
+			[halfLength, halfLength],
+			[-halfLength, halfLength],
+		);
 	},
 	'pentagon': (sideLength) => {
 		
@@ -152,7 +163,6 @@ shapes.forEach((shape) => {
 		const regularShape = shapeType in regularShapeHandlers;
 
 		setShapeSelected(shape);
-		setRecordPointsButtonActive(false);
 		setShapeSettingsViewable(regularShape);
 		clearShapePoints();
 		setSetupStage(2);
