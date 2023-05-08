@@ -8,6 +8,7 @@ const topLeftPoint = [
 ];
 
 let assets = [];
+let graphMovementDisabled = false;
 
 const normalGridLineColour = 'rgba(0, 0, 0, 0.2)';
 const majorGridLineColour = 'rgba(0, 0, 0, 0.5)';
@@ -72,7 +73,7 @@ function convertCanvasPointToGraphPoint(canvasPoint) {
 
 let mouseDown = false;
 function handleMouseDrag(event) {
-	if (!mouseDown) return;
+	if (graphMovementDisabled || !mouseDown) return;
 
 	topLeftPoint[0] -= event.movementX * scale;
 	topLeftPoint[1] += event.movementY * scale;
@@ -88,7 +89,7 @@ function handleTouchStart(event) {
 	lastTouch = event.touches[0];
 }
 function handleTouchDrag(event) {
-	if (!lastTouch || event.touches.length !== 1) return;
+	if (graphMovementDisabled || !lastTouch || event.touches.length !== 1) return;
 
 	const touch = event.touches[0];
 
@@ -131,15 +132,41 @@ function handleZoom(event) {
 }
 canvas.addEventListener('wheel', handleZoom, {passive: false});
 
-function addPoint(coord, radius) {
-	assets.push({coord, radius});
+function addAsset(asset) {
+	assets.push(asset);
 }
 function drawAssets(assets) {
-	ctx.fillStyle = 'black';
-	ctx.beginPath();
 	assets.forEach((asset) => {
-		const canvasCoord = convertGraphPointToCanvasPoint(coord);
-		ctx.arc(...canvasCoord, radius / scale, 0, 2 * Math.PI);
+		ctx.fillStyle = asset.fillStyle || 'black';
+		ctx.strokeStyle = asset.strokeStyle || 'black';
+		ctx.lineWidth = asset.lineWidth || 1;
+	
+		ctx.beginPath();
+
+		switch (asset.type) {
+		case 'polygon':
+			let points = [];
+			asset.points.forEach((point) => {
+				points.push(convertGraphPointToCanvasPoint(point));
+			});
+
+			ctx.moveTo(...points[0]);
+			points.slice(1).forEach((point) => {
+				ctx.lineTo(...point);
+			});
+		}
+
+		ctx.closePath();
+
+		if (asset.fill) ctx.fill();
+		if (asset.stroke) ctx.stroke();
 	});
-	ctx.fill();
+}
+function removeAsset(id) {
+	assets = assets.filter((asset) => asset.id !== id);
+}
+
+function setGraphMovementDisabled(disabled, cursor = 'default') {
+	graphMovementDisabled = disabled;
+	canvas.style.cursor = disabled ? cursor : '';
 }

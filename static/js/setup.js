@@ -13,6 +13,7 @@ const stageInputs = {
 		},
 		onStageReset: () => {
 			setShapeSettingsViewable(null);
+			clearShapePoints();
 		},
 	},
 	3: {
@@ -27,6 +28,23 @@ const stageInputs = {
 
 const stageCount = 3;
 let setupStage = 1;
+
+let shapePoints = [];
+const shapePointsAssetId = 'shapePoints';
+function addShapePoints(...points) {
+	shapePoints.push(...points);
+	removeAsset(shapePointsAssetId);
+	addAsset({
+		id: shapePointsAssetId,
+		type: 'polygon',
+		points: shapePoints,
+		stroke: true,
+	});
+}
+function clearShapePoints() {
+	shapePoints = [];
+	removeAsset(shapePointsAssetId);
+}
 
 function setSetupStage(stage) {
 	for (let stageI = 1; stageI <= stageCount; stageI++) {
@@ -83,43 +101,99 @@ window.addEventListener('load', () => {
 });
 
 // Stage 1 (shape type)
-const regularShapes = [
-	'triangle',
-	'square',
-	'pentagon',
-	'hexagon',
-];
-const shapeTypes = Array.from(document.querySelectorAll('.type-selection .card'));
+const regularShapeHandlers = {
+	'triangle': (sideLength) => {
+		const shapeHeight = sideLength * Math.cos(Math.PI / 6);
+		const belowY = (sideLength * Math.tan(Math.PI / 6)) / 2;
+		const xOffset = sideLength / 2;
+		const yOffset = (shapeHeight / 2) - belowY;
+		addShapePoints(
+			[0, (shapeHeight - belowY) - yOffset],
+			[xOffset, -belowY - yOffset],
+			[-xOffset, -belowY - yOffset],
+		);
+	},
+	'square': (sideLength) => {
+		
+	},
+	'pentagon': (sideLength) => {
+		
+	},
+	'hexagon': (sideLength) => {
+		
+	},
+};
+const shapes = Array.from(document.querySelectorAll('.type-selection .card'));
+const shapeTypeText = $('shapeTypeText');
+let selectedShape = null;
 
-function setSingleShapeSelected(shapeType, selected) {
+function setSingleShapeSelected(shape, selected) {
 	const classFunction = selected ? 'add' : 'remove';
-	shapeType.classList[classFunction]('text-white');
-	shapeType.classList[classFunction]('bg-primary');
+	shape.classList[classFunction]('text-white');
+	shape.classList[classFunction]('bg-primary');
+
+	if (selected) {
+		const shapeType = shape.dataset.shapeType;
+		shapeTypeText.innerText = shapeType[0].toUpperCase() + shapeType.slice(1);
+	}
 }
 
-function setShapeSelected(shapeType) {
-	shapeTypes.forEach((shape) => {
-		setSingleShapeSelected(shape, shapeType === shape);
+function setShapeSelected(shape) {
+	selectedShape = shape?.dataset.shapeType || null;
+	shapes.forEach((shapeCard) => {
+		setSingleShapeSelected(shapeCard, shape === shapeCard);
 	});
 }
 
-document.querySelectorAll('.type-selection .card').forEach((type) => {
-	type.addEventListener('click', () => {
-		setShapeSelected(type);
+shapes.forEach((shape) => {
+	shape.addEventListener('click', () => {
+		const shapeType = shape.dataset.shapeType;
+		if (shapeType === selectedShape) return;
+		const regularShape = shapeType in regularShapeHandlers;
 
-		const shape = type.dataset.shapeType;
-		setShapeSettingsViewable(regularShapes.includes(shape));
-
+		setShapeSelected(shape);
+		setShapeSettingsViewable(regularShape);
+		clearShapePoints();
 		setSetupStage(2);
+
+		if (regularShape) {
+			stageInputs[2].elements.regularSideLength.element.dispatchEvent(new Event('input'));
+		}
 	});
+});
+
+stageInputs[2].elements.regularSideLength.element.addEventListener('input', function() {
+	if (!selectedShape) return;
+	clearShapePoints();
+	regularShapeHandlers[selectedShape](this.value);
 });
 
 // Stage 2 (Shape Settings)
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
+const recordPointsButton = $('recordPoints');
+const recordPointsText = $('recordPointsText');
+
+let listeningForPoints = false;
 
 function setShapeSettingsViewable(isRegular) {
 	let hideAll = isRegular === null;
 	regularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'remove' : 'add')]('hidden');
 	irregularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'add' : 'remove')]('hidden');
 }
+
+recordPointsButton.addEventListener('click', () => {
+	listeningForPoints = !listeningForPoints;
+	setGraphMovementDisabled(listeningForPoints, 'crosshair');
+
+	recordPointsText.innerText = listeningForPoints ? 'Stop' : 'Start';
+	recordPointsButton.classList[listeningForPoints ? 'add' : 'remove']('btn-danger');
+	recordPointsButton.classList[listeningForPoints ? 'remove' : 'add']('btn-primary');
+});
+
+canvas.addEventListener('click', (event) => {
+	if (!listeningForPoints) return;
+
+	const graphPoint = convertCanvasPointToGraphPoint([event.offsetX, event.offsetY]);
+	addShapePoints(graphPoint);
+});

@@ -20,3 +20,9 @@ function toggleSettings() {
 		topLeftPoint[0] += 215 * (isHidden ? 1 : -1);
 	}
 }
+
+function updateInputWithRange(thisInput, otherInputId, isRange) {
+	const otherInput = $(otherInputId);
+	otherInput.value = thisInput.value;
+	if (isRange) otherInput.dispatchEvent(new Event('input'));
+}

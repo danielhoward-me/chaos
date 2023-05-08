@@ -59,20 +59,21 @@
 			<h6><i class="bi bi-2-circle-fill"></i> Shape Settings:</h6>
 			<div class="settings-stage">
 				<div class="input-group hidden" id="regularShapeSettings">
-					<span class="input-group-text"><span id="shapeTypeText"></span> Side Length</span>
+					<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span> Side Length</span>
 					<input
 						class="form-control" type="number" id="regularShapeSideLength"
 						value="50" min="1"
-						oninput="$('regularShapeSideLengthRange').value = this.value"
+						oninput="updateInputWithRange(this, 'regularShapeSideLengthRange')"
 					/>
 					<input
 						tabindex="-1" type="range" class="form-range" id="regularShapeSideLengthRange"
 						value="50" min="10" max="500" step="1"
-						oninput="$('regularShapeSideLength').value = this.value"
+						oninput="updateInputWithRange(this, 'regularShapeSideLength', true)"
 					/>
 				</div>
 				<div class="input-group hidden" id="irregularShapeSettings">
-					<button class="btn btn-primary" id="recordIrregularShapes">Record Clicks for Irregular Shape</button>
+					<button class="btn btn-primary" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
+					<button class="btn btn-outline-danger" onclick="clearShapePoints()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
 				</div>
 			</div>
 		</div>
@@ -87,12 +88,12 @@
 					<input
 						class="form-control" type="number" id="pointsCount"
 						value="1000" min="1"
-						oninput="$('pointsCountRange').value = this.value"
+						oninput="updateInputWithRange(this, 'pointsCountRange')"
 					/>
 					<input
 						tabindex="-1" type="range" class="form-range" id="pointsCountRange"
 						value="1000" min="1" max="100000" step="1"
-						oninput="$('pointsCount').value = this.value"
+						oninput="updateInputWithRange(this, 'pointsCount', true)"
 					/>
 				</div>
 			</div>

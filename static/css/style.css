@@ -17,6 +17,9 @@ body {
 .canvas:active {
 	cursor: grabbing;
 }
+*:has(> .canvas:active) {
+	user-select: none;
+}
 
 .settings-base {
 	position: fixed;
