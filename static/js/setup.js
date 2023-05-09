@@ -43,10 +43,10 @@ const stages = {
 		onStageReset: () => {
 			setShapeSettingsViewable(null);
 			setSideCountVisible(false);
-			clearShapePoints();
+			clearShapeVertices();
 		},
 		onStageExit: () => {
-			setRecordPointsButtonActive(false);
+			setRecordVerticesButtonActive(false);
 		},
 	},
 };
@@ -54,22 +54,22 @@ const stages = {
 const stageCount = 4;
 let setupStage = 1;
 
-let shapePoints = [];
-const shapePointsAssetId = 'shapePoints';
-function addShapePoints(...points) {
-	shapePoints.push(...points);
-	removeAsset(shapePointsAssetId);
-	addAsset({
-		id: shapePointsAssetId,
+let shapeVertices = [];
+const shapeVerticesAssetId = 'shapeVertices';
+function addShapeVertices(...vertices) {
+	shapeVertices.push(...vertices);
+	removeAsset(shapeVerticesAssetId);
+	addAssets({
+		id: shapeVerticesAssetId,
 		type: 'polygon',
-		points: shapePoints,
+		points: shapeVertices,
 		stroke: true,
 		lineWidth: 2,
 	});
 }
-function clearShapePoints() {
-	shapePoints = [];
-	removeAsset(shapePointsAssetId);
+function clearShapeVertices() {
+	shapeVertices = [];
+	removeAsset(shapeVerticesAssetId);
 }
 
 function setSetupStage(stage) {

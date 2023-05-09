@@ -119,7 +119,7 @@ function handleTouchDrag(event) {
 		lastZoomLength = zoomLength;
 	}
 }
-function handleTouchEnd(event) {
+function handleTouchEnd() {
 	lastTouch = null;
 	lastZoomLength = null;
 }
@@ -154,8 +154,8 @@ function handleZoom(center, deltaY) {
 	topLeftPoint[1] -= newMousePosition[1] - beforeMousePosition[1];
 }
 
-function addAsset(asset) {
-	assets.push(asset);
+function addAssets(...givenAssets) {
+	assets.push(...givenAssets);
 }
 function drawAssets(assets) {
 	assets.forEach((asset) => {
@@ -176,6 +176,13 @@ function drawAssets(assets) {
 			points.slice(1).forEach((point) => {
 				ctx.lineTo(...point);
 			});
+			break;
+		case 'circle':
+			const center = convertGraphPointToCanvasPoint(asset.center);
+			const radius = (asset.radius || 5) / scale;
+
+			ctx.arc(center[0], center[1], radius, 0, 2 * Math.PI);
+			break;
 		}
 
 		ctx.closePath();

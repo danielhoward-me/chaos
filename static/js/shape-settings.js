@@ -26,11 +26,11 @@ const defaultPolygonRotations = {
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
 const polygonSideCount = $('polygonSettings');
-const recordPointsButton = $('recordPoints');
-const recordPointsText = $('recordPointsText');
+const recordVerticesButton = $('recordVertices');
+const recordVerticesText = $('recordVerticesText');
 const shapeTypeText = $('shapeTypeText');
 
-let listeningForPoints = false;
+let listeningForVertices = false;
 
 function setShapeSettingsViewable(isRegular) {
 	let hideAll = isRegular === null;
@@ -42,40 +42,40 @@ function setSideCountVisible(visible) {
 	polygonSideCount.classList[visible ? 'remove' : 'add']('hidden');
 }
 
-recordPointsButton.addEventListener('click', () => {
-	setRecordPointsButtonActive(!listeningForPoints);
-	if (!listeningForPoints && shapePoints.length >= 3) {
+recordVerticesButton.addEventListener('click', () => {
+	setRecordVerticesButtonActive(!listeningForVertices);
+	if (!listeningForVertices && shapeVertices.length >= 3) {
 		setSetupStage(3);
 	}
 });
 
 canvas.addEventListener('click', (event) => {
-	if (!listeningForPoints) return;
+	if (!listeningForVertices) return;
 
 	const graphPoint = convertCanvasPointToGraphPoint([event.offsetX, event.offsetY]);
-	addShapePoints(graphPoint);
+	addShapeVertices(graphPoint);
 });
 
-function setRecordPointsButtonActive(active) {
-	listeningForPoints = active;
+function setRecordVerticesButtonActive(active) {
+	listeningForVertices = active;
 
 	setGraphMovementDisabled(active, 'crosshair');
 
-	recordPointsText.innerText = active ? 'Stop' : 'Start';
-	recordPointsButton.classList[active ? 'add' : 'remove']('btn-danger');
-	recordPointsButton.classList[active ? 'remove' : 'add']('btn-success');
+	recordVerticesText.innerText = active ? 'Stop' : 'Start';
+	recordVerticesButton.classList[active ? 'add' : 'remove']('btn-danger');
+	recordVerticesButton.classList[active ? 'remove' : 'add']('btn-success');
 }
 function clearRecordedShape() {
-	clearShapePoints();
+	clearShapeVertices();
 	setSetupStage(2);
 }
 
-function generatePolygonPoints(sideLength, sideCount) {
+function generatePolygonVertices(sideLength, sideCount) {
 	const internalMiddleAngle = (2 * Math.PI) / sideCount; 
 	const internalSideAngle = ((sideCount - 2) * Math.PI) / sideCount;
 	const radius = (sideLength * Math.sin(internalSideAngle / 2)) / Math.sin(internalMiddleAngle);
 
-	let points = [];
+	let vertices = [];
 
 	// Modify the angle to start at the top of the shape
 	// and allow the shape to be rotated
@@ -85,21 +85,21 @@ function generatePolygonPoints(sideLength, sideCount) {
 
 	for (let sideI = 0; sideI < sideCount; sideI++) {
 		const angle = (sideI * internalMiddleAngle) + angleModifier;
-		points.push([
+		vertices.push([
 			radius * Math.cos(angle),
 			radius * Math.sin(angle),
 		]);
 	}
 
-	return points;
+	return vertices;
 }
 
-function generatePolygonPointsHandler() {
+function generatePolygonVerticesHandler() {
 	const sideLength = parseFloat(stages[2].elements.regularSideLength.element.value);
 	const sideCount = parseInt(stages[2].elements.polygonSideCount.element.value);
 
-	clearShapePoints();
-	addShapePoints(...generatePolygonPoints(sideLength, sideCount));
+	clearShapeVertices();
+	addShapeVertices(...generatePolygonVertices(sideLength, sideCount));
 
 	const shapeType = polygonShapeNames[sideCount];
 	shapeTypeText.innerText = shapeType ? `${shapeType?.charAt(0).toUpperCase()}${shapeType?.slice(1)} ` : '';
@@ -112,7 +112,7 @@ function shapeSettingsInputHandler(updateGraph) {
 	sanitiseInputsInStage(2);
 
 	if (updateGraph) {
-		generatePolygonPointsHandler();
+		generatePolygonVerticesHandler();
 	}
 }
 

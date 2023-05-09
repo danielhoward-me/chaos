@@ -26,7 +26,7 @@ shapes.forEach((shape) => {
 		setShapeSelected(shape);
 		setShapeSettingsViewable(!isCustomShape);
 		setSideCountVisible(!(isCustomShape || isPreset));
-		clearShapePoints();
+		clearShapeVertices();
 
 		if (isCustomShape) {
 			setSetupStage(2);

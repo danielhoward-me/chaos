@@ -66,10 +66,10 @@
 			<div class="settings-stage">
 				<div class="hidden shape-setting-group" id="irregularShapeSettings">
 					<div class="input-group">
-						<button class="btn btn-success" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
-						<button class="btn btn-danger" onclick="clearRecordedShape()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
+						<button class="btn btn-success" id="recordVertices"><i class="bi bi-record-fill"></i> <span id="recordVerticesText">Start</span> Recording Vertices</button>
+						<button class="btn btn-danger" onclick="clearRecordedShape()"><i class="bi bi-trash3-fill"></i> Clear Vertices</button>
 					</div>
-					<small class="form-text">At least three points need to be selected</small>
+					<small class="form-text">At least three vertices need to be selected</small>
 				</div>
 				<div class="hidden" id="regularShapeSettings">
 					<div class="input-group shape-setting-group">
@@ -136,6 +136,9 @@
 			<h6><i class="bi bi-3-circle-fill"></i> Generate Points:</h6>
 			<div class="settings-stage">
 				<button class="btn btn-primary" id="generatePoints"><i class="bi bi-play-fill"></i> Generate Points</button>
+				<div class="progress hidden" style="margin-top: 10px;" id="generatePointsLoadingBar">
+					<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+				</div>
 			</div>
 		</div>
 
@@ -163,11 +166,13 @@
 
 	<canvas id="canvas" class="canvas"></canvas>
 	
-	<script src="/static/js/points.js"></script>
 	<script src="/static/js/app.js"></script>
+	<script src="/static/js/points.js"></script>
+	<script src="/static/js/generate-points.js"></script>
 	<script src="/static/js/setup.js"></script>
 	<script src="/static/js/shape-type.js"></script>
 	<script src="/static/js/shape-settings.js"></script>
+	<script src="/static/js/playback-settings.js"></script>
 	<script src="/static/js/canvas.js"></script>
 </body>
 </html>
