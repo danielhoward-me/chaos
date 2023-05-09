@@ -19,9 +19,9 @@ function getRandomPointInShape(...points) {
 
 	const shapeData = getShapeData(height, width, ...points);
 
-	let randomPoint = getRandomPointInRect(width, height);
+	let randomPoint = getRandomPointInRect(width-1, height-1);
 	while (!isPointInShape(randomPoint, shapeData)) {
-		randomPoint = getRandomPointInRect(width, height);
+		randomPoint = getRandomPointInRect(width-1, height-1);
 	}
 
 	return randomPoint.map((coord, i) => coord + bounds.min[i]);
