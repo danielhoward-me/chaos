@@ -87,6 +87,10 @@ body {
 	width: 100px;
 }
 
+.shape-image-selected {
+	filter: invert(1);
+}
+
 .shape-setting-group {
 	margin-bottom: 10px;
 }

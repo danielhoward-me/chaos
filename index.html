@@ -19,6 +19,18 @@
 		<div data-setup-stage="1">
 			<h6><i class="bi bi-1-circle-fill"></i> Shape Type:</h6>
 			<div class="settings-stage type-selection">
+				<div data-shape-type="polygon" class="card">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/polygon.svg">
+						<h6 class="card-title">Polygon</h6>
+					</div>
+				</div>
+				<div data-shape-type="custom" class="card">
+					<div class="card-body">
+						<img class="card-img-top type-image" src="/static/img/custom.svg">
+						<h6 class="card-title">Custom</h6>
+					</div>
+				</div>
 				<div data-shape-type="triangle" class="card">
 					<div class="card-body">
 						<img class="card-img-top type-image" src="/static/img/triangle.svg">
@@ -43,14 +55,8 @@
 						<h6 class="card-title">Hexagon</h6>
 					</div>
 				</div>
-				<div data-shape-type="custom" class="card">
-					<div class="card-body">
-						<img class="card-img-top type-image" src="/static/img/custom.svg">
-						<h6 class="card-title">Custom</h6>
-					</div>
-				</div>
 			</div>
-			<small class="form-text text-muted">All the preset shapes are normal regular shapes</small>
+			<small class="form-text">All the preset shapes are normal regular shapes</small>
 		</div>
 
 		<hr/>
@@ -58,22 +64,40 @@
 		<div data-setup-stage="2">
 			<h6><i class="bi bi-2-circle-fill"></i> Shape Settings:</h6>
 			<div class="settings-stage">
-				<div class="input-group hidden shape-setting-group" id="regularShapeSettings">
-					<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span> Side Length</span>
-					<input
-						class="form-control" type="number" id="regularShapeSideLength"
-						value="50" min="1"
-						oninput="updateInputWithRange(this, 'regularShapeSideLengthRange')"
-					/>
-					<input
-						tabindex="-1" type="range" class="form-range" id="regularShapeSideLengthRange"
-						value="50" min="10" max="500" step="1"
-						oninput="updateInputWithRange(this, 'regularShapeSideLength', true)"
-					/>
+				<div class="hidden shape-setting-group" id="irregularShapeSettings">
+					<div class="input-group">
+						<button class="btn btn-success" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
+						<button class="btn btn-danger" onclick="clearRecordedShape()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
+					</div>
+					<small class="form-text">At least three points need to be selected</small>
 				</div>
-				<div class="input-group hidden shape-setting-group" id="irregularShapeSettings">
-					<button class="btn btn-success" id="recordPoints"><i class="bi bi-record-fill"></i> <span id="recordPointsText">Start</span> Recording Points</button>
-					<button class="btn btn-danger" onclick="clearRecordedShape()"><i class="bi bi-trash3-fill"></i> Clear Points</button>
+				<div class="hidden" id="regularShapeSettings">
+					<div class="input-group shape-setting-group hidden" id="polygonSettings">
+						<span style="white-space: pre;" class="input-group-text">Side Count</span>
+						<input
+							class="form-control" type="number" id="polygonSideCount"
+							value="5" min="3" data-update-graph
+							oninput="updateInputWithRange(this, 'polygonSideCountRange')"
+						/>
+						<input
+							tabindex="-1" type="range" class="form-range" id="polygonSideCountRange"
+							value="5" min="3" max="20" step="1"
+							oninput="updateInputWithRange(this, 'polygonSideCount', true)"
+						/>
+					</div>
+					<div class="input-group shape-setting-group">
+						<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span>Side Length</span>
+						<input
+							class="form-control" type="number" id="regularShapeSideLength"
+							value="50" min="1" data-update-graph
+							oninput="updateInputWithRange(this, 'regularShapeSideLengthRange')"
+						/>
+						<input
+							tabindex="-1" type="range" class="form-range" id="regularShapeSideLengthRange"
+							value="50" min="10" max="500" step="1"
+							oninput="updateInputWithRange(this, 'regularShapeSideLength', true)"
+						/>
+					</div>
 				</div>
 				<div class="input-group">
 					<span class="input-group-text">Points Count</span>
@@ -127,6 +151,8 @@
 	<script src="/static/js/points.js"></script>
 	<script src="/static/js/app.js"></script>
 	<script src="/static/js/setup.js"></script>
+	<script src="/static/js/shape-type.js"></script>
+	<script src="/static/js/shape-settings.js"></script>
 	<script src="/static/js/canvas.js"></script>
 </body>
 </html>

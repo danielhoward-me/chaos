@@ -6,25 +6,38 @@ const stageInputs = {
 	},
 	2: {
 		elements: {
+			polygonSideCount: {
+				element: $('polygonSideCount'),
+				sanitisation: {
+					isInt: true,
+					default: 5,
+					mte: 3,
+				},
+			},
 			regularSideLength: {
 				element: $('regularShapeSideLength'),
-				defaultValue: 50,
+				sanitisation: {
+					isFloat: true,
+					default: 50,
+					mt: 0,
+				},
+			},
+			pointsCount: {
+				element: $('pointsCount'),
+				sanitisation: {
+					isInt: true,
+					default: 1000,
+					mte: 1,
+				},
 			},
 		},
 		onStageReset: () => {
 			setShapeSettingsViewable(null);
+			setSideCountVisible(false);
 			clearShapePoints();
 		},
 		onStageExit: () => {
 			setRecordPointsButtonActive(false);
-		},
-	},
-	3: {
-		elements: {
-			pointsCount: {
-				element: $('pointsCount'),
-				defaultValue: 1000,
-			},
 		},
 	},
 };
@@ -98,8 +111,7 @@ function resetStageInputs(stage) {
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach((inputData) => {
-		inputData.element.value = inputData.defaultValue;
-		inputData.element.dispatchEvent(new Event('input'));
+		inputData.element.setValue(inputData?.sanitisation?.default);
 	});
 	stageData.onStageReset?.();
 }
@@ -108,120 +120,25 @@ window.addEventListener('load', () => {
 	setSetupStage(0);
 });
 
-// Stage 1 (shape type)
-const regularShapeHandlers = {
-	'triangle': (sideLength) => {
-		const shapeHeight = sideLength * Math.cos(Math.PI / 6);
-		const halfHeight = shapeHeight / 2;
-		const xOffset = sideLength / 2;
-		addShapePoints(
-			[0, halfHeight],
-			[xOffset, -halfHeight],
-			[-xOffset, -halfHeight],
-		);
-	},
-	'square': (sideLength) => {
-		const halfLength = sideLength / 2;
-		addShapePoints(
-			[-halfLength, -halfLength],
-			[halfLength, -halfLength],
-			[halfLength, halfLength],
-			[-halfLength, halfLength],
-		);
-	},
-	'pentagon': (sideLength) => {
-		
-	},
-	'hexagon': (sideLength) => {
-		
-	},
-};
-const shapes = Array.from(document.querySelectorAll('.type-selection .card'));
-const shapeTypeText = $('shapeTypeText');
-let selectedShape = null;
+function sanitiseInputsInStage(stage) {
+	const stageData = stageInputs[stage];
+	if (!stageData) return;
 
-function setSingleShapeSelected(shape, selected) {
-	const classFunction = selected ? 'add' : 'remove';
-	shape.classList[classFunction]('text-white');
-	shape.classList[classFunction]('bg-primary');
+	Object.values(stageData.elements || []).forEach(({element, sanitisation}) => {
+		const originalValue = element.value;
+		let newValue = originalValue;
 
-	if (selected) {
-		const shapeType = shape.dataset.shapeType;
-		shapeTypeText.innerText = shapeType[0].toUpperCase() + shapeType.slice(1);
-	}
-}
+		if (sanitisation.isInt) newValue = parseInt(newValue);
+		if (sanitisation.isFloat) newValue = parseFloat(newValue);
 
-function setShapeSelected(shape) {
-	selectedShape = shape?.dataset.shapeType || null;
-	shapes.forEach((shapeCard) => {
-		setSingleShapeSelected(shapeCard, shape === shapeCard);
+		if (sanitisation.mt !== undefined && !(newValue > sanitisation.mt)) newValue = sanitisation.default;
+		if (sanitisation.mte !== undefined && !(newValue >= sanitisation.mte)) newValue = sanitisation.default;
+		if (sanitisation.lt !== undefined && !(newValue < sanitisation.lt)) newValue = sanitisation.default;
+		if (sanitisation.lte !== undefined && !(newValue <= sanitisation.lte)) newValue = sanitisation.default;
+
+		if (isNaN(newValue)) newValue = sanitisation.default;
+
+		// Don't compare type as it could be a string and number
+		element.setValue(newValue, newValue != originalValue);
 	});
-}
-
-shapes.forEach((shape) => {
-	shape.addEventListener('click', () => {
-		const shapeType = shape.dataset.shapeType;
-		if (shapeType === selectedShape) return;
-		const regularShape = shapeType in regularShapeHandlers;
-
-		setShapeSelected(shape);
-		setShapeSettingsViewable(regularShape);
-		clearShapePoints();
-
-		if (regularShape) {
-			// Trigger input event to update shape
-			stageInputs[2].elements.regularSideLength.element.dispatchEvent(new Event('input'));
-			setSetupStage(3);
-		} else {
-			setSetupStage(2);
-		}
-	});
-});
-
-stageInputs[2].elements.regularSideLength.element.addEventListener('input', function() {
-	if (!selectedShape) return;
-	clearShapePoints();
-	regularShapeHandlers[selectedShape](this.value);
-});
-
-// Stage 2 (Shape Settings)
-const regularShapeSettings = $('regularShapeSettings');
-const irregularShapeSettings = $('irregularShapeSettings');
-const recordPointsButton = $('recordPoints');
-const recordPointsText = $('recordPointsText');
-
-let listeningForPoints = false;
-
-function setShapeSettingsViewable(isRegular) {
-	let hideAll = isRegular === null;
-	regularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'remove' : 'add')]('hidden');
-	irregularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'add' : 'remove')]('hidden');
-}
-
-recordPointsButton.addEventListener('click', () => {
-	setRecordPointsButtonActive(!listeningForPoints);
-	if (!listeningForPoints && shapePoints.length >= 3) {
-		setSetupStage(3);
-	}
-});
-
-canvas.addEventListener('click', (event) => {
-	if (!listeningForPoints) return;
-
-	const graphPoint = convertCanvasPointToGraphPoint([event.offsetX, event.offsetY]);
-	addShapePoints(graphPoint);
-});
-
-function setRecordPointsButtonActive(active) {
-	listeningForPoints = active;
-
-	setGraphMovementDisabled(active, 'crosshair');
-
-	recordPointsText.innerText = active ? 'Stop' : 'Start';
-	recordPointsButton.classList[active ? 'add' : 'remove']('btn-danger');
-	recordPointsButton.classList[active ? 'remove' : 'add']('btn-success');
-}
-function clearRecordedShape() {
-	clearShapePoints();
-	setSetupStage(2);
 }

@@ -26,3 +26,9 @@ function updateInputWithRange(thisInput, otherInputId, isRange) {
 	otherInput.value = thisInput.value;
 	if (isRange) otherInput.dispatchEvent(new Event('input'));
 }
+
+// Allows us to set a value, and trigger the input event
+HTMLInputElement.prototype.setValue = function(value, triggerEvent = true) {
+    this.value = value;
+    if (triggerEvent) this.dispatchEvent(new Event('input'));
+}
