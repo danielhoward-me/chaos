@@ -6,6 +6,14 @@ const stageInputs = {
 	},
 	2: {
 		elements: {
+			regularSideLength: {
+				element: $('regularShapeSideLength'),
+				sanitisation: {
+					isFloat: true,
+					default: 50,
+					mt: 0,
+				},
+			},
 			polygonSideCount: {
 				element: $('polygonSideCount'),
 				sanitisation: {
@@ -14,12 +22,13 @@ const stageInputs = {
 					mte: 3,
 				},
 			},
-			regularSideLength: {
-				element: $('regularShapeSideLength'),
+			polygonRotate: {
+				element: $('polygonRotate'),
 				sanitisation: {
 					isFloat: true,
-					default: 50,
-					mt: 0,
+					default: 0,
+					mte: 0,
+					lte: 360,
 				},
 			},
 			pointsCount: {

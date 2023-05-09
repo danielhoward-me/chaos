@@ -52,8 +52,12 @@ function generatePolygonPoints(sideLength, sideCount) {
 
 	let points = [];
 
+	// Modify the angle to start at the top of the shape
+	// and allow the shape to be rotated
+	const angleModifier = (Math.PI / 2) - (parseFloat(stageInputs[2].elements.polygonRotate.element.value) * (Math.PI / 180));
+
 	for (let sideI = 0; sideI < sideCount; sideI++) {
-		const angle = sideI * internalMiddleAngle;
+		const angle = (sideI * internalMiddleAngle) + angleModifier;
 		points.push([
 			radius * Math.cos(angle),
 			radius * Math.sin(angle),

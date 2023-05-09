@@ -72,19 +72,6 @@
 					<small class="form-text">At least three points need to be selected</small>
 				</div>
 				<div class="hidden" id="regularShapeSettings">
-					<div class="input-group shape-setting-group hidden" id="polygonSettings">
-						<span style="white-space: pre;" class="input-group-text">Side Count</span>
-						<input
-							class="form-control" type="number" id="polygonSideCount"
-							value="5" min="3" data-update-graph
-							oninput="updateInputWithRange(this, 'polygonSideCountRange')"
-						/>
-						<input
-							tabindex="-1" type="range" class="form-range" id="polygonSideCountRange"
-							value="5" min="3" max="20" step="1"
-							oninput="updateInputWithRange(this, 'polygonSideCount', true)"
-						/>
-					</div>
 					<div class="input-group shape-setting-group">
 						<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span>Side Length</span>
 						<input
@@ -97,6 +84,34 @@
 							value="50" min="10" max="500" step="1"
 							oninput="updateInputWithRange(this, 'regularShapeSideLength', true)"
 						/>
+					</div>
+					<div class="hidden" id="polygonSettings">
+						<div class="input-group shape-setting-group">
+							<span class="input-group-text">Side Count</span>
+							<input
+								class="form-control" type="number" id="polygonSideCount"
+								value="5" min="3" data-update-graph
+								oninput="updateInputWithRange(this, 'polygonSideCountRange')"
+							/>
+							<input
+								tabindex="-1" type="range" class="form-range" id="polygonSideCountRange"
+								value="5" min="3" max="20" step="1"
+								oninput="updateInputWithRange(this, 'polygonSideCount', true)"
+							/>
+						</div>
+						<div class="input-group shape-setting-group">
+							<span class="input-group-text">Rotate Shape</span>
+							<input
+								class="form-control" type="number" id="polygonRotate"
+								value="0" min="0" max="360" data-update-graph
+								oninput="updateInputWithRange(this, 'polygonRotateRange')"
+							/>
+							<input
+								tabindex="-1" type="range" class="form-range" id="polygonRotateRange"
+								value="0" min="0" max="360" step="1"
+								oninput="updateInputWithRange(this, 'polygonRotate', true)"
+							/>
+						</div>
 					</div>
 				</div>
 				<div class="input-group">
