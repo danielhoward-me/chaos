@@ -1,4 +1,4 @@
-const stageInputs = {
+const stages = {
 	1: {
 		onStageReset: () => {
 			setShapeSelected(null);
@@ -75,7 +75,7 @@ function clearShapePoints() {
 function setSetupStage(stage) {
 	if (stage === setupStage) return;
 
-	stageInputs[setupStage]?.onStageExit?.();
+	stages[setupStage]?.onStageExit?.();
 
 	for (let stageI = 1; stageI <= stageCount; stageI++) {
 		const container = getSetupStageContainer(stageI);
@@ -116,7 +116,7 @@ function setStageEnabled(stageContainer, enabled) {
 }
 
 function resetStageInputs(stage) {
-	const stageData = stageInputs[stage];
+	const stageData = stages[stage];
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach((inputData) => {
@@ -130,7 +130,7 @@ window.addEventListener('load', () => {
 });
 
 function sanitiseInputsInStage(stage) {
-	const stageData = stageInputs[stage];
+	const stageData = stages[stage];
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach(({element, sanitisation}) => {

@@ -1,3 +1,28 @@
+const polygonShapeNames = {
+	3: 'triangle',
+	4: 'square',
+	5: 'pentagon',
+	6: 'hexagon',
+	7: 'heptagon',
+	8: 'octagon',
+	9: 'nonagon',
+	10: 'decagon',
+	11: 'hendecagon',
+	12: 'dodecagon',
+	13: 'tridecagon',
+	14: 'tetradecagon',
+	15: 'pentadecagon',
+	16: 'hexadecagon',
+	17: 'heptadecagon',
+	18: 'octadecagon',
+	19: 'enneadecagon',
+	20: 'icosagon',
+};
+const defaultPolygonRotations = {
+	4: 45,
+	6: 30,
+};
+
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
 const polygonSideCount = $('polygonSettings');
@@ -54,7 +79,9 @@ function generatePolygonPoints(sideLength, sideCount) {
 
 	// Modify the angle to start at the top of the shape
 	// and allow the shape to be rotated
-	const angleModifier = (Math.PI / 2) - (parseFloat(stageInputs[2].elements.polygonRotate.element.value) * (Math.PI / 180));
+	const userRotation = parseFloat(stages[2].elements.polygonRotate.element.value) * (Math.PI / 180);
+	const defaultRotation = (defaultPolygonRotations[sideCount] || 0) * (Math.PI / 180);
+	const angleModifier = (Math.PI / 2) - userRotation - defaultRotation;
 
 	for (let sideI = 0; sideI < sideCount; sideI++) {
 		const angle = (sideI * internalMiddleAngle) + angleModifier;
@@ -68,8 +95,8 @@ function generatePolygonPoints(sideLength, sideCount) {
 }
 
 function generatePolygonPointsHandler() {
-	const sideLength = parseFloat(stageInputs[2].elements.regularSideLength.element.value);
-	const sideCount = parseInt(stageInputs[2].elements.polygonSideCount.element.value);
+	const sideLength = parseFloat(stages[2].elements.regularSideLength.element.value);
+	const sideCount = parseInt(stages[2].elements.polygonSideCount.element.value);
 
 	clearShapePoints();
 	addShapePoints(...generatePolygonPoints(sideLength, sideCount));
@@ -89,6 +116,6 @@ function shapeSettingsInputHandler(updateGraph) {
 	}
 }
 
-Object.values(stageInputs[2].elements || []).forEach(({element}) => {
+Object.values(stages[2].elements || []).forEach(({element}) => {
 	element.addEventListener('input', () => shapeSettingsInputHandler(element.dataset.updateGraph !== undefined));
 });

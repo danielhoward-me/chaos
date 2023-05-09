@@ -1,23 +1,3 @@
-const polygonShapeNames = {
-	3: 'triangle',
-	4: 'square',
-	5: 'pentagon',
-	6: 'hexagon',
-	7: 'heptagon',
-	8: 'octagon',
-	9: 'nonagon',
-	10: 'decagon',
-	11: 'hendecagon',
-	12: 'dodecagon',
-	13: 'tridecagon',
-	14: 'tetradecagon',
-	15: 'pentadecagon',
-	16: 'hexadecagon',
-	17: 'heptadecagon',
-	18: 'octadecagon',
-	19: 'enneadecagon',
-	20: 'icosagon',
-};
 const shapes = Array.from(document.querySelectorAll('.type-selection .card'));
 let selectedShape = null;
 
@@ -42,6 +22,7 @@ shapes.forEach((shape) => {
 		const isCustomShape = shapeType === 'custom';
 		const isPreset = Object.values(polygonShapeNames).includes(shapeType);
 
+		resetStageInputs(2);
 		setShapeSelected(shape);
 		setShapeSettingsViewable(!isCustomShape);
 		setSideCountVisible(!(isCustomShape || isPreset));
@@ -52,10 +33,9 @@ shapes.forEach((shape) => {
 		} else {
 			if (Object.values(polygonShapeNames).includes(shapeType)) {
 				const sideCount = Object.keys(polygonShapeNames).find((key) => polygonShapeNames[key] === shapeType);
-				stageInputs[2].elements.polygonSideCount.element.value = sideCount;
+				stages[2].elements.polygonSideCount.element.value = sideCount;
 			}
 
-			// Trigger input event to update shape
 			shapeSettingsInputHandler(true);
 		}
 	});
