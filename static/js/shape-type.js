@@ -25,7 +25,7 @@ shapes.forEach((shape) => {
 		resetStageInputs(2);
 		setShapeSelected(shape);
 		setShapeSettingsViewable(!isCustomShape);
-		setSideCountVisible(!(isCustomShape || isPreset));
+		setPolygonSettingsVisible(!(isCustomShape || isPreset));
 		clearShapeVertices();
 
 		if (isCustomShape) {
@@ -33,7 +33,7 @@ shapes.forEach((shape) => {
 		} else {
 			if (Object.values(polygonShapeNames).includes(shapeType)) {
 				const sideCount = Object.keys(polygonShapeNames).find((key) => polygonShapeNames[key] === shapeType);
-				stages[2].elements.polygonSideCount.element.value = sideCount;
+				polygonSideCount.value = sideCount;
 			}
 
 			shapeSettingsInputHandler(true);

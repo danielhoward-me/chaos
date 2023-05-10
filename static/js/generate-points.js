@@ -36,17 +36,30 @@ function generateSierpinskiPoints(vertices, pointsCount) {
 	});
 }
 generatePointsButton.addEventListener('click', async () => {
-	loadingBar.classList.remove('hidden');
-
-	const pointsCount = stages[2].elements.pointsCount.element.value;
-	const points = await generateSierpinskiPoints(shapeVertices, pointsCount);
-	setSierpinskiPoints(points);
-
-	loadingBar.classList.add('hidden');
+	setSetupStage(3);
 	showLoadingProgress(0);
+	loadingBar.classList.remove('hidden');
+	generatePointsButton.disabled = true;
+
+	const pointsCountValue = pointsCount.value;
+	const points = await generateSierpinskiPoints(shapeVertices, pointsCountValue);
+
+	generatePointsButton.disabled = false;
+	showLoadingProgress(100);
+
+	setTimeout(() => {
+		// If the function has been run since, don't do anything
+		if (currentResolve) return;
+
+		loadingBar.classList.add('hidden');
+		showLoadingProgress(0);
+	}, 2000);
+
+	setSierpinskiPoints(points);
 });
 
 function showLoadingProgress(progess) {
 	loadingBarBody.style.width = `${progess}%`;
-	loadingBarBody.innerText = `${progess}%`;
+	loadingBarBody.innerText = progess === 100 ? 'Completed' : `${progess}%`;
+	loadingBarBody.classList.toggle('bg-success', progess === 100);
 }

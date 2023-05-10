@@ -29,6 +29,14 @@ function updateInputWithRange(thisInput, otherInputId, isRange) {
 
 // Allows us to set a value, and trigger the input event
 HTMLInputElement.prototype.setValue = function(value, triggerEvent = true) {
-    this.value = value;
+	switch (this.type) {
+	case 'checkbox':
+		this.checked = value;
+		break;
+	default:
+    	this.value = value;
+		break;
+	}
+
     if (triggerEvent) this.dispatchEvent(new Event('input'));
 }

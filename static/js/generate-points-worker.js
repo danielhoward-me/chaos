@@ -21,6 +21,7 @@ function reportProgress(currentCount, totalCount) {
 
 function calculatePoints(vertices, startPoint, pointsCount) {
 	const points = [];
+
 	let currentPoint = startPoint;
 	for (let i = 0; i < pointsCount; i++) {
 		const {vertex, index} = getRandomVertex(vertices);
@@ -35,6 +36,8 @@ function calculatePoints(vertices, startPoint, pointsCount) {
 			reportProgress(i, pointsCount);
 		}
 	}
+	points[0].startPoint = startPoint;
+
 	return points;
 }
 

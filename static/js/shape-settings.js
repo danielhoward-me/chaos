@@ -25,10 +25,15 @@ const defaultPolygonRotations = {
 
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
-const polygonSideCount = $('polygonSettings');
+const polygonSettings = $('polygonSettings');
 const recordVerticesButton = $('recordVertices');
 const recordVerticesText = $('recordVerticesText');
 const shapeTypeText = $('shapeTypeText');
+
+const polygonRotate = stages[2].elements.polygonRotate.element;
+const regularSideLength = stages[2].elements.regularSideLength.element;
+const polygonSideCount = stages[2].elements.polygonSideCount.element;
+const pointsCount = stages[2].elements.pointsCount.element;
 
 let listeningForVertices = false;
 
@@ -38,8 +43,8 @@ function setShapeSettingsViewable(isRegular) {
 	irregularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'add' : 'remove')]('hidden');
 }
 
-function setSideCountVisible(visible) {
-	polygonSideCount.classList[visible ? 'remove' : 'add']('hidden');
+function setPolygonSettingsVisible(visible) {
+	polygonSettings.classList[visible ? 'remove' : 'add']('hidden');
 }
 
 recordVerticesButton.addEventListener('click', () => {
@@ -71,15 +76,13 @@ function clearRecordedShape() {
 }
 
 function generatePolygonVertices(sideLength, sideCount) {
-	const internalMiddleAngle = (2 * Math.PI) / sideCount; 
-	const internalSideAngle = ((sideCount - 2) * Math.PI) / sideCount;
-	const radius = (sideLength * Math.sin(internalSideAngle / 2)) / Math.sin(internalMiddleAngle);
+	const {radius, internalMiddleAngle} = getShapeBaseData(sideLength, sideCount);
 
 	let vertices = [];
 
 	// Modify the angle to start at the top of the shape
 	// and allow the shape to be rotated
-	const userRotation = parseFloat(stages[2].elements.polygonRotate.element.value) * (Math.PI / 180);
+	const userRotation = parseFloat(polygonRotate.value) * (Math.PI / 180);
 	const defaultRotation = (defaultPolygonRotations[sideCount] || 0) * (Math.PI / 180);
 	const angleModifier = (Math.PI / 2) - userRotation - defaultRotation;
 
@@ -94,9 +97,21 @@ function generatePolygonVertices(sideLength, sideCount) {
 	return vertices;
 }
 
+function getShapeBaseData(sideLength, sideCount) {
+	const internalMiddleAngle = (2 * Math.PI) / sideCount; 
+	const internalSideAngle = ((sideCount - 2) * Math.PI) / sideCount;
+	const radius = (sideLength * Math.sin(internalSideAngle / 2)) / Math.sin(internalMiddleAngle);
+
+	return {
+		radius,
+		internalMiddleAngle,
+		internalSideAngle,
+	};
+}
+
 function generatePolygonVerticesHandler() {
-	const sideLength = parseFloat(stages[2].elements.regularSideLength.element.value);
-	const sideCount = parseInt(stages[2].elements.polygonSideCount.element.value);
+	const sideLength = parseFloat(regularSideLength.value);
+	const sideCount = parseInt(polygonSideCount.value);
 
 	clearShapeVertices();
 	addShapeVertices(...generatePolygonVertices(sideLength, sideCount));

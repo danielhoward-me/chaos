@@ -42,11 +42,34 @@ const stages = {
 		},
 		onStageReset: () => {
 			setShapeSettingsViewable(null);
-			setSideCountVisible(false);
+			setPolygonSettingsVisible(false);
 			clearShapeVertices();
 		},
 		onStageExit: () => {
 			setRecordVerticesButtonActive(false);
+		},
+	},
+	4: {
+		elements: {
+			playbackSpeed: {
+				element: $('playbackSpeed'),
+				sanitisation: {
+					isFloat: true,
+					default: 100,
+					mt: 0,
+				},
+			},
+			showLines: {
+				element: $('showLines'),
+				sanitisation: {
+					default: false,
+				},
+			},
+		},
+		onStageReset: () => {
+			updatePlaybackTime(true);
+			setPlaying(false);
+			deletePoints();
 		},
 	},
 };
@@ -134,6 +157,8 @@ function sanitiseInputsInStage(stage) {
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach(({element, sanitisation}) => {
+		if (element.type !== 'number') return;
+
 		const originalValue = element.value;
 		let newValue = originalValue;
 

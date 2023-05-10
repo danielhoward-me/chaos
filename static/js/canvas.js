@@ -13,7 +13,11 @@ let graphMovementDisabled = false;
 const normalGridLineColour = 'rgba(0, 0, 0, 0.2)';
 const majorGridLineColour = 'rgba(0, 0, 0, 0.5)';
 
+let lastFrameTime = Date.now();
 function drawFrame() {
+	const delta = Date.now() - lastFrameTime;
+	lastFrameTime = Date.now();
+
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.lineWidth = 1;
 	ctx.strokeStyle = 'black';
@@ -22,6 +26,8 @@ function drawFrame() {
 	drawGridLine(topLeftPoint[0], topLeftPoint[1], canvas.width, canvas.height, false);
 	drawGridLine(topLeftPoint[1], topLeftPoint[0], canvas.height, canvas.width, true);
 
+	// Called in playback settings to update points if the user is in play state
+	updateAssets(delta);
 	drawAssets(assets);
 
 	window.requestAnimationFrame(drawFrame);
@@ -159,6 +165,8 @@ function addAssets(...givenAssets) {
 }
 function drawAssets(assets) {
 	assets.forEach((asset) => {
+		if (asset.hidden) return;
+
 		ctx.fillStyle = asset.fillStyle || 'black';
 		ctx.strokeStyle = asset.strokeStyle || 'black';
 		ctx.lineWidth = asset.lineWidth || 1;
@@ -193,6 +201,12 @@ function drawAssets(assets) {
 }
 function removeAsset(id) {
 	assets = assets.filter((asset) => asset.id !== id);
+}
+function findFirstAssetIndex(id) {
+	return assets.findIndex((asset) => asset.id === id);
+}
+function setAssetHidden(index, hidden) {
+	assets[index].hidden = hidden;
 }
 
 function setGraphMovementDisabled(disabled, cursor = 'default') {

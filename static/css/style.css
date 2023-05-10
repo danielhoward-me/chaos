@@ -55,6 +55,14 @@ body {
 	font-size: larger;
 }
 
+@media screen and (max-width: 768px) {
+	.settings-box {
+		width: calc(100vw - 30px);
+		height: 50vh;
+		bottom: 0;
+	}
+}
+
 .settings-stage {
 	text-align: center;
 	padding: 10px;
@@ -92,10 +100,36 @@ body {
 	margin-bottom: 10px;
 }
 
-@media screen and (max-width: 768px) {
-	.settings-box {
-		width: calc(100vw - 30px);
-		height: 50vh;
-		bottom: 0;
-	}
+.playback-container {
+	display: flex;
+	margin-top: 20px;
+	background-color: #f3f8fe;
+	padding: 10px;
+	border: #C1CAD6 1px solid;
+	border-radius: 5px;
+}
+
+.playback-play {
+	background: rgba(0,0,0,0);
+	border: 0;
+	border-radius: 3px;
+	flex-shrink: 0;
+	overflow: visible;
+	padding: 0 7px;
+	transition: all .3s ease;
+}
+.playback-container:not(.text-muted) > .playback-play:hover {
+	background: #0d6efd;
+	color: white;
+}
+
+.playback-seek {
+	flex: 1;
+	margin: 0 10px;
+	margin-bottom: -6px
+}
+
+.playback-time {
+	flex-shrink: 0;
+	margin-left: 10px;
 }
