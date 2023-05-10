@@ -43,6 +43,7 @@ generatePointsButton.addEventListener('click', async () => {
 	setSierpinskiPoints(points);
 
 	loadingBar.classList.add('hidden');
+	showLoadingProgress(0);
 });
 
 function showLoadingProgress(progess) {

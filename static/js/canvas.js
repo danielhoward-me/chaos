@@ -123,7 +123,7 @@ function handleTouchEnd() {
 	lastTouch = null;
 	lastZoomLength = null;
 }
-canvas.addEventListener('touchstart', handleTouchStart);
+canvas.addEventListener('touchstart', handleTouchStart, {passive: true});
 window.addEventListener('touchmove', handleTouchDrag);
 window.addEventListener('touchend', handleTouchEnd);
 

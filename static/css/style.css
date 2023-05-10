@@ -83,9 +83,6 @@ body {
 .type-selection .card:last-of-type {
 	margin-right: 0;
 }
-.type-image {
-	width: 100px;
-}
 
 .shape-image-selected {
 	filter: invert(1);
