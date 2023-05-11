@@ -38,14 +38,19 @@ body {
 	transform: translateX(calc(-100% - 30px));
 	transition-delay: 0s;
 }
-.open-settings-box {
-	cursor: pointer;
+.close-settings-popup {
 	transform: translateX(calc(-100% - 30px));
 	transition-delay: 0s;
 }
-.settings-box.closed + .open-settings-box {
+.settings-box.closed ~ .close-settings-popup {
 	transform: translateX(0);
 	transition-delay: .6s;
+}
+.open-settings-button {
+	cursor: pointer;
+}
+.fullscreen-playback {
+	bottom: 0;
 }
 .close-settings {
 	position: absolute;
@@ -102,7 +107,6 @@ body {
 
 .playback-container {
 	display: flex;
-	margin-top: 20px;
 	background-color: #f3f8fe;
 	padding: 10px;
 	border: #C1CAD6 1px solid;

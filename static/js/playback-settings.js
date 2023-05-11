@@ -1,11 +1,12 @@
-const playbackSeek = $('playbackSeek');
-const playbackPlay = $('playbackPlay');
-const playbackPrevious = $('playbackPrevious');
-const playbackNext = $('playbackNext');
-const playbackTimeCurrent = $('playbackTimeCurrent');
-const playbackTimeTotal = $('playbackTimeTotal');
-const playbackPlayIcon = $('playbackPlayIcon');
-const playbackPauseIcon = $('playbackPauseIcon');
+const playbackSeek = document.querySelectorAll('#playbackSeek');
+const playbackPlay = document.querySelectorAll('#playbackPlay');
+const playbackPrevious = document.querySelectorAll('#playbackPrevious');
+const playbackNext = document.querySelectorAll('#playbackNext');
+const playbackTimeCurrent = document.querySelectorAll('#playbackTimeCurrent');
+const playbackTimeTotal = document.querySelectorAll('#playbackTimeTotal');
+const playbackPlayIcon = document.querySelectorAll('#playbackPlayIcon');
+const playbackPauseIcon = document.querySelectorAll('#playbackPauseIcon');
+const fullscreenPlaybackSettings = $('fullscreenPlaybackSettings');
 
 const playbackSpeed = stages[4].elements.playbackSpeed.element;
 const showLines = stages[4].elements.showLines.element;
@@ -20,6 +21,7 @@ let playing = false;
 let firstAssetIndex = -1;
 let currentShowingCount = 0;
 let pointRadius = 0;
+let listenForKeyboard = false;
 
 onUpdateAssets(() => {
 	firstAssetIndex = findFirstAssetIndex(canvasPointsId);
@@ -31,6 +33,8 @@ function setSierpinskiPoints(processedPoints) {
 
 	loadPointsIntoAssets();
 	updateTotalPlaybackTime();
+	setFullscreenPlaybackSettingsVisible(true);
+	setKeyboardEnabled(true);
 }
 
 function loadPointsIntoAssets() {
@@ -76,9 +80,9 @@ function updatePlaybackTime(reset) {
 		syncAssetsWithPlaybackTime();
 	}
 
-	playbackSeek.value = totalPlaybackTime === 0 ?  0 : (currentPlaybackTime / totalPlaybackTime) * 100;
-	playbackTimeCurrent.innerText = convertSecondsToTime(currentPlaybackTime);
-	playbackTimeTotal.innerText = convertSecondsToTime(totalPlaybackTime);
+	playbackSeek.setValue('value', totalPlaybackTime === 0 ?  0 : (currentPlaybackTime / totalPlaybackTime) * 100);
+	playbackTimeCurrent.setValue('innerText', convertSecondsToTime(currentPlaybackTime));
+	playbackTimeTotal.setValue('innerText', convertSecondsToTime(totalPlaybackTime));
 }
 
 function convertSecondsToTime(totalSeconds) {
@@ -104,8 +108,12 @@ playbackSpeed.addEventListener('input', () => {
 });
 
 function setPlaybackIcons(isPlaying) {
-	playbackPlayIcon.classList.toggle('hidden', isPlaying);
-	playbackPauseIcon.classList.toggle('hidden', !isPlaying);
+	playbackPlayIcon.forEach((icon) => icon.classList.toggle('hidden', isPlaying));
+	playbackPauseIcon.forEach((icon) => icon.classList.toggle('hidden', !isPlaying));
+}
+
+function setFullscreenPlaybackSettingsVisible(isVisible) {
+	fullscreenPlaybackSettings.classList.toggle('hidden', !isVisible);
 }
 
 function setPlaying(isPlaying) {
@@ -113,18 +121,20 @@ function setPlaying(isPlaying) {
 	setPlaybackIcons(playing);
 }
 
-playbackPlay.addEventListener('click', () => {
-	if (currentShowingCount === points.length) {
-		currentPlaybackTime = 0;
-		syncAssetsWithPlaybackTime();
-		updatePlaybackTime();
-	}
-
-	setPlaying(!playing);
+playbackPlay.forEach((play) => {
+	play.addEventListener('click', () => {
+		if (currentShowingCount === points.length) {
+			currentPlaybackTime = 0;
+			syncAssetsWithPlaybackTime();
+			updatePlaybackTime();
+		}
+	
+		setPlaying(!playing);
+	});
 });
 
-playbackPrevious.addEventListener('click', () => seekPoints(-1));
-playbackNext.addEventListener('click', () => seekPoints(1));
+playbackPrevious.forEach((previous) => previous.addEventListener('click', () => seekPoints(-1)));
+playbackNext.forEach((next) => next.addEventListener('click', () => seekPoints(1)));
 
 function seekPoints(amount) {
 	const playbackSpeedValue = playbackSpeed.value;
@@ -208,13 +218,28 @@ function drawPointLines() {
 	}
 }
 
-playbackSeek.addEventListener('input', () => {
-	const seekValue = playbackSeek.value;
-	currentPlaybackTime = (seekValue / 100) * totalPlaybackTime;
-	updatePlaybackTime();
-	syncAssetsWithPlaybackTime();
+playbackSeek.forEach((seek) => {
+	seek.addEventListener('input', () => {
+		const seekValue = seek.value;
+		playbackSeek.setValue('value', seekValue);
+		currentPlaybackTime = (seekValue / 100) * totalPlaybackTime;
+		updatePlaybackTime();
+		syncAssetsWithPlaybackTime();
+	});
 });
 
 showLines.addEventListener('input', () => {
 	if (!playing) syncAssetsWithPlaybackTime();
+});
+
+function setKeyboardEnabled(isEnabled) {
+	listenForKeyboard = isEnabled;
+}
+
+window.addEventListener('keydown', (event) => {
+	if (!listenForKeyboard || event.target.tagName === 'INPUT') return;
+
+	if (event.key === 'ArrowLeft') playbackPrevious[0].click();
+	if (event.key === 'ArrowRight') playbackNext[0].click();
+	if (event.key === ' ') playbackPlay[0].click();
 });

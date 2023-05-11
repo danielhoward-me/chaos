@@ -193,7 +193,7 @@
 					</div>
 				</div>
 
-				<div class="playback-container">
+				<div class="playback-container" style="margin-top: 20px;">
 					<button id="playbackPrevious" class="playback-button">
 						<i class="bi bi-skip-backward-fill"></i>
 					</button>
@@ -223,8 +223,28 @@
 			</div>
 		</div>
 	</div>
-	<div class="settings-base open-settings-box" onclick="toggleSettings()">
+	<div class="settings-base close-settings-popup open-settings-button" onclick="toggleSettings()">
 		<i class="bi bi-gear-fill"></i>
+	</div>
+	<div class="settings-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings" style="bottom: 0;">
+		<div class="playback-container">
+			<button id="playbackPrevious" class="playback-button">
+				<i class="bi bi-skip-backward-fill"></i>
+			</button>
+			<button id="playbackPlay" class="playback-button">
+				<i id="playbackPlayIcon" class="bi bi-play-fill"></i>
+				<i id="playbackPauseIcon" class="bi bi-pause-fill hidden"></i>
+			</button>
+			<button id="playbackNext" class="playback-button">
+				<i class="bi bi-skip-forward-fill"></i>
+			</button>
+			<div class="playback-seek">
+				<input id="playbackSeek" type="range" class="form-range" value="0" min="0" max="100" step="0.01"/>
+			</div>
+			<div class="playback-time">
+				<span id="playbackTimeCurrent">0:00</span>/<span id="playbackTimeTotal">0:00</span>
+			</div>
+		</div>
 	</div>
 
 	<canvas id="canvas" class="canvas"></canvas>

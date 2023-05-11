@@ -15,9 +15,9 @@ resizeCanvas();
 function toggleSettings() {
 	const isHidden = settingsBox.classList.toggle('closed');
 	if (canvas.width <= 768) {
-		topLeftPoint[1] += canvas.height/4 * (isHidden ? 1 : -1);
+		topLeftPoint[1] += (canvas.height/4 * (isHidden ? 1 : -1)) * scale;
 	} else {
-		topLeftPoint[0] += 215 * (isHidden ? 1 : -1);
+		topLeftPoint[0] += (215 * (isHidden ? 1 : -1)) * scale;
 	}
 }
 
@@ -39,4 +39,11 @@ HTMLInputElement.prototype.setValue = function(value, triggerEvent = true) {
 	}
 
     if (triggerEvent) this.dispatchEvent(new Event('input'));
+}
+
+// Allows us to complete operations on all items in a NodeList
+NodeList.prototype.setValue = function(key, value) {
+	this.forEach((element) => {
+		element[key] = value;
+	});
 }

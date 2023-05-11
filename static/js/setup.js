@@ -70,6 +70,8 @@ const stages = {
 			updatePlaybackTime(true);
 			setPlaying(false);
 			deletePoints();
+			setFullscreenPlaybackSettingsVisible(false);
+			setKeyboardEnabled(false);
 		},
 	},
 };
