@@ -19,7 +19,7 @@ body {
 	cursor: grabbing;
 }
 
-.settings-base {
+.side-overlay-base {
 	position: fixed;
     z-index: 10;
 	padding: 10px;
@@ -28,13 +28,13 @@ body {
 	border-radius: 10px;
 	transition: transform .5s ease-in-out;
 }
-.settings-box {
+.side-overlay {
 	width: 400px;
 	height: calc(100vh - 30px);
 	transition-delay: .6s;
 	overflow-y: auto;
 }
-.settings-box.closed {
+.side-overlay.closed {
 	transform: translateX(calc(-100% - 30px));
 	transition-delay: 0s;
 }

@@ -104,12 +104,12 @@ function handleTouchDrag(event) {
 	switch (event.touches.length) {
 	case 1:
 		const touch = event.touches[0];
-	
+
 		if (lastTouch) {
 			topLeftPoint[0] -= (touch.clientX - lastTouch.clientX) * scale;
 			topLeftPoint[1] += (touch.clientY - lastTouch.clientY) * scale;
 		}
-	
+
 		lastTouch = touch;
 		break;
 	case 2:
@@ -178,7 +178,7 @@ function drawAssets(assets) {
 		ctx.fillStyle = asset.fillStyle || 'black';
 		ctx.strokeStyle = asset.strokeStyle || 'black';
 		ctx.lineWidth = asset.lineWidth || 1;
-	
+
 		ctx.beginPath();
 
 		switch (asset.type) {

@@ -4,7 +4,7 @@ onmessage = function(e) {
 		startPoint,
 		pointsCount,
 	} = e.data;
-	
+
 	const points = calculatePoints(vertices, startPoint, pointsCount);
 	postMessage({
 		type: 'points',

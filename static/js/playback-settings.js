@@ -137,7 +137,7 @@ playbackPlay.forEach((play) => {
 			syncAssetsWithPlaybackTime();
 			updatePlaybackTime();
 		}
-	
+
 		setPlaying(!playing);
 	});
 });
@@ -211,7 +211,7 @@ function drawPointLines() {
 		const previousPoint = index === 0 ? startPoint : points[index-1].point;
 		const currentPoint = points[index].point;
 		const chosenVertex = shapeVertices[points[index].index];
-	
+
 		addAssets(
 			{
 				id: canvasLinesId,

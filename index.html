@@ -29,7 +29,7 @@
 	<link rel="stylesheet" href="/static/css/style.css">
 </head>
 <body>
-	<div id="settingsBox" class="settings-base settings-box">
+	<div id="settingsBox" class="side-overlay-base side-overlay settings-box">
 		<div class="close-settings" onclick="toggleSettings()">
 			<i class="bi bi-x-lg"></i>
 		</div>
@@ -236,15 +236,23 @@
 
 		<div style="text-align: center;">
 			<div class="btn-group">
-				<button type="button" class="btn btn-primary" onclick="help()"><i class="bi bi-info-circle"></i> Help</button>
+				<button type="button" class="btn btn-primary" onclick="toggleHelp()"><i class="bi bi-info-circle"></i> Help</button>
 				<button type="button" class="btn btn-danger" onclick="setSetupStage(0)"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
 	</div>
-	<div class="settings-base close-settings-popup open-settings-button" onclick="toggleSettings()">
+
+	<div id="helpBox" class="side-overlay-base side-overlay closed" style="transition-delay: 0s;">
+		<div class="close-settings" onclick="toggleHelp()">
+			<i class="bi bi-x-lg"></i>
+		</div>
+		<h3 style="text-align: center;">Help</h3>
+	</div>
+
+	<div class="side-overlay-base close-settings-popup open-settings-button" onclick="toggleSettings()">
 		<i class="bi bi-gear-fill"></i>
 	</div>
-	<div class="settings-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings" style="bottom: 0;">
+	<div class="side-overlay-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings" style="bottom: 0;">
 		<div class="playback-container">
 			<button id="playbackPrevious" class="playback-button">
 				<i class="bi bi-skip-backward-fill"></i>
@@ -266,7 +274,7 @@
 	</div>
 
 	<canvas id="canvas" class="canvas"></canvas>
-	
+
 	<script src="/static/js/app.js"></script>
 	<script src="/static/js/points.js"></script>
 	<script src="/static/js/generate-points.js"></script>
@@ -275,5 +283,6 @@
 	<script src="/static/js/shape-settings.js"></script>
 	<script src="/static/js/canvas.js"></script>
 	<script src="/static/js/playback-settings.js"></script>
+	<script src="/static/js/help.js"></script>
 </body>
 </html>
