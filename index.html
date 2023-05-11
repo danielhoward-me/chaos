@@ -275,6 +275,20 @@
 
 	<canvas id="canvas" class="canvas"></canvas>
 
+	<div class="zoom">
+		<div class="btn-group-vertical">
+			<button class="btn btn-light" onclick="zoomIn()">
+				<i class="bi bi-zoom-in"></i>
+			</button>
+			<button class="btn btn-light" onclick="zoomOut()">
+				<i class="bi bi-zoom-out"></i>
+			</button>
+		</div>
+	</div>
+	<div class="fps-counter">
+		<span id="fpsCounter">0</span> FPS
+	</div>
+
 	<script src="/static/js/app.js"></script>
 	<script src="/static/js/points.js"></script>
 	<script src="/static/js/generate-points.js"></script>
@@ -283,6 +297,5 @@
 	<script src="/static/js/shape-settings.js"></script>
 	<script src="/static/js/canvas.js"></script>
 	<script src="/static/js/playback-settings.js"></script>
-	<script src="/static/js/help.js"></script>
 </body>
 </html>

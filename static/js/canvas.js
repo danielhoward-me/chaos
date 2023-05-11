@@ -1,4 +1,5 @@
 const ctx = canvas.getContext('2d');
+const fpsCounter = $('fpsCounter');
 
 let scale = 1;
 let gridLineFrequency = 50;
@@ -16,6 +17,7 @@ const majorGridLineColour = 'rgba(0, 0, 0, 0.5)';
 let lastFrameTime = Date.now();
 function drawFrame() {
 	const delta = Date.now() - lastFrameTime;
+	fpsCounter.innerHTML = calculateFps(delta);
 	lastFrameTime = Date.now();
 
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -221,4 +223,9 @@ function setAssetHidden(index, hidden) {
 function setGraphMovementDisabled(disabled, cursor = 'default') {
 	graphMovementDisabled = disabled;
 	canvas.style.cursor = disabled ? cursor : '';
+}
+
+function calculateFps(delta) {
+	const fps = 1000/delta;
+	return fps.toFixed(fps > 10 ? 0 : 1);
 }

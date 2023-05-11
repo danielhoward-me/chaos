@@ -47,3 +47,31 @@ NodeList.prototype.setValue = function(key, value) {
 		element[key] = value;
 	});
 }
+
+const helpBox = $('helpBox');
+
+function toggleHelp() {
+	helpBox.classList.toggle('closed');
+}
+
+function zoomIn() {
+	handleZoom(getCurrentScreenCenter(), -100);
+}
+function zoomOut() {
+	handleZoom(getCurrentScreenCenter(), 100);
+}
+function getCurrentScreenCenter() {
+	center = [canvas.width/2, canvas.height/2];
+
+	if (settingsBox.classList.contains('closed')) {
+		return center;
+	}
+
+	if (canvas.width <= 768) {
+		center[1] /= 2;
+	} else {
+		center[0] += 215;
+	}
+
+	return center;
+}

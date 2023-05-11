@@ -66,6 +66,17 @@ body {
 		height: 50vh;
 		bottom: 0;
 	}
+
+	.zoom {
+		transition: bottom .5s ease-in-out;
+		transition-delay: .6s;
+	}
+	.settings-box.closed ~ .zoom {
+		transition-delay: 0s;
+	}
+	.settings-box:not(.closed) ~ .zoom {
+		bottom: calc(50vh + 15px + 15px);
+	}
 }
 
 .settings-stage {
@@ -136,4 +147,16 @@ body {
 .playback-time {
 	flex-shrink: 0;
 	margin-left: 10px;
+}
+
+.zoom {
+	position: fixed;
+	bottom: 15px;
+	right: 15px;
+}
+
+.fps-counter {
+	position: fixed;
+	top: 8px;
+	right: 15px;
 }
