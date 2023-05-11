@@ -36,7 +36,6 @@ function calculatePoints(vertices, startPoint, pointsCount) {
 			reportProgress(i, pointsCount);
 		}
 	}
-	points[0].startPoint = startPoint;
 
 	return points;
 }

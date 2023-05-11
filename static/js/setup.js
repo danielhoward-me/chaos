@@ -65,6 +65,24 @@ const stages = {
 					default: false,
 				},
 			},
+			lineColour: {
+				element: $('lineColour'),
+				sanitisation: {
+					default: '#ff0000',
+				},
+			},
+			showStartPoint: {
+				element: $('showStartPoint'),
+				sanitisation: {
+					default: false,
+				},
+			},
+			startPointColour: {
+				element: $('startPointColour'),
+				sanitisation: {
+					default: '#00ff00',
+				},
+			},
 		},
 		onStageReset: () => {
 			updatePlaybackTime(true);

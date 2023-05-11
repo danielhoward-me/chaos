@@ -2,6 +2,7 @@ const generatePointsButton = $('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');
 const loadingBarBody = loadingBar.querySelector('div');
 let currentResolve;
+let currentStartPoint;
 
 const worker = new Worker('/static/js/generate-points-worker.js');
 worker.onmessage = function(e) {
@@ -33,6 +34,7 @@ function generateSierpinskiPoints(vertices, pointsCount) {
 		});
 
 		currentResolve = resolve;
+		currentStartPoint = startPoint;
 	});
 }
 generatePointsButton.addEventListener('click', async () => {
@@ -55,7 +57,7 @@ generatePointsButton.addEventListener('click', async () => {
 		showLoadingProgress(0);
 	}, 2000);
 
-	setSierpinskiPoints(points);
+	setSierpinskiPoints(points, currentStartPoint);
 });
 
 function showLoadingProgress(progess) {

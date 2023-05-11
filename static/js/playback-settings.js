@@ -10,9 +10,13 @@ const fullscreenPlaybackSettings = $('fullscreenPlaybackSettings');
 
 const playbackSpeed = stages[4].elements.playbackSpeed.element;
 const showLines = stages[4].elements.showLines.element;
+const lineColour = stages[4].elements.lineColour.element;
+const showStartPoint = stages[4].elements.showStartPoint.element;
+const startPointColour = stages[4].elements.startPointColour.element;
 
 const canvasPointsId = 'p';
 const canvasLinesId = 'l';
+const canvasStartPointId = 's';
 
 let points = [];
 let totalPlaybackTime = 0;
@@ -23,18 +27,23 @@ let currentShowingCount = 0;
 let pointRadius = 0;
 let listenForKeyboard = false;
 
+let startPoint = null;
+
 onUpdateAssets(() => {
 	firstAssetIndex = findFirstAssetIndex(canvasPointsId);
 });
 
-function setSierpinskiPoints(processedPoints) {
+function setSierpinskiPoints(processedPoints, usedStartPoint) {
 	setSetupStage(4);
 	points = processedPoints;
+	startPoint = usedStartPoint;
 
 	loadPointsIntoAssets();
 	updateTotalPlaybackTime();
 	setFullscreenPlaybackSettingsVisible(true);
 	setKeyboardEnabled(true);
+	syncLineColour();
+	syncStartPointColour();
 }
 
 function loadPointsIntoAssets() {
@@ -163,6 +172,10 @@ function syncAssetsWithPlaybackTime() {
 
 	currentShowingCount = expectedCount;
 	drawPointLines();
+	drawStartPoint();
+}
+function syncAssetsWithPlaybackTimeIfNotPlaying() {
+	if (!playing) syncAssetsWithPlaybackTime();
 }
 
 // Run in canvas before drawing assets
@@ -185,6 +198,7 @@ function updateAssets(delta) {
 	}
 
 	drawPointLines();
+	drawStartPoint();
 }
 
 function drawPointLines() {
@@ -194,7 +208,7 @@ function drawPointLines() {
 
 	if (showLines.checked) {
 		const index = currentShowingCount-1;
-		const previousPoint = index === 0 ? points[0].startPoint : points[index-1].point;
+		const previousPoint = index === 0 ? startPoint : points[index-1].point;
 		const currentPoint = points[index].point;
 		const chosenVertex = shapeVertices[points[index].index];
 	
@@ -204,7 +218,7 @@ function drawPointLines() {
 				type: 'polygon',
 				points: [previousPoint, chosenVertex],
 				stroke: true,
-				strokeStyle: 'red',
+				strokeStyle: lineColour.value,
 			},
 			...([previousPoint, currentPoint, chosenVertex].map((point) => ({
 				id: canvasLinesId,
@@ -212,8 +226,25 @@ function drawPointLines() {
 				center: point,
 				radius: pointRadius * 1.5,
 				fill: true,
-				fillStyle: 'red',
+				fillStyle: lineColour.value,
 			}))),
+		);
+	}
+}
+
+function drawStartPoint() {
+	removeAsset(canvasStartPointId);
+
+	if (showStartPoint.checked) {
+		addAssets(
+			{
+				id: canvasStartPointId,
+				type: 'circle',
+				center: startPoint,
+				radius: pointRadius * 1.5,
+				fill: true,
+				fillStyle: startPointColour.value,
+			},
 		);
 	}
 }
@@ -229,8 +260,23 @@ playbackSeek.forEach((seek) => {
 });
 
 showLines.addEventListener('input', () => {
-	if (!playing) syncAssetsWithPlaybackTime();
+	syncAssetsWithPlaybackTimeIfNotPlaying();
+	syncLineColour();
 });
+showStartPoint.addEventListener('input', () => {
+	syncAssetsWithPlaybackTimeIfNotPlaying();
+	syncStartPointColour();
+});
+
+function syncLineColour() {
+	lineColour[showLines.checked ? 'removeAttribute' : 'setAttribute' ]('disabled', '');
+}
+function syncStartPointColour() {
+	startPointColour[showStartPoint.checked ? 'removeAttribute' : 'setAttribute' ]('disabled', '');
+}
+
+lineColour.addEventListener('input', syncAssetsWithPlaybackTimeIfNotPlaying);
+startPointColour.addEventListener('input', syncAssetsWithPlaybackTimeIfNotPlaying);
 
 function setKeyboardEnabled(isEnabled) {
 	listenForKeyboard = isEnabled;

@@ -15,14 +15,14 @@
 	<meta property="og:url" content="https://st.danielhoward.me/">
 	<meta property="og:title" content="Sierpinski Triangle Drawer">
 	<meta property="og:description" content="Design a Sierpinski Triangle, and play around with the settings used to generate it. Even change the shape to any other one!">
-	<meta property="og:image" content="/static/img/sierpinski-triangle.jpg">
+	<meta property="og:image" content="https://st.danielhoward.me/static/img/sierpinski-triangle.jpg">
 
 	<!-- Twitter -->
 	<meta property="twitter:card" content="summary_large_image">
 	<meta property="twitter:url" content="https://st.danielhoward.me/">
 	<meta property="twitter:title" content="Sierpinski Triangle Drawer">
 	<meta property="twitter:description" content="Design a Sierpinski Triangle, and play around with the settings used to generate it. Even change the shape to any other one!">
-	<meta property="twitter:image" content="/static/img/sierpinski-triangle.jpg">
+	<meta property="twitter:image" content="https://st.danielhoward.me/static/img/sierpinski-triangle.jpg">
 
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.10.5.min.css">
@@ -172,28 +172,46 @@
 		<div data-setup-stage="4">
 			<h6><i class="bi bi-4-circle-fill"></i> Playback Settings:</h6>
 			<div class="settings-stage">
-				<div class="input-group">
-					<span class="input-group-text">Playback Speed</span>
+				<div class="shape-setting-group">
+					<div class="input-group">
+						<span class="input-group-text">Playback Speed</span>
+						<input
+							class="form-control" type="number" id="playbackSpeed"
+							value="100" min="1"
+							oninput="updateInputWithRange(this, 'playbackSpeedRange')"
+						/>
+						<span class="input-group-text">points/s</span>
+					</div>
 					<input
-						class="form-control" type="number" id="playbackSpeed"
-						value="100" min="1"
-						oninput="updateInputWithRange(this, 'playbackSpeedRange')"
+						tabindex="-1" type="range" class="form-range" id="playbackSpeedRange"
+						value="100" min="1" max="10000" step="1"
+						oninput="updateInputWithRange(this, 'playbackSpeed', true)"
 					/>
-					<span class="input-group-text">points/s</span>
 				</div>
-				<input
-					tabindex="-1" type="range" class="form-range" id="playbackSpeedRange"
-					value="100" min="1" max="10000" step="1"
-					oninput="updateInputWithRange(this, 'playbackSpeed', true)"
-				/>
-				<div class="input-group">
-					<span class="input-group-text">Show Lines</span>
-					<div class="input-group-text form-control">
-						<input type="checkbox" id="showLines" style="margin: 0 auto;"/>
+				<div class="shape-setting-group">
+					<div class="input-group">
+						<span class="input-group-text">Show Lines</span>
+						<div class="input-group-text form-control">
+							<input type="checkbox" id="showLines" style="margin: 0 auto;"/>
+						</div>
+						<div class="input-group-text form-control">
+							<input type="color" class="form-control-color" id="lineColour" value="#ff0000" style="margin: 0 auto;"/>
+						</div>
+					</div>
+				</div>
+				<div class="shape-setting-group">
+					<div class="input-group">
+						<span class="input-group-text">Show Start Point</span>
+						<div class="input-group-text form-control">
+							<input type="checkbox" id="showStartPoint" style="margin: 0 auto;"/>
+						</div>
+						<div class="input-group-text form-control">
+							<input type="color" class="form-control-color" id="startPointColour" value="#00ff00" style="margin: 0 auto;"/>
+						</div>
 					</div>
 				</div>
 
-				<div class="playback-container" style="margin-top: 20px;">
+				<div class="playback-container">
 					<button id="playbackPrevious" class="playback-button">
 						<i class="bi bi-skip-backward-fill"></i>
 					</button>
