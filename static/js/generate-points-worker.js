@@ -48,7 +48,7 @@ function getRandomNumber(min, max) {
 function getRandomVertex(vertices) {
 	const randomIndex = getRandomNumber(0, vertices.length - 1);
 	return {
-		vertex: vertices[getRandomNumber(0, vertices.length - 1)],
+		vertex: vertices[randomIndex],
 		index: randomIndex,
 	};
 }
