@@ -160,8 +160,16 @@ function handleZoom(center, deltaY) {
 	topLeftPoint[1] -= newMousePosition[1] - beforeMousePosition[1];
 }
 
-function addAssets(...givenAssets) {
-	assets.push(...givenAssets);
+const onUpdateAssetsCallbacks = [];
+function onUpdateAssets(callback) {
+	onUpdateAssetsCallbacks.push(callback);
+}
+function callOnUpdateAssetsCallbacks() {
+	onUpdateAssetsCallbacks.forEach((callback) => callback());
+}
+function addAssets(...newAssets) {
+	assets.push(...newAssets);
+	callOnUpdateAssetsCallbacks();
 }
 function drawAssets(assets) {
 	assets.forEach((asset) => {
@@ -201,6 +209,7 @@ function drawAssets(assets) {
 }
 function removeAsset(id) {
 	assets = assets.filter((asset) => asset.id !== id);
+	callOnUpdateAssetsCallbacks();
 }
 function findFirstAssetIndex(id) {
 	return assets.findIndex((asset) => asset.id === id);

@@ -1,5 +1,7 @@
 const playbackSeek = $('playbackSeek');
 const playbackPlay = $('playbackPlay');
+const playbackPrevious = $('playbackPrevious');
+const playbackNext = $('playbackNext');
 const playbackTimeCurrent = $('playbackTimeCurrent');
 const playbackTimeTotal = $('playbackTimeTotal');
 const playbackPlayIcon = $('playbackPlayIcon');
@@ -19,13 +21,16 @@ let firstAssetIndex = -1;
 let currentShowingCount = 0;
 let pointRadius = 0;
 
+onUpdateAssets(() => {
+	firstAssetIndex = findFirstAssetIndex(canvasPointsId);
+});
+
 function setSierpinskiPoints(processedPoints) {
 	setSetupStage(4);
 	points = processedPoints;
 
 	loadPointsIntoAssets();
 	updateTotalPlaybackTime();
-	firstAssetIndex = findFirstAssetIndex(canvasPointsId);
 }
 
 function loadPointsIntoAssets() {
@@ -117,6 +122,20 @@ playbackPlay.addEventListener('click', () => {
 
 	setPlaying(!playing);
 });
+
+playbackPrevious.addEventListener('click', () => seekPoints(-1));
+playbackNext.addEventListener('click', () => seekPoints(1));
+
+function seekPoints(amount) {
+	const playbackSpeedValue = playbackSpeed.value;
+	currentPlaybackTime += amount/playbackSpeedValue;
+
+	if (currentPlaybackTime < 0) currentPlaybackTime = 0;
+	if (currentPlaybackTime > totalPlaybackTime) currentPlaybackTime = totalPlaybackTime;
+
+	updatePlaybackTime();
+	syncAssetsWithPlaybackTime();
+}
 
 function getCountToDisplay() {
 	const playbackSpeedValue = playbackSpeed.value;
