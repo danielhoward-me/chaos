@@ -1,16 +1,21 @@
 package main
 
 import (
+	"bytes"
 	"flag"
 	"fmt"
 	"os"
 	"regexp"
+	"strconv"
+	"strings"
+	"time"
 
 	"github.com/tdewolff/minify/v2"
 	"github.com/tdewolff/minify/v2/css"
 	"github.com/tdewolff/minify/v2/html"
 	"github.com/tdewolff/minify/v2/js"
 	"github.com/tdewolff/minify/v2/svg"
+	htmlParser "golang.org/x/net/html"
 )
 
 var publicDir string
@@ -100,6 +105,60 @@ func getFileExtension(fileName string) string {
 	return extensionMatches[len(extensionMatches)-1]
 }
 
+func processHtmlDocument(data []byte) ([]byte, error) {
+	doc, err := htmlParser.Parse(strings.NewReader(string(data)))
+	if err != nil {
+		return []byte{}, err
+	}
+
+	timeNow := time.Now()
+	unixTime := timeNow.Unix()
+	cacheString := strconv.FormatInt(unixTime, 10)
+
+	var processNode func(*htmlParser.Node)
+	processNode = func(node *htmlParser.Node) {
+		if node.Type == htmlParser.ElementNode {
+			key := ""
+			if node.Data == "img" || node.Data == "script" {
+				key = "src"
+			} else if node.Data == "link" {
+				key = "href"
+			}
+
+			if key != "" {
+				for i, attribute := range node.Attr {
+					if attribute.Key == key {
+						location := attribute.Val
+
+						if strings.Contains(location, "?") {
+							location += "&" + cacheString
+						} else {
+							location += "?" + cacheString
+						}
+
+						attribute.Val = location
+						node.Attr[i] = attribute
+						break
+					}
+				}
+			}
+		}
+
+		for child := node.FirstChild; child != nil; child = child.NextSibling {
+			processNode(child)
+		}
+	}
+
+	processNode(doc)
+
+	buf := new(bytes.Buffer)
+	if err := htmlParser.Render(buf, doc); err != nil {
+		return []byte{}, err
+	}
+
+	return buf.Bytes(), nil
+}
+
 func minifyPublicFiles() error {
 	directories := []string{"/"}
 	for {
@@ -127,6 +186,13 @@ func minifyPublicFiles() error {
 			fileData, err := os.ReadFile(relativeDirectory + "/" + fileName)
 			if err != nil {
 				return fmt.Errorf("failed to read file %s: %s", fileName, err)
+			}
+
+			if fileExtension == "html" {
+				fileData, err = processHtmlDocument(fileData)
+				if err != nil {
+					return fmt.Errorf("failed to process html file %s: %s", fileName, err)
+				}
 			}
 
 			minifyType, exists := minifyTypes[fileExtension]
