@@ -116,8 +116,11 @@ body {
 	filter: invert(1);
 }
 
-.shape-setting-group {
+.setting-group {
 	margin-bottom: 10px;
+}
+.settings-stage > .setting-group:last-of-type {
+	margin-bottom: 0;
 }
 
 .playback-container {

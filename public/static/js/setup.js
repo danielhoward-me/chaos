@@ -39,6 +39,15 @@ const stages = {
 					mte: 1,
 				},
 			},
+			lineProportion: {
+				element: $('lineProportion'),
+				sanitisation: {
+					isFloat: true,
+					default: 50,
+					mte: 0,
+					lte: 100,
+				},
+			},
 		},
 		onStageReset: () => {
 			setShapeSettingsViewable(null);

@@ -6,22 +6,22 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
 
 	<!-- Primary Meta Tags -->
-	<title>Sierpinski Triangle Drawer</title>
-	<meta name="title" content="Sierpinski Triangle Drawer">
-	<meta name="description" content="Design a Sierpinski Triangle, and play around with the settings used to generate it. Even change the shape to any other one!">
+	<title>Chaos Game Visualiser</title>
+	<meta name="title" content="Chaos Game Visualiser">
+	<meta name="description" content="Draw shapes using the chaos game method and maninulate them on the grid">
 
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content="website">
 	<meta property="og:url" content="https://st.danielhoward.me/">
-	<meta property="og:title" content="Sierpinski Triangle Drawer">
-	<meta property="og:description" content="Design a Sierpinski Triangle, and play around with the settings used to generate it. Even change the shape to any other one!">
+	<meta property="og:title" content="Chaos Game Visualiser">
+	<meta property="og:description" content="Draw shapes using the chaos game method and maninulate them on the grid">
 	<meta property="og:image" content="https://st.danielhoward.me/static/img/sierpinski-triangle.jpg">
 
 	<!-- Twitter -->
 	<meta property="twitter:card" content="summary_large_image">
 	<meta property="twitter:url" content="https://st.danielhoward.me/">
-	<meta property="twitter:title" content="Sierpinski Triangle Drawer">
-	<meta property="twitter:description" content="Design a Sierpinski Triangle, and play around with the settings used to generate it. Even change the shape to any other one!">
+	<meta property="twitter:title" content="Chaos Game Visualiser">
+	<meta property="twitter:description" content="Draw shapes using the chaos game method and maninulate them on the grid">
 	<meta property="twitter:image" content="https://st.danielhoward.me/static/img/sierpinski-triangle.jpg">
 
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
@@ -83,7 +83,7 @@
 		<div data-setup-stage="2">
 			<h6><i class="bi bi-2-circle-fill"></i> Shape Settings:</h6>
 			<div class="settings-stage">
-				<div class="hidden shape-setting-group" id="irregularShapeSettings">
+				<div class="hidden setting-group" id="irregularShapeSettings">
 					<div class="input-group" style="justify-content: center;">
 						<button class="btn btn-success" id="recordVertices"><i class="bi bi-record-fill"></i> <span id="recordVerticesText">Start</span> Recording Vertices</button>
 						<button class="btn btn-danger" onclick="clearRecordedShape()"><i class="bi bi-trash3-fill"></i></button>
@@ -91,7 +91,7 @@
 					<small class="form-text">At least three vertices need to be selected</small>
 				</div>
 				<div class="hidden" id="regularShapeSettings">
-					<div class="shape-setting-group">
+					<div class="setting-group">
 						<div class="input-group">
 							<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span>Side Length</span>
 							<input
@@ -107,7 +107,7 @@
 						/>
 					</div>
 					<div class="hidden" id="polygonSettings">
-						<div class="shape-setting-group">
+						<div class="setting-group">
 							<div class="input-group">
 								<span class="input-group-text">Side Count</span>
 								<input
@@ -122,7 +122,7 @@
 								oninput="updateInputWithRange(this, 'polygonSideCount', true)"
 							/>
 						</div>
-						<div class="shape-setting-group">
+						<div class="setting-group">
 							<div class="input-group">
 								<span class="input-group-text">Rotate Shape</span>
 								<input
@@ -130,6 +130,7 @@
 									value="0" min="0" max="360" data-update-graph
 									oninput="updateInputWithRange(this, 'polygonRotateRange')"
 								/>
+								<span class="input-group-text">&deg;</span>
 							</div>
 							<input
 								tabindex="-1" type="range" class="form-range" id="polygonRotateRange"
@@ -139,19 +140,37 @@
 						</div>
 					</div>
 				</div>
-				<div class="input-group">
-					<span class="input-group-text">Points Count</span>
+				<div class="setting-group">
+					<div class="input-group">
+						<span class="input-group-text">Points Count</span>
+						<input
+							class="form-control" type="number" id="pointsCount"
+							value="1000" min="1"
+							oninput="updateInputWithRange(this, 'pointsCountRange')"
+						/>
+					</div>
 					<input
-						class="form-control" type="number" id="pointsCount"
-						value="1000" min="1"
-						oninput="updateInputWithRange(this, 'pointsCountRange')"
+						tabindex="-1" type="range" class="form-range" id="pointsCountRange"
+						value="1000" min="1" max="100000" step="1"
+						oninput="updateInputWithRange(this, 'pointsCount', true)"
 					/>
 				</div>
-				<input
-					tabindex="-1" type="range" class="form-range" id="pointsCountRange"
-					value="1000" min="1" max="100000" step="1"
-					oninput="updateInputWithRange(this, 'pointsCount', true)"
-				/>
+				<div class="setting-group">
+					<div class="input-group">
+						<span class="input-group-text">Line Proportion</span>
+						<input
+							class="form-control" type="number" id="lineProportion"
+							value="50" min="0" max="100"
+							oninput="updateInputWithRange(this, 'lineProportionRange')"
+						/>
+						<span class="input-group-text">%</span>
+					</div>
+					<input
+						tabindex="-1" type="range" class="form-range" id="lineProportionRange"
+						value="50" min="0" max="100" step="1"
+						oninput="updateInputWithRange(this, 'lineProportion', true)"
+					/>
+				</div>
 			</div>
 		</div>
 
@@ -172,7 +191,7 @@
 		<div data-setup-stage="4">
 			<h6><i class="bi bi-4-circle-fill"></i> Playback Settings:</h6>
 			<div class="settings-stage">
-				<div class="shape-setting-group">
+				<div class="setting-group">
 					<div class="input-group">
 						<span class="input-group-text">Playback Speed</span>
 						<input
@@ -188,7 +207,7 @@
 						oninput="updateInputWithRange(this, 'playbackSpeed', true)"
 					/>
 				</div>
-				<div class="shape-setting-group">
+				<div class="setting-group">
 					<div class="input-group">
 						<span class="input-group-text">Show Lines</span>
 						<div class="input-group-text form-control">
@@ -199,7 +218,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="shape-setting-group">
+				<div class="setting-group">
 					<div class="input-group">
 						<span class="input-group-text">Show Start Point</span>
 						<div class="input-group-text form-control">

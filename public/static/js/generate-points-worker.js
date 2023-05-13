@@ -3,9 +3,10 @@ onmessage = function(e) {
 		vertices,
 		startPoint,
 		pointsCount,
+		lineProportion,
 	} = e.data;
 
-	const points = calculatePoints(vertices, startPoint, pointsCount);
+	const points = calculatePoints(vertices, startPoint, pointsCount, lineProportion);
 	postMessage({
 		type: 'points',
 		data: points,
@@ -19,18 +20,19 @@ function reportProgress(currentCount, totalCount) {
 	});
 }
 
-function calculatePoints(vertices, startPoint, pointsCount) {
-	const points = [];
+function calculatePoints(vertices, startPoint, pointsCount, lineProportion) {
+	const points = [{
+		point: startPoint,
+		index: -1,
+	}];
 
-	let currentPoint = startPoint;
 	for (let i = 0; i < pointsCount; i++) {
 		const {vertex, index} = getRandomVertex(vertices);
-		const newPoint = getPointBetweenPoints(currentPoint, vertex);
+		const newPoint = getPointBetweenPoints(vertex, points[i].point, lineProportion);
 		points.push({
 			point: newPoint,
 			index,
 		});
-		currentPoint = newPoint;
 
 		if (i % (pointsCount / 100) === 0) {
 			reportProgress(i, pointsCount);
@@ -52,9 +54,9 @@ function getRandomVertex(vertices) {
 	};
 }
 
-function getPointBetweenPoints(point1, point2) {
+function getPointBetweenPoints(point1, point2, lineProportion) {
 	return [
-		(point1[0] + point2[0]) / 2,
-		(point1[1] + point2[1]) / 2,
+		point1[0] + (point2[0] - point1[0]) * lineProportion,
+		point1[1] + (point2[1] - point1[1]) * lineProportion,
 	];
 }

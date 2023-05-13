@@ -34,6 +34,7 @@ const polygonRotate = stages[2].elements.polygonRotate.element;
 const regularSideLength = stages[2].elements.regularSideLength.element;
 const polygonSideCount = stages[2].elements.polygonSideCount.element;
 const pointsCount = stages[2].elements.pointsCount.element;
+const lineProportion = stages[2].elements.lineProportion.element;
 
 let listeningForVertices = false;
 

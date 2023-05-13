@@ -2,7 +2,6 @@ const generatePointsButton = $('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');
 const loadingBarBody = loadingBar.querySelector('div');
 let currentResolve;
-let currentStartPoint;
 
 const worker = new Worker('/static/js/generate-points-worker.js');
 worker.onmessage = function(e) {
@@ -22,7 +21,7 @@ worker.onmessage = function(e) {
 	}
 }
 
-function generateSierpinskiPoints(vertices, pointsCount) {
+function generateChaosPoints(vertices, pointsCount, lineProportion) {
 	if (currentResolve) return Promise.reject('Already generating points');
 	return new Promise((resolve) => {
 		const startPoint = getRandomPointInShape(...vertices);
@@ -31,10 +30,10 @@ function generateSierpinskiPoints(vertices, pointsCount) {
 			vertices,
 			startPoint,
 			pointsCount,
+			lineProportion,
 		});
 
 		currentResolve = resolve;
-		currentStartPoint = startPoint;
 	});
 }
 generatePointsButton.addEventListener('click', async () => {
@@ -44,7 +43,8 @@ generatePointsButton.addEventListener('click', async () => {
 	generatePointsButton.disabled = true;
 
 	const pointsCountValue = pointsCount.value;
-	const points = await generateSierpinskiPoints(shapeVertices, pointsCountValue);
+	const lineProportionValue = lineProportion.value/100;
+	const points = await generateChaosPoints(shapeVertices, pointsCountValue, lineProportionValue);
 
 	generatePointsButton.disabled = false;
 	showLoadingProgress(100);
@@ -57,7 +57,7 @@ generatePointsButton.addEventListener('click', async () => {
 		showLoadingProgress(0);
 	}, 2000);
 
-	setSierpinskiPoints(points, currentStartPoint);
+	setChaosPoints(points);
 });
 
 function showLoadingProgress(progess) {

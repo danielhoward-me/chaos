@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.1.0](https://github.com/Toffee1347/sierpinski-triangle-drawer/tree/v1.1.0)
+- Change the project from being focused on the Sierpinski triangle to being focused on the chaos game since it suits the project better
+- Add a proportion option in shape settings which lets you decide how far along the line the point should be placed from the vertex
+
 ## [v1.0.2](https://github.com/Toffee1347/sierpinski-triangle-drawer/tree/v1.0.2)
 - Add [robots.txt](https://github.com/Toffee1347/sierpinski-triangle-drawer/blob/v1.0.2/public/robots.txt) to make it easier for search engines to index the site
 

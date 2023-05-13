@@ -27,16 +27,13 @@ let currentShowingCount = 0;
 let pointRadius = 0;
 let listenForKeyboard = false;
 
-let startPoint = null;
-
 onUpdateAssets(() => {
 	firstAssetIndex = findFirstAssetIndex(canvasPointsId);
 });
 
-function setSierpinskiPoints(processedPoints, usedStartPoint) {
+function setChaosPoints(processedPoints) {
 	setSetupStage(4);
 	points = processedPoints;
-	startPoint = usedStartPoint;
 
 	loadPointsIntoAssets();
 	updateTotalPlaybackTime();
@@ -204,11 +201,11 @@ function updateAssets(delta) {
 function drawPointLines() {
 	removeAsset(canvasLinesId);
 
-	if (currentShowingCount === 0) return;
+	if (currentShowingCount <= 1) return;
 
 	if (showLines.checked) {
 		const index = currentShowingCount-1;
-		const previousPoint = index === 0 ? startPoint : points[index-1].point;
+		const previousPoint = points[index-1].point;
 		const currentPoint = points[index].point;
 		const chosenVertex = shapeVertices[points[index].index];
 
@@ -240,7 +237,7 @@ function drawStartPoint() {
 			{
 				id: canvasStartPointId,
 				type: 'circle',
-				center: startPoint,
+				center: points[0].point,
 				radius: pointRadius * 1.5,
 				fill: true,
 				fillStyle: startPointColour.value,
