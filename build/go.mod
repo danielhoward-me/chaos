@@ -1,4 +1,4 @@
-module go.danielhoward.me/sierpinski-triangle-drawer/build
+module go.danielhoward.me/chaos-game/build
 
 go 1.19
 
