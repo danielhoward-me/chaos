@@ -20,6 +20,7 @@ import (
 
 var publicDir string
 var outDir string
+var appVersion string
 
 var minifyTypes = map[string](struct {
 	minifyFunc minify.MinifierFunc
@@ -56,6 +57,7 @@ func initialiseMinifier() {
 func main() {
 	flag.StringVar(&publicDir, "public-dir", "./public", "The directory to minify")
 	flag.StringVar(&outDir, "out-dir", "./out", "The directory to output the minified code to (creates file if it doesn't exist)")
+	flag.StringVar(&appVersion, "app-version", "0.0.0", "The current version of the app")
 	flag.Parse()
 
 	fmt.Println("Initialising minifier")
@@ -156,7 +158,22 @@ func processHtmlDocument(data []byte) ([]byte, error) {
 		return []byte{}, err
 	}
 
-	return buf.Bytes(), nil
+	processedDoc := buf.Bytes()
+
+	variables := getHtmlVariables()
+	for key, value := range variables {
+		textRegex := regexp.MustCompile("%" + key + "%")
+		processedDoc = textRegex.ReplaceAll(processedDoc, []byte(value))
+	}
+
+	return processedDoc, nil
+}
+
+func getHtmlVariables() map[string]string {
+	return map[string]string{
+		"APP_VERSION": appVersion,
+		"LAST_DEPLOY": time.Now().Format(time.ANSIC),
+	}
 }
 
 func minifyPublicFiles() error {
@@ -189,6 +206,7 @@ func minifyPublicFiles() error {
 			}
 
 			if fileExtension == "html" {
+				fmt.Printf("Adding cache string and putting variables in html document %s", fileName)
 				fileData, err = processHtmlDocument(fileData)
 				if err != nil {
 					return fmt.Errorf("failed to process html file %s: %s", fileName, err)
