@@ -1,7 +1,12 @@
 const stages = {
 	1: {
-		onStageReset: () => {
-			setShapeSelected(null);
+		elements: {
+			shapeType: {
+				element: $('shapeType'),
+				sanitisation: {
+					default: '',
+				},
+			},
 		},
 	},
 	2: {

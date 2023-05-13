@@ -40,6 +40,23 @@ HTMLInputElement.prototype.setValue = function(value, triggerEvent = true) {
 
     if (triggerEvent) this.dispatchEvent(new Event('input'));
 }
+HTMLSelectElement.prototype.setValue = function(value, triggerEvent = true) {
+	this.value = value;
+	if (triggerEvent) this.dispatchEvent(new Event('change'));
+}
+
+// Allows to get a value from an input, based on its type
+HTMLInputElement.prototype.getValue = function() {
+	switch (this.type) {
+	case 'checkbox':
+		return this.checked;
+	default:
+		return this.value;
+	}
+}
+HTMLSelectElement.prototype.getValue = function(value, triggerEvent = true) {
+	return this.value;
+}
 
 // Allows us to complete operations on all items in a NodeList
 NodeList.prototype.setValue = function(key, value) {
