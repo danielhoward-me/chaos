@@ -172,7 +172,7 @@ func processHtmlDocument(data []byte) ([]byte, error) {
 func getHtmlVariables() map[string]string {
 	return map[string]string{
 		"APP_VERSION": appVersion,
-		"LAST_DEPLOY": time.Now().Format(time.ANSIC),
+		"LAST_BUILD":  time.Now().Format(time.Stamp),
 	}
 }
 
