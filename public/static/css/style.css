@@ -164,3 +164,7 @@ body {
 	top: 8px;
 	right: 15px;
 }
+
+small a, small a:hover, small a:visited {
+	color: inherit;
+}

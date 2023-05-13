@@ -206,7 +206,7 @@ func minifyPublicFiles() error {
 			}
 
 			if fileExtension == "html" {
-				fmt.Printf("Adding cache string and putting variables in html document %s", fileName)
+				fmt.Printf("Adding cache string and putting variables in html document %s\n", fileName)
 				fileData, err = processHtmlDocument(fileData)
 				if err != nil {
 					return fmt.Errorf("failed to process html file %s: %s", fileName, err)
