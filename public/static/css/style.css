@@ -56,12 +56,13 @@ body {
 	position: absolute;
 	right: 10px;
 	top: 10px;
-	cursor: pointer;
 	font-size: larger;
+	border-radius: 50%;
+	z-index: 100;
 }
 
 @media screen and (max-width: 768px) {
-	.settings-box {
+	.side-overlay {
 		width: calc(100vw - 30px);
 		height: 50vh;
 		bottom: 0;
@@ -76,6 +77,9 @@ body {
 	}
 	.settings-box:not(.closed) ~ .zoom {
 		bottom: calc(50vh + 15px + 15px);
+	}
+	.fullscreen-playback {
+		width: calc(100vw - 87px);
 	}
 }
 

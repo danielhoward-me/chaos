@@ -30,9 +30,9 @@
 </head>
 <body>
 	<div id="settingsBox" class="side-overlay-base side-overlay settings-box">
-		<div class="close-settings" onclick="toggleSettings()">
+		<button class="btn btn-primary close-settings" onclick="toggleSettings()">
 			<i class="bi bi-x-lg"></i>
-		</div>
+		</button>
 		<h3 style="text-align: center;">Settings</h3>
 
 		<div data-setup-stage="1">
@@ -240,19 +240,27 @@
 				<button type="button" class="btn btn-danger" onclick="setSetupStage(0)"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
+		<br/>
+		<small class="form-text">App Version: %APP_VERSION%</small>
+		<br/>
+		<small class="form-text">Last Build and Deploy: %LAST_DEPLOY%</small>
 	</div>
 
 	<div id="helpBox" class="side-overlay-base side-overlay closed" style="transition-delay: 0s;">
-		<div class="close-settings" onclick="toggleHelp()">
+		<button class="btn btn-primary close-settings" onclick="toggleHelp()">
 			<i class="bi bi-x-lg"></i>
-		</div>
+		</button>
 		<h3 style="text-align: center;">Help</h3>
+
+		<small class="form-text">App Version: %APP_VERSION%</small>
+		<br/>
+		<small class="form-text">Last Build and Deploy: %LAST_DEPLOY%</small>
 	</div>
 
 	<div class="side-overlay-base close-settings-popup open-settings-button" onclick="toggleSettings()">
 		<i class="bi bi-gear-fill"></i>
 	</div>
-	<div class="side-overlay-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings" style="bottom: 0;">
+	<div class="side-overlay-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings">
 		<div class="playback-container">
 			<button id="playbackPrevious" class="playback-button">
 				<i class="bi bi-skip-backward-fill"></i>
