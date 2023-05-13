@@ -1,5 +1,8 @@
 # Changelog
 
+## [v1.1.2](https://github.com/Toffee1347/chaos-game/tree/v1.1.2)
+- Change the line proportion option to be the distance from the point instead of the vertex since that is how it is done on other sites
+
 ## [v1.1.1](https://github.com/Toffee1347/chaos-game/tree/v1.1.1)
 - Update all references to the Sierpinski triangle to the chaos game with the new repository name
 
