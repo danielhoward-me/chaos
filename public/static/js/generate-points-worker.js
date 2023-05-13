@@ -28,7 +28,7 @@ function calculatePoints(vertices, startPoint, pointsCount, lineProportion) {
 
 	for (let i = 0; i < pointsCount; i++) {
 		const {vertex, index} = getRandomVertex(vertices);
-		const newPoint = getPointBetweenPoints(vertex, points[i].point, lineProportion);
+		const newPoint = getPointBetweenPoints(points[i].point, vertex, lineProportion);
 		points.push({
 			point: newPoint,
 			index,
