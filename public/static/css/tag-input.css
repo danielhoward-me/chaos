@@ -1,0 +1,43 @@
+tag-input {
+	display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+	padding: 1rem;
+	outline: none;
+	cursor: text;
+	background: white;
+	border-radius: inherit;
+	transition: all 0.2s;
+}
+tag-input:has(input:disabled) {
+	cursor: default;
+	background: #e9ecef;
+}
+
+tag-input input {
+	outline: none;
+	border: none;
+	background: inherit;
+}
+
+tag-input span.tag {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	margin: 0.5rem;
+	padding-left: 0.8rem;
+	border-radius: 35px;
+	background: lightgray;
+}
+
+tag-input i {
+	cursor: pointer;
+	margin-left: 0.5rem;
+	padding: 0.5rem calc(0.5rem + 4px);
+	border-radius: inherit;
+	background: rgb(200, 200, 200);
+	aspect-ratio: 1/1;
+}
+tag-input i:hover {
+	background: rgb(180, 180, 180);
+}

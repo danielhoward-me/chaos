@@ -27,6 +27,7 @@
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.10.5.min.css">
 	<link rel="stylesheet" href="/static/css/style.css">
+	<link rel="stylesheet" href="/static/css/tag-input.css">
 </head>
 <body>
 	<div id="settingsBox" class="side-overlay-base side-overlay settings-box">
@@ -181,6 +182,14 @@
 						oninput="updateInputWithRange(this, 'lineProportion', true)"
 					/>
 				</div>
+				<div class="setting-group">
+					<div class="input-group">
+						<span class="input-group-text">Vertex Rules</span>
+						<div class="form-control" style="padding: 0;">
+							<tag-input placeholder="index-difference ≠ ±1"></tag-input>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
@@ -330,6 +339,7 @@
 		<span id="fpsCounter">0</span> FPS
 	</div>
 
+	<script src="/static/js/tag-input.js"></script>
 	<script src="/static/js/app.js"></script>
 	<script src="/static/js/points.js"></script>
 	<script src="/static/js/generate-points.js"></script>
