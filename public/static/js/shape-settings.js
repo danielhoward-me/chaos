@@ -135,6 +135,7 @@ const characterSets = {
 	'≠': ['!', '='],
 	'≤': ['<', '='],
 	'≥': ['>', '='],
+	'±': ['+', '-'],
 };
 const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, characters.sort()]);
 vertexRules.addEventListener('input', () => {
