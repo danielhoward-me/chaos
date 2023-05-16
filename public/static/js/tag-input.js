@@ -27,7 +27,6 @@ class TagInput extends HTMLElement {
 
 		if (key === 'Enter') {
 			this.addTag(this.input.value);
-			this.input.value = '';
 		}
 	}
 
@@ -73,7 +72,14 @@ class TagInput extends HTMLElement {
 
 	addTag(tag) {
 		if (tag !== '') {
+			const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
+				detail: {tag},
+				cancelable: true,
+			}));
+			if (eventCancelled) return;
+
 			this.tags.push(tag);
+			this.input.value = '';
 			this.renderTags();
 		}
 	}
@@ -92,7 +98,6 @@ class TagInput extends HTMLElement {
 	}
 
 	setValue(value) {
-		console.trace();
 		this.value = value;
 	}
 }

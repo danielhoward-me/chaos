@@ -186,10 +186,11 @@
 					<div class="input-group">
 						<span class="input-group-text">Vertex Rules</span>
 						<div class="form-control vertex-rules-container">
-							<tag-input id="vertexRules" placeholder="index-difference ≠ ±1">
-								<input type="text" placeholder="index-difference ≠ ±1">
+							<tag-input id="vertexRules" placeholder="difference ≠ 1">
+								<input type="text" placeholder="difference ≠ 1">
 							</tag-input>
 						</div>
+						<div id="vertexRuleFeedback" class="invalid-feedback hidden"></div>
 					</div>
 				</div>
 			</div>
@@ -342,6 +343,7 @@
 	</div>
 
 	<script src="/static/js/tag-input.js"></script>
+	<script src="/static/js/vertex-rules-parser.js"></script>
 	<script src="/static/js/app.js"></script>
 	<script src="/static/js/points.js"></script>
 	<script src="/static/js/generate-points.js"></script>

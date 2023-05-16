@@ -25,6 +25,7 @@ const polygonSettings = $('polygonSettings');
 const recordVerticesButton = $('recordVertices');
 const recordVerticesText = $('recordVerticesText');
 const shapeTypeText = $('shapeTypeText');
+const vertexRuleFeedback = $('vertexRuleFeedback');
 
 const polygonRotate = stages[2].elements.polygonRotate.element;
 const regularSideLength = stages[2].elements.regularSideLength.element;
@@ -130,12 +131,10 @@ function shapeSettingsInputHandler(updateGraph) {
 	}
 }
 
-
 const characterSets = {
 	'≠': ['!', '='],
 	'≤': ['<', '='],
 	'≥': ['>', '='],
-	'±': ['+', '-'],
 };
 const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, characters.sort()]);
 vertexRules.addEventListener('input', () => {
@@ -155,6 +154,23 @@ vertexRules.addEventListener('input', () => {
 				vertexRules.input.value = value.slice(0, i) + replacement + value.slice(i + characters.length);
 			}
 		});
+	}
+});
+
+vertexRules.addEventListener('newtag', (e) => {
+	vertexRules.parentElement.classList.remove('is-invalid');
+	vertexRuleFeedback.classList.add('hidden');
+
+	const tag = e.detail.tag;
+
+	try {
+		new VertexRule(tag);
+	} catch (err) {
+		e.preventDefault();
+
+		vertexRules.parentElement.classList.add('is-invalid');
+		vertexRuleFeedback.innerText = err.message;
+		vertexRuleFeedback.classList.remove('hidden');
 	}
 });
 
