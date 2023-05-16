@@ -4,6 +4,7 @@ class TagInput extends HTMLElement {
 
 		this.tags = [];
 
+		this.innerHTML = '';
 		this.createInput();
 		this.initialiseEvents();
 	}
@@ -18,14 +19,16 @@ class TagInput extends HTMLElement {
 	}
 
 	registerInputEvents() {
-		this.input.addEventListener('keydown', (e) => {
-			const key = e.key;
+		this.input.addEventListener('keydown', this.handleInput.bind(this));
+	}
 
-			if (key === 'Enter') {
-				this.addTag(this.input.value);
-				this.input.value = '';
-			}
-		});
+	handleInput(e) {
+		const key = e.key;
+
+		if (key === 'Enter') {
+			this.addTag(this.input.value);
+			this.input.value = '';
+		}
 	}
 
 	initialiseEvents() {
@@ -36,6 +39,8 @@ class TagInput extends HTMLElement {
 
 	renderTags() {
 		const isFocused = this.input === document.activeElement;
+		const isDisabled = this.input.disabled;
+		const currentValue = this.input.value;
 
 		this.innerHTML = '';
 		this.tags.forEach((tag, i) => {
@@ -44,6 +49,8 @@ class TagInput extends HTMLElement {
 		this.createInput();
 
 		if (isFocused) this.input.focus();
+		if (isDisabled) this.input.disabled = true;
+		if (currentValue) this.input.value = currentValue;
 	}
 
 	createTag(tag, index) {
@@ -74,6 +81,19 @@ class TagInput extends HTMLElement {
 	removeTag(index) {
 		this.tags.splice(index, 1);
 		this.renderTags();
+	}
+
+	get value() {
+		return this.tags;
+	}
+	set value(value) {
+		this.tags = value;
+		this.renderTags();
+	}
+
+	setValue(value) {
+		console.trace();
+		this.value = value;
 	}
 }
 

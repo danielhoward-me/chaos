@@ -53,6 +53,12 @@ const stages = {
 					lte: 100,
 				},
 			},
+			vertexRules: {
+				element: $('vertexRules'),
+				sanitisation: {
+					default: [],
+				},
+			},
 		},
 		onStageReset: () => {
 			setShapeSettingsViewable(null);
@@ -177,7 +183,7 @@ function resetStageInputs(stage) {
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach((inputData) => {
-		inputData.element.setValue(inputData?.sanitisation?.default);
+		inputData.element.setValue(JSON.parse(JSON.stringify(inputData?.sanitisation?.default)));
 	});
 	stageData.onStageReset?.();
 }

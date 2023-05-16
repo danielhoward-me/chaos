@@ -7,7 +7,6 @@ tag-input {
 	cursor: text;
 	background: white;
 	border-radius: inherit;
-	transition: all 0.2s;
 }
 tag-input:has(input:disabled) {
 	cursor: default;
@@ -28,6 +27,7 @@ tag-input span.tag {
 	padding-left: 0.8rem;
 	border-radius: 35px;
 	background: lightgray;
+	overflow-wrap: anywhere;
 }
 
 tag-input i {

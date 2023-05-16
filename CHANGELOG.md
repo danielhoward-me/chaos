@@ -6,6 +6,7 @@
 - Add basic saves functionality to be able to download and upload configurations
 - Add option called `Vertex Rules` which outlines the rules used when picking a new vertex
   - This is implemented through a custom element called `tag-input`
+- Rotate even sided polygons by half their internal angle to make them look more natural
 
 ## [v1.1.2](https://github.com/Toffee1347/chaos-game/tree/v1.1.2)
 - Change the line proportion option to be the distance from the point instead of the vertex since that is how it is done on other sites

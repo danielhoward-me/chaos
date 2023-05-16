@@ -18,10 +18,6 @@ const polygonShapeNames = {
 	19: 'enneadecagon',
 	20: 'icosagon',
 };
-const defaultPolygonRotations = {
-	4: 45,
-	6: 30,
-};
 
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
@@ -35,6 +31,7 @@ const regularSideLength = stages[2].elements.regularSideLength.element;
 const polygonSideCount = stages[2].elements.polygonSideCount.element;
 const pointsCount = stages[2].elements.pointsCount.element;
 const lineProportion = stages[2].elements.lineProportion.element;
+const vertexRules = stages[2].elements.vertexRules.element;
 
 let listeningForVertices = false;
 
@@ -84,7 +81,8 @@ function generatePolygonVertices(sideLength, sideCount) {
 	// Modify the angle to start at the top of the shape
 	// and allow the shape to be rotated
 	const userRotation = parseFloat(polygonRotate.value) * (Math.PI / 180);
-	const defaultRotation = (defaultPolygonRotations[sideCount] || 0) * (Math.PI / 180);
+	// Rotate even sided shapes by half the internal angle to make them point up
+	const defaultRotation = sideCount % 2 === 0 ? internalMiddleAngle / 2 : 0;
 	const angleModifier = (Math.PI / 2) - userRotation - defaultRotation;
 
 	for (let sideI = 0; sideI < sideCount; sideI++) {
@@ -131,6 +129,34 @@ function shapeSettingsInputHandler(updateGraph) {
 		generatePolygonVerticesHandler();
 	}
 }
+
+
+const characterSets = {
+	'≠': ['!', '='],
+	'≤': ['<', '='],
+	'≥': ['>', '='],
+	'±': ['+', '-'],
+};
+const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, characters.sort()]);
+vertexRules.addEventListener('input', () => {
+	const value = vertexRules.input.value;
+
+	for (let i = 0; i < value.length; i++) {
+		characterSetEntries.forEach(([replacement, characters]) => {
+			if (i + characters.length > value.length) return;
+
+			const valueCharacters = [];
+			for (let j = 0; j < characters.length; j++) {
+				valueCharacters.push(value[i + j]);
+			}
+			valueCharacters.sort();
+
+			if (valueCharacters.join('') === characters.join('')) {
+				vertexRules.input.value = value.slice(0, i) + replacement + value.slice(i + characters.length);
+			}
+		});
+	}
+});
 
 Object.values(stages[2].elements || []).forEach(({element}) => {
 	element.addEventListener('input', () => shapeSettingsInputHandler(element.dataset.updateGraph !== undefined));

@@ -34,7 +34,9 @@ function drawFrame() {
 
 	window.requestAnimationFrame(drawFrame);
 }
-window.requestAnimationFrame(drawFrame);
+window.addEventListener('load', () => {
+	window.requestAnimationFrame(drawFrame);
+});
 
 function drawGridLine(startPointLoopCoord, startPointDrawingCoord, drawLinesUntil, lineLength, isHorizontal) {
 	const lineCoordIndex = isHorizontal ? 1 : 0;
