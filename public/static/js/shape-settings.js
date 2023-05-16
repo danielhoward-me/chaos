@@ -139,6 +139,9 @@ const characterSets = {
 };
 const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, characters.sort()]);
 vertexRules.addEventListener('input', () => {
+	vertexRules.parentElement.classList.remove('is-invalid');
+	vertexRuleFeedback.classList.add('hidden');
+
 	const value = vertexRules.input.value;
 
 	for (let i = 0; i < value.length; i++) {
@@ -159,9 +162,6 @@ vertexRules.addEventListener('input', () => {
 });
 
 vertexRules.addEventListener('newtag', (e) => {
-	vertexRules.parentElement.classList.remove('is-invalid');
-	vertexRuleFeedback.classList.add('hidden');
-
 	const tag = e.detail.tag;
 
 	try {

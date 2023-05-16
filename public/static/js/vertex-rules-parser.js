@@ -10,6 +10,8 @@ Object.keys(variableAliases).forEach((alias) => allowedVariables.push(cleanChara
 const operationsOrderRegexes = [['*', '/', '%'], ['+', '-']]	
 	.map((operators) => operators.map(cleanCharactersForRegex))
 	.map((operators) => new RegExp(operators.join('|'), 'g'));
+// When parsing the rule, we use the reverse of this order
+operationsOrderRegexes.reverse();
 
 const leftNumberRegex = /[-+]?\d+/;
 const allowedOperatorRegex = new RegExp(allowedOperators.join('|'));
@@ -56,6 +58,10 @@ function createSpacedRegexText(...parts) {
 	return parts.join('\\s*');
 }
 
+function regexMatchWholeString(regex) {
+	return new RegExp(`^(${regex.source})$`);
+}
+
 class VertexRule {
 	constructor(rule) {
 		this.rule = rule;
@@ -73,58 +79,35 @@ class VertexRule {
 
 	parse() {
 		this.variables = [];
-		this.artifacts = [];
-
 		this.equator = VertexRule.parseEquator(this.rule);
 
 		let [equation, numberSet] = this.rule.split(this.equator);
-		this.equation = VertexRule.parseEquation(equation);
+		this.equation = this.parseEquation(equation);
 		this.numberSet = VertexRule.parseNumberSet(numberSet);
-
-		let firstLeftRun = true;
-		while (true) {
-			if (!firstLeftRun) {
-				const operatorMatch = allowedOperatorRegex.exec(equation);
-				if (!operatorMatch) break;
-				const operator = operatorMatch[0];
-				equation = equation.slice(operatorMatch.index + operator.length);
-
-				this.artifacts.push({
-					isOperator: true,
-					text: operator,
-				});
-			}
-			firstLeftRun = false;
-
-			let fragmentMatch = singleComponentFragmentRegex.exec(equation);
-			if (!fragmentMatch) break;
-			const matchText = fragmentMatch[0];
-			equation = equation.slice(fragmentMatch.index + matchText.length);
-	
-			if (allowedVariableRegex.test(matchText)) {
-				const variable = variableAliases[matchText] || matchText;
-				if (!this.variables.includes(variable)) this.variables.push(variable);
-				this.artifacts.push({
-					isVariable: true,
-					text: variable,
-				});
-			} else {
-				this.artifacts.push({
-					isNumber: true,
-					text: matchText,
-				});
-			}
-		}
 	}
 
-	static parseEquation(equation) {
+	parseEquation(equation) {
 		// Test if either is a single component fragment
 		// if it is, we can put it straight into the equation
-		if (new RegExp(`^(${singleComponentFragmentRegex.source})$`).test(equation)) {
-			return variableAliases[equation] || equation;
+		if (regexMatchWholeString(singleComponentFragmentRegex).test(equation)) {
+			if (regexMatchWholeString(allowedVariableRegex).test(equation)) {
+				const variable = variableAliases[equation] || equation;
+				if (!this.variables.includes(variable)) this.variables.push(variable);
+				return {
+					type: 'variable',
+					variable,
+				};
+			} else if (regexMatchWholeString(leftNumberRegex).test(equation)) {
+				return {
+					type: 'number',
+					number: parseInt(equation),
+				};
+			} else {
+				throw new Error(`'${equation}' is an invalid vertex rule as it is not a valid variable or number`);
+			}
 		}
 
-		for (const operatorsRegex of operationsOrderRegexes) {
+		for (const operatorsRegex of  operationsOrderRegexes) {
 			const operatorMatches = [...equation.matchAll(operatorsRegex)];
 			if (operatorMatches.length === 0) continue;
 
@@ -133,9 +116,9 @@ class VertexRule {
 			const right = equation.slice(operatorMatch.index + operatorMatch[0].length);
 
 			return {
-				left: VertexRule.parseEquation(left),
+				left: this.parseEquation(left),
 				operator: operatorMatch[0],
-				right: VertexRule.parseEquation(right),
+				right: this.parseEquation(right),
 			};
 		}
 	}
@@ -152,7 +135,7 @@ class VertexRule {
 			numberSetString.match(new RegExp(rightNumberRegex.source, 'g')).forEach((number) => {
 				numberSet.push(...VertexRule.parseNumberSetValues(number));
 			});
-			return numberSet;
+			return [...new Set(numberSet)];
 		} else {
 			return VertexRule.parseNumberSetValues(numberSetString);
 		}
