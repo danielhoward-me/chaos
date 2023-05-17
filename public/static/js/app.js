@@ -34,11 +34,11 @@ HTMLInputElement.prototype.setValue = function(value, triggerEvent = true) {
 		this.checked = value;
 		break;
 	default:
-    	this.value = value;
+		this.value = value;
 		break;
 	}
 
-    if (triggerEvent) this.dispatchEvent(new Event('input'));
+	if (triggerEvent) this.dispatchEvent(new Event('input'));
 }
 HTMLSelectElement.prototype.setValue = function(value, triggerEvent = true) {
 	this.value = value;
