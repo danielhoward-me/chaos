@@ -85,6 +85,7 @@ class TagInput extends HTMLElement {
 	}
 
 	removeTag(index) {
+		this.dispatchEvent(new CustomEvent('removetag'));
 		this.tags.splice(index, 1);
 		this.renderTags();
 	}
@@ -97,8 +98,15 @@ class TagInput extends HTMLElement {
 		this.renderTags();
 	}
 
+	getValue() {
+		return this.value;
+	}
 	setValue(value) {
 		this.value = value;
+
+		if (value?.length === 0) {
+			this.input.value = '';
+		}
 	}
 }
 

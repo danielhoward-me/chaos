@@ -33,7 +33,7 @@ function calculatePoints(vertices, startPoint, pointsCount, lineProportion, vert
 
 	for (let i = 0; i < pointsCount; i++) {
 		let {vertex, index} = getRandomVertex(vertices);
-		while (!testVertexRules(vertexRules, points[i].index, index, vertices.length - 1)) {
+		while (!testVertexRules(vertexRules, points[i].index, index, vertices.length)) {
 			({vertex, index} = getRandomVertex(vertices));
 		}
 

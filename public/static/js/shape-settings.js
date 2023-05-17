@@ -123,7 +123,10 @@ function generatePolygonVerticesHandler() {
 function shapeSettingsInputHandler(updateGraph) {
 	if (!selectedShape) return;
 
-	setSetupStage(3);
+	if (!(shapeTypeSelect.value === 'custom' && shapeVertices.length < 3)) {
+		setSetupStage(3);
+	}
+
 	sanitiseInputsInStage(2);
 
 	if (updateGraph) {
@@ -173,6 +176,10 @@ vertexRules.addEventListener('newtag', (e) => {
 		vertexRuleFeedback.innerText = err.message;
 		vertexRuleFeedback.classList.remove('hidden');
 	}
+});
+
+vertexRules.addEventListener('removetag', () => {
+	setSetupStage(3);
 });
 
 Object.values(stages[2].elements || []).forEach(({element}) => {

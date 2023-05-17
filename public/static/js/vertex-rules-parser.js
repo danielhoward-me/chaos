@@ -9,7 +9,8 @@ Object.keys(variableAliases).forEach((alias) => allowedVariables.push(cleanChara
 
 const operationsOrderRegexes = [['*', '/', '%'], ['+', '-']]	
 	.map((operators) => operators.map(cleanCharactersForRegex))
-	.map((operators) => new RegExp(operators.join('|'), 'g'));
+	.map((operators) => new RegExp(operators.join('|'), 'g'))
+	.map(makeOperatorRegex);
 // When parsing the rule, we use the reverse of this order
 operationsOrderRegexes.reverse();
 
@@ -63,6 +64,11 @@ function createSpacedRegexText(...parts) {
 
 function regexMatchWholeString(regex) {
 	return new RegExp(`^(${regex.source})$`);
+}
+function makeOperatorRegex(operatorRegex) {
+	// The operator regex used during parsing needs to allow
+	// a number to be prefixed with + or -
+	return new RegExp(`[^${cleanCharactersForRegex('*/%')}](${operatorRegex.source})[-+]?`, operatorRegex.flags);
 }
 
 class VertexRule {
@@ -119,12 +125,19 @@ class VertexRule {
 			if (operatorMatches.length === 0) continue;
 
 			const operatorMatch = operatorMatches[operatorMatches.length - 1];
-			const left = equation.slice(0, operatorMatch.index);
-			const right = equation.slice(operatorMatch.index + operatorMatch[0].length);
+			const foundOperator = operatorMatch[1];
+			const operatorIndex = operatorMatch.index + operatorMatch[0].indexOf(foundOperator);
+			
+			const left = equation.slice(0, operatorIndex);
+			const right = equation.slice(operatorIndex + foundOperator.length);
+
+			// If the previous index is a multiplication, division or modulo
+			// then we need to ignore this operator as 
 
 			return {
+				type: 'equation',
 				left: this.parseEquation(left),
-				operator: operatorMatch[0],
+				operator: foundOperator,
 				right: this.parseEquation(right),
 			};
 		}
@@ -176,30 +189,16 @@ class VertexRule {
 		const cachedValue = this.executeCache[key];
 		if (cachedValue !== undefined) return cachedValue;
 
-		const parametersSets = [];
-	
-		if (this.variables.includes('difference')) {
-			// There are two valid differences
-			const differences = VertexRule.calulateDifferences(oldIndex, newIndex, maxIndex);
-			differences.forEach((difference) => {
-				parametersSets.push({
-					old: oldIndex,
-					new: newIndex,
-					difference: difference,
-				});
-			});
-		} else {
-			parametersSets.push({
-				old: oldIndex,
-				new: newIndex,
-			});
-		}
+		if ((this.variables.includes('old') || this.variables.includes('difference')) && oldIndex === -1) return true;
 
-		let output = false;
-		for (const parameters of parametersSets) {
-			const value = VertexRule.executeInner(this.equation, parameters);
-			output = this.testValue(value);
-		}
+		const parameters = {
+			old: oldIndex,
+			new: newIndex,
+			difference: VertexRule.calulateDifference(oldIndex, newIndex, maxIndex),
+		};
+
+		const value = VertexRule.executeInner(this.equation, parameters);
+		const output = this.testValue(value);
 
 		this.executeCache[key] = output;
 
@@ -212,11 +211,12 @@ class VertexRule {
 	}
 
 	static executeInner(equation, parameters) {
-		if (equation.type === 'variable') {
+		switch (equation.type) {
+		case 'variable':
 			return parameters[equation.variable];
-		} else if (equation.type === 'number') {
+		case 'number':
 			return equation.number;
-		} else {
+		case 'equation':
 			const left = VertexRule.executeInner(equation.left, parameters);
 			const right = VertexRule.executeInner(equation.right, parameters);
 
@@ -236,7 +236,7 @@ class VertexRule {
 	}
 
 	testValue(value) {
-		if (valueSetRegex.test(this.equator)) {
+		if (singleValueEquatorsRegex.test(this.equator)) {
 			const validValue = this.valueSet[0];
 
 			switch (this.equator) {
@@ -259,9 +259,14 @@ class VertexRule {
 		}
 	}
 
-	static calulateDifferences(oldIndex, newIndex, maxIndex) {
-		if (oldIndex === -1) return [-1];
-		const difference = Math.abs(newIndex - oldIndex);
-		return [difference, maxIndex - difference];
+	static calulateDifference(oldIndex, newIndex, indexCount) {
+		const difference = newIndex - oldIndex;
+		if (difference > indexCount / 2) {
+			return difference - indexCount;
+		} else if (difference < -indexCount / 2) {
+			return difference + indexCount;
+		} else {
+			return difference;
+		}
 	}
 }
