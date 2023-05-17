@@ -1,12 +1,17 @@
+importScripts('/static/js/vertex-rules-parser.js')
+
 onmessage = function(e) {
 	const {
 		vertices,
 		startPoint,
 		pointsCount,
 		lineProportion,
+		vertexRules: vertexRulesValues,
 	} = e.data;
 
-	const points = calculatePoints(vertices, startPoint, pointsCount, lineProportion);
+	const vertexRules = vertexRulesValues.map((rule) => new VertexRule(rule));
+	const points = calculatePoints(vertices, startPoint, pointsCount, lineProportion, vertexRules);
+
 	postMessage({
 		type: 'points',
 		data: points,
@@ -20,14 +25,18 @@ function reportProgress(currentCount, totalCount) {
 	});
 }
 
-function calculatePoints(vertices, startPoint, pointsCount, lineProportion) {
+function calculatePoints(vertices, startPoint, pointsCount, lineProportion, vertexRules) {
 	const points = [{
 		point: startPoint,
 		index: -1,
 	}];
 
 	for (let i = 0; i < pointsCount; i++) {
-		const {vertex, index} = getRandomVertex(vertices);
+		let {vertex, index} = getRandomVertex(vertices);
+		while (!testVertexRules(vertexRules, points[i].index, index, vertices.length - 1)) {
+			({vertex, index} = getRandomVertex(vertices));
+		}
+
 		const newPoint = getPointBetweenPoints(points[i].point, vertex, lineProportion);
 		points.push({
 			point: newPoint,
@@ -59,4 +68,11 @@ function getPointBetweenPoints(point1, point2, lineProportion) {
 		point1[0] + (point2[0] - point1[0]) * lineProportion,
 		point1[1] + (point2[1] - point1[1]) * lineProportion,
 	];
+}
+
+function testVertexRules(vertexRules, oldIndex, newIndex, maxIndex) {
+	for (const rule of vertexRules) {
+		if (!rule.execute(oldIndex, newIndex, maxIndex)) return false;
+	}
+	return true;
 }

@@ -23,11 +23,14 @@ const leftComponentRegex = new RegExp(createSpacedRegexText(
 	bracketRegexText(singleComponentFragmentRegex.source), ')*',
 ));
 
-const allowedEquators = ['=', '≠', '≥', '≤'];
-const allowedEquatorsRegex = new RegExp(allowedEquators.join('|'));
+const valueSetEquators = ['=', '≠'];
+const valueSetEquatorsRegex = new RegExp(valueSetEquators.join('|'));
+const singleValueEquators = ['<', '>', '≤', '≥'];
+const singleValueEquatorsRegex = new RegExp(singleValueEquators.join('|'));
+const allowedEquatorsRegex = new RegExp(`${valueSetEquatorsRegex.source}|${singleValueEquatorsRegex.source}`);
 
 const rightNumberRegex = /[-+±]?\d+/;
-const numberSetRegex = new RegExp(createSpacedRegexText(
+const valueSetRegex = new RegExp(createSpacedRegexText(
 	'{',
 	bracketRegexText(rightNumberRegex.source), '(', ',',
 	bracketRegexText(rightNumberRegex.source), ')*',
@@ -35,7 +38,7 @@ const numberSetRegex = new RegExp(createSpacedRegexText(
 ));
 const rightComponentRegex = new RegExp(createSpacedRegexText(
 	bracketRegexText(rightNumberRegex.source), '|',
-	bracketRegexText(numberSetRegex.source),
+	bracketRegexText(valueSetRegex.source),
 ));
 
 const vertexRuleRegex = new RegExp(createSpacedRegexText(
@@ -74,16 +77,20 @@ class VertexRule {
 
 		if (this.variables.length === 0) {
 			throw new Error(`'${this.rule}' is an invalid vertex rule as it does not contain any variables`);
+		} else if (this.valueSet.length !== 1 && !valueSetEquatorsRegex.test(this.equator)) {
+			throw new Error(`'${this.rule}' is an invalid vertex rule as it contains multiple values but doesn't use = or ≠`);
 		}
+
+		this.executeCache = {};
 	}
 
 	parse() {
 		this.variables = [];
 		this.equator = VertexRule.parseEquator(this.rule);
 
-		let [equation, numberSet] = this.rule.split(this.equator);
+		let [equation, valueSet] = this.rule.split(this.equator);
 		this.equation = this.parseEquation(equation);
-		this.numberSet = VertexRule.parseNumberSet(numberSet);
+		this.valueSet = VertexRule.parsevalueSet(valueSet);
 	}
 
 	parseEquation(equation) {
@@ -129,18 +136,18 @@ class VertexRule {
 		return equatorMatch[0];
 	}
 
-	static parseNumberSet(numberSetString) {
-		if (numberSetRegex.test(numberSetString)) {
-			const numberSet = [];
-			numberSetString.match(new RegExp(rightNumberRegex.source, 'g')).forEach((number) => {
-				numberSet.push(...VertexRule.parseNumberSetValues(number));
+	static parsevalueSet(valueSetString) {
+		if (valueSetRegex.test(valueSetString)) {
+			const valueSet = [];
+			valueSetString.match(new RegExp(rightNumberRegex.source, 'g')).forEach((number) => {
+				valueSet.push(...VertexRule.parsevalueSetValues(number));
 			});
-			return [...new Set(numberSet)];
+			return [...new Set(valueSet)];
 		} else {
-			return VertexRule.parseNumberSetValues(numberSetString);
+			return VertexRule.parsevalueSetValues(valueSetString);
 		}
 	}
-	static parseNumberSetValues(value) {
+	static parsevalueSetValues(value) {
 		if (value.startsWith('±')) {
 			const number = parseInt(value.slice(1));
 			return [number, -number];
@@ -163,7 +170,12 @@ class VertexRule {
 	}
 
 	// Returns true if the rule is successful
-	exectute(oldIndex, newIndex, maxIndex) {
+	// execute order 66
+	execute(oldIndex, newIndex, maxIndex) {
+		const key = `${oldIndex},${newIndex},${maxIndex}`;
+		const cachedValue = this.executeCache[key];
+		if (cachedValue !== undefined) return cachedValue;
+
 		const parametersSets = [];
 	
 		if (this.variables.includes('difference')) {
@@ -183,18 +195,72 @@ class VertexRule {
 			});
 		}
 
+		let output = false;
 		for (const parameters of parametersSets) {
-			if (!this.executeInner(parameters)) return false;
+			const value = VertexRule.executeInner(this.equation, parameters);
+			output = this.testValue(value);
 		}
 
-		return true;
+		this.executeCache[key] = output;
+
+		return output;
 	}
 
-	executeInner(parameters) {
+	testExecuteCache(oldIndex, newIndex, maxIndex) {
+		const key = `${oldIndex},${newIndex},${maxIndex}`;
+		return this.executeCache[key];
+	}
 
+	static executeInner(equation, parameters) {
+		if (equation.type === 'variable') {
+			return parameters[equation.variable];
+		} else if (equation.type === 'number') {
+			return equation.number;
+		} else {
+			const left = VertexRule.executeInner(equation.left, parameters);
+			const right = VertexRule.executeInner(equation.right, parameters);
+
+			switch (equation.operator) {
+			case '+':
+				return left + right;
+			case '-':
+				return left - right;
+			case '*':
+				return left * right;
+			case '/':
+				return left / right;
+			case '%':
+				return left % right;
+			}
+		}
+	}
+
+	testValue(value) {
+		if (valueSetRegex.test(this.equator)) {
+			const validValue = this.valueSet[0];
+
+			switch (this.equator) {
+			case '<':
+				return value < validValue;
+			case '>':
+				return value > validValue;
+			case '≤':
+				return value <= validValue;
+			case '≥':
+				return value >= validValue;
+			}
+		} else {
+			switch (this.equator) {
+			case '=':
+				return this.valueSet.includes(value);
+			case '≠':
+				return !this.valueSet.includes(value);
+			}
+		}
 	}
 
 	static calulateDifferences(oldIndex, newIndex, maxIndex) {
+		if (oldIndex === -1) return [-1];
 		const difference = Math.abs(newIndex - oldIndex);
 		return [difference, maxIndex - difference];
 	}

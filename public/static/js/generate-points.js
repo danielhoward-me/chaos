@@ -21,7 +21,7 @@ worker.onmessage = function(e) {
 	}
 }
 
-function generateChaosPoints(vertices, pointsCount, lineProportion) {
+function generateChaosPoints(vertices, pointsCount, lineProportion, vertexRules) {
 	if (currentResolve) return Promise.reject('Already generating points');
 	return new Promise((resolve) => {
 		const startPoint = getRandomPointInShape(...vertices);
@@ -31,6 +31,7 @@ function generateChaosPoints(vertices, pointsCount, lineProportion) {
 			startPoint,
 			pointsCount,
 			lineProportion,
+			vertexRules,
 		});
 
 		currentResolve = resolve;
@@ -44,7 +45,8 @@ generatePointsButton.addEventListener('click', async () => {
 
 	const pointsCountValue = pointsCount.value;
 	const lineProportionValue = lineProportion.value/100;
-	const points = await generateChaosPoints(shapeVertices, pointsCountValue, lineProportionValue);
+	const vertexRulesValue = vertexRules.value;
+	const points = await generateChaosPoints(shapeVertices, pointsCountValue, lineProportionValue, vertexRulesValue);
 
 	generatePointsButton.disabled = false;
 	showLoadingProgress(100);
