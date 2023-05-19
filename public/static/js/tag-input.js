@@ -71,17 +71,22 @@ class TagInput extends HTMLElement {
 	}
 
 	addTag(tag) {
-		if (tag !== '') {
-			const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
-				detail: {tag},
-				cancelable: true,
-			}));
-			if (eventCancelled) return;
+		if (tag === '') return;
 
-			this.tags.push(tag);
-			this.input.value = '';
-			this.renderTags();
-		}
+		const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
+			detail: {
+				tag,
+				changeTag: (newTag) => {
+					tag = newTag;
+				},
+			},
+			cancelable: true,
+		}));
+		if (eventCancelled) return;
+
+		this.tags.push(tag);
+		this.input.value = '';
+		this.renderTags();
 	}
 
 	removeTag(index) {

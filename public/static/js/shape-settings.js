@@ -168,7 +168,8 @@ vertexRules.addEventListener('newtag', (e) => {
 	const tag = e.detail.tag;
 
 	try {
-		new VertexRule(tag);
+		const rule = new VertexRule(tag);
+		e.detail.changeTag(rule.rule);
 	} catch (err) {
 		e.preventDefault();
 

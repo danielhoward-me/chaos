@@ -7,12 +7,11 @@
 
 - [x] Make inequalities work in vertex rules
 - [x] Fix vertex rule bug with double operations
-- [ ] Test vertex rules before points are generated, to catch impossible combinations
+- [x] Test vertex rules before points are generated, to catch impossible combinations
 
 ### Features
 
-- [ ] Allow for `2old` to be used in vertex rules to represent `2 * old`
-- [ ] Make the vertex rule display show full name for variables and properly format it
+- [x] Make the vertex rule display show full name for variables and properly format it
 
 
 ## Future releases
@@ -30,3 +29,4 @@
 - [ ] Add an OR option to vertex rules
 - [ ] Optimise point displaying to cache the result as an image, then draw that image onto the canvas
 - [ ] Change vertex rules to require the set equator when working with sets
+- [ ] Allow for `2old` to be used in vertex rules to represent `2 * old`
