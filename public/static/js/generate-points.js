@@ -1,7 +1,9 @@
 const generatePointsButton = $('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');
 const loadingBarBody = loadingBar.querySelector('div');
-let currentResolve;
+
+const impossibleVertexRulesWarning = $('impossibleVertexRulesWarning');
+const impossibleVertexRulesOldVar = $('impossibleVertexRulesOldVar');
 
 const worker = new Worker('/static/js/generate-points-worker.js');
 worker.onmessage = function(e) {
@@ -18,9 +20,13 @@ worker.onmessage = function(e) {
 	case 'loadingProgress':
 		showLoadingProgress(data);
 		break;
+	case 'impossibleRules':
+		impossibleRules(data);
+		break;
 	}
 }
 
+let currentResolve;
 function generateChaosPoints(vertices, pointsCount, lineProportion, vertexRules) {
 	if (currentResolve) return Promise.reject('Already generating points');
 	return new Promise((resolve) => {
@@ -42,11 +48,13 @@ generatePointsButton.addEventListener('click', async () => {
 	showLoadingProgress(0);
 	loadingBar.classList.remove('hidden');
 	generatePointsButton.disabled = true;
+	showNoPossiblePointsWarning(false);
 
 	const pointsCountValue = pointsCount.value;
 	const lineProportionValue = lineProportion.value/100;
 	const vertexRulesValue = vertexRules.value;
 	const points = await generateChaosPoints(shapeVertices, pointsCountValue, lineProportionValue, vertexRulesValue);
+	if (!points) return;
 
 	generatePointsButton.disabled = false;
 	showLoadingProgress(100);
@@ -62,8 +70,22 @@ generatePointsButton.addEventListener('click', async () => {
 	setChaosPoints(points);
 });
 
+function impossibleRules(oldVar) {
+	showNoPossiblePointsWarning(true, oldVar);
+	generatePointsButton.disabled = false;
+	loadingBar.classList.add('hidden');
+	showLoadingProgress(0);
+	currentResolve();
+	currentResolve = null;
+}
+
 function showLoadingProgress(progess) {
 	loadingBarBody.style.width = `${progess}%`;
 	loadingBarBody.innerText = progess === 100 ? 'Completed' : `${progess}%`;
 	loadingBarBody.classList.toggle('bg-success', progess === 100);
+}
+
+function showNoPossiblePointsWarning(show, oldVar) {
+	impossibleVertexRulesWarning.classList.toggle('hidden', !show);
+	impossibleVertexRulesOldVar.innerText = oldVar ?? '';
 }

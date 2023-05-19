@@ -12,6 +12,7 @@
 ### Features
 
 - [ ] Allow for `2old` to be used in vertex rules to represent `2 * old`
+- [ ] Make the vertex rule display show full name for variables and properly format it
 
 
 ## Future releases

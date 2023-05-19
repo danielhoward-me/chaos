@@ -201,6 +201,11 @@
 		<div data-setup-stage="3">
 			<h6><i class="bi bi-3-circle-fill"></i> Generate Points:</h6>
 			<div class="settings-stage">
+				<div id="impossibleVertexRulesWarning" class="alert alert-warning hidden" role="alert">
+					<i class="bi bi-exclamation-triangle-fill"></i>
+					When the old variable was set to <code id="impossibleVertexRulesOldVar"></code>,
+					no vertex could be chosen that satisfied the vertex rules.
+				</div>
 				<button class="btn btn-primary" id="generatePoints"><i class="bi bi-play-fill"></i> Generate Points</button>
 				<div class="progress hidden" style="margin-top: 10px;" id="generatePointsLoadingBar">
 					<div class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>

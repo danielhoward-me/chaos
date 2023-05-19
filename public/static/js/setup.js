@@ -69,6 +69,11 @@ const stages = {
 			setRecordVerticesButtonActive(false);
 		},
 	},
+	3: {
+		onStageReset: () => {
+			showNoPossiblePointsWarning(false);
+		},
+	},
 	4: {
 		elements: {
 			playbackSpeed: {

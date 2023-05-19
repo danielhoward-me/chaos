@@ -11,6 +11,7 @@ onmessage = function(e) {
 
 	const vertexRules = vertexRulesValues.map((rule) => new VertexRule(rule));
 	const points = calculatePoints(vertices, startPoint, pointsCount, lineProportion, vertexRules);
+	if (!points) return;
 
 	postMessage({
 		type: 'points',
@@ -32,15 +33,19 @@ function calculatePoints(vertices, startPoint, pointsCount, lineProportion, vert
 	}];
 
 	for (let i = 0; i < pointsCount; i++) {
-		let {vertex, index} = getRandomVertex(vertices);
-		while (!testVertexRules(vertexRules, points[i].index, index, vertices.length)) {
-			({vertex, index} = getRandomVertex(vertices));
+		const randomVertex = getRandomVertex(vertices, vertexRules, points[i].index);
+		if (randomVertex === null) {
+			postMessage({
+				type: 'impossibleRules',
+				data: points[i].index,
+			});
+			return;
 		}
 
-		const newPoint = getPointBetweenPoints(points[i].point, vertex, lineProportion);
+		const newPoint = getPointBetweenPoints(points[i].point, randomVertex.vertex, lineProportion);
 		points.push({
 			point: newPoint,
-			index,
+			index: randomVertex.index,
 		});
 
 		if (i % (pointsCount / 100) === 0) {
@@ -55,12 +60,22 @@ function getRandomNumber(min, max) {
 	return Math.round(Math.random() * (max - min) + min);
 }
 
-function getRandomVertex(vertices) {
-	const randomIndex = getRandomNumber(0, vertices.length - 1);
-	return {
-		vertex: vertices[randomIndex],
-		index: randomIndex,
-	};
+function getRandomVertex(vertices, vertexRules, oldIndex) {
+	const possibleIndexes = vertices.map((_, i) => i);
+
+	while (possibleIndexes.length > 0) {
+		const randomIndex = getRandomNumber(0, possibleIndexes.length - 1);
+		const index = possibleIndexes[randomIndex];
+		if (testVertexRules(vertexRules, oldIndex, index, vertices.length)) {
+			return {
+				vertex: vertices[index],
+				index,
+			};
+		}
+		possibleIndexes.splice(randomIndex, 1);
+	}
+
+	return null;
 }
 
 function getPointBetweenPoints(point1, point2, lineProportion) {
