@@ -72,8 +72,8 @@ function drawGridLine(startPointLoopCoord, startPointDrawingCoord, drawLinesUnti
 
 function convertGraphPointToCanvasPoint(graphPoint) {
 	return [
-		(graphPoint[0] - topLeftPoint[0])/scale,
-		-(graphPoint[1] - topLeftPoint[1])/scale,
+		Math.round((graphPoint[0] - topLeftPoint[0])/scale),
+		Math.round(-(graphPoint[1] - topLeftPoint[1])/scale),
 	];
 }
 

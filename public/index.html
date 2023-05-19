@@ -300,11 +300,71 @@
 		</div>
 	</div>
 
-	<div id="helpBox" class="side-overlay-base side-overlay closed" style="transition-delay: 0s;">
+	<div id="helpBox" class="side-overlay-base side-overlay closed" style="transition-delay: 0s; height: calc(100% - 30px);">
 		<button class="btn btn-primary close-settings" onclick="toggleHelp()">
 			<i class="bi bi-x-lg"></i>
 		</button>
 		<h3 style="text-align: center;">Help</h3>
+
+		The <a href="https://en.wikipedia.org/wiki/Chaos_game" target="_blank" class="link-primary">Chaos Game</a>
+		is a mathematical method of drawing fractals. It uses a polygon shape and a random point within
+		the shape as a starting point. The steps for then generating the points are as follows:
+		<ol>
+			<li>Pick a random vertex</li>
+			<li>Draw a new point halfway inbetween the current point and the vertex</li>
+			<li>Go back to step 1, using the previously generated point</li>
+		</ol>
+		Once this process has been repeated a large number of times with a triangle, it will create the triangle known as the
+		<a href="https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle" target="_blank" class="link-primary">Sierpiński Triangle</a>
+		which looks like the following:
+		<br/>
+		<img src="/static/img/help/sierpinski-triangle.jpg" loading="lazy" alt="Sierpiński Triangle" class="help-menu-image"/>
+
+		<hr/>
+
+		<h5 style="text-align: center;">How to generate a Sierpiński Triangle</h5>
+		<ol>
+			<li>Select the triangle shape from stage <i class="bi bi-1-circle-fill"></i></li>
+			<img src="/static/img/help/triangle-shape-type.jpg" loading="lazy" alt="Triangle Shape Type" class="help-menu-image"/>
+			<li>
+				Keep shape settings from stage <i class="bi bi-2-circle-fill"></i> default for the purpose of this tutorial
+				(descriptions of the shape settings can be seen <a class="link-primary" href="#help-shape-settings">here</a>)
+			</li>
+			<img src="/static/img/help/triangle-shape-settings.jpg" loading="lazy" alt="Triangle Shape Settings" class="help-menu-image"/>
+			<li>Click <code>Generate Points</code> in stage <i class="bi bi-3-circle-fill"></i></li>
+			<img src="/static/img/help/triangle-generate-points.jpg" loading="lazy" alt="Triangle Generate Points" class="help-menu-image"/>
+			<li>
+				Click Play <i class="bi bi-play-fill"></i> in stage <i class="bi bi-4-circle-fill"></i>
+				(descriptions of the playback settings can be seen <a class="link-primary" href="#help-playback-settings">here</a>)
+			</li>
+			<img src="/static/img/help/triangle-playback-settings.jpg" loading="lazy" alt="Triangle Playback Settings" class="help-menu-image"/>
+			<li>Watch as the triangle on the grid is filled with points</li>
+			<img src="/static/img/help/triangle-points.gif" alt="Triangle Points" class="help-menu-image"/>
+		</ol>
+
+		<hr/>
+
+		<div data-help-section="help-shape-type">
+			<h5 style="text-align: center;"><i class="bi bi-1-circle-fill"></i> Shape Type</h5>
+		</div>
+
+		<hr/>
+
+		<div data-help-section="help-shape-settings">
+			<h5 style="text-align: center;"><i class="bi bi-2-circle-fill"></i> Shape Settings</h5>
+		</div>
+
+		<hr/>
+
+		<div data-help-section="help-generate-points">
+			<h5 style="text-align: center;"><i class="bi bi-3-circle-fill"></i> Generate Points</h5>
+		</div>
+
+		<hr/>
+
+		<div data-help-section="help-playback-settings">
+			<h5 style="text-align: center;"><i class="bi bi-4-circle-fill"></i> Playback Settings</h5>
+		</div>
 	</div>
 
 	<div class="side-overlay-base close-settings-popup open-settings-button" onclick="toggleSettings()">

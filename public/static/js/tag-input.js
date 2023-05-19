@@ -13,6 +13,10 @@ class TagInput extends HTMLElement {
 		this.input = document.createElement('input');
 		this.input.type = 'text';
 		this.input.placeholder = this.getAttribute('placeholder') || '';
+		this.input.autocapitalize = 'off';
+		this.input.autocomplete = 'off';
+		this.input.autocorrect = 'off';
+		this.input.spellcheck = false;
 		
 		this.appendChild(this.input);
 		this.registerInputEvents();

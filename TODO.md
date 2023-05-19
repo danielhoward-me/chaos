@@ -18,6 +18,8 @@
 
 ### Bugs
 
+- [ ] Point size is incorrectly calculated when the shape type is custom
+
 ### Features
 
 - [ ] Add saves feature which allows a user to download and upload configurations

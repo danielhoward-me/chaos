@@ -67,9 +67,28 @@ NodeList.prototype.setValue = function(key, value) {
 
 const helpBox = $('helpBox');
 
-function toggleHelp() {
-	helpBox.classList.toggle('closed');
+function toggleHelp(force = undefined) {
+	const isHidden = helpBox.classList.toggle('closed', force === undefined ? undefined : !force);
+	const newHash = isHidden ? '' : window.location.hash.startsWith('#help') ? window.location.hash : '#help';
+	window.history.pushState(null, null, window.location.pathname + newHash);
 }
+function readHelpHash() {
+	const hash = window.location.hash;
+	const isHelp = hash.startsWith('#help');
+	toggleHelp(isHelp);
+	if (!isHelp) return;
+
+	const helpSection = hash.split('#')[1];
+	const sectionElement = document.querySelector(`[data-help-section="${helpSection}"]`);
+	if (sectionElement) {
+		sectionElement.scrollIntoView({behavior: 'smooth'});
+	}
+}
+window.addEventListener('load', readHelpHash);
+window.addEventListener('hashchange', readHelpHash);
+document.querySelectorAll('a[href^="#help-"]').forEach((element) => {
+	element.addEventListener('click', readHelpHash);
+});
 
 function zoomIn() {
 	handleZoom(getCurrentScreenCenter(), -100);
