@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.2.0](https://github.com/Toffee1347/chaos-game/) (Unreleased)
+## [v1.2.0](https://github.com/Toffee1347/chaos-game/tree/v1.2.0)
 - Update the shape type selector to work by using a hidden select element
   - This is more inline with other behaviours of inputs being the values that will change the output of the program
 - Begin to add basic saves functionality to be able to download and upload configurations

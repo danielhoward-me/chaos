@@ -1,7 +1,7 @@
 # Todo
 
 
-## For release [v1.2.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v120-unreleased)
+## For release [v1.2.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v120)
 
 ### Bugs
 
