@@ -262,13 +262,20 @@ class VertexRule {
 
 	static calulateDifference(oldIndex, newIndex, indexCount) {
 		const difference = newIndex - oldIndex;
+	
+		let boundDifference = difference;
 		if (difference > indexCount / 2) {
-			return difference - indexCount;
+			boundDifference = difference - indexCount;
 		} else if (difference < -indexCount / 2) {
-			return difference + indexCount;
-		} else {
-			return difference;
+			boundDifference = difference + indexCount;
 		}
+
+		// If the difference is half the index count, then we need to take the positive value
+		if (Math.abs(boundDifference) === indexCount / 2) {
+			boundDifference = Math.abs(boundDifference);
+		}
+
+		return boundDifference;
 	}
 
 	formatVertexRule() {

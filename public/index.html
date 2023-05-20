@@ -37,7 +37,7 @@
 		<h3 style="text-align: center;">Settings</h3>
 
 		<div data-setup-stage="1">
-			<h6><i class="bi bi-1-circle-fill"></i> Shape Type:</h6>
+			<h6><a class="settings-help-link" href="#help-shape-type"><i class="bi bi-1-circle-fill"></i> Shape Type:</a></h6>
 			<div class="settings-stage type-selection">
 				<div data-shape-type="polygon" class="card">
 					<div class="card-body">
@@ -92,7 +92,7 @@
 		<hr/>
 
 		<div data-setup-stage="2">
-			<h6><i class="bi bi-2-circle-fill"></i> Shape Settings:</h6>
+			<h6><a class="settings-help-link" href="#help-shape-settings"><i class="bi bi-2-circle-fill"></i> Shape Settings:</a></h6>
 			<div class="settings-stage">
 				<div class="hidden setting-group" id="irregularShapeSettings">
 					<div class="input-group" style="justify-content: center;">
@@ -199,7 +199,7 @@
 		<hr/>
 
 		<div data-setup-stage="3">
-			<h6><i class="bi bi-3-circle-fill"></i> Generate Points:</h6>
+			<h6><a class="settings-help-link" href="#help-generate-points"><i class="bi bi-3-circle-fill"></i> Generate Points:</a></h6>
 			<div class="settings-stage">
 				<div id="impossibleVertexRulesWarning" class="alert alert-warning hidden" role="alert">
 					<i class="bi bi-exclamation-triangle-fill"></i>
@@ -216,7 +216,7 @@
 		<hr/>
 
 		<div data-setup-stage="4">
-			<h6><i class="bi bi-4-circle-fill"></i> Playback Settings:</h6>
+			<h6><a class="settings-help-link" href="#help-playback-settings"><i class="bi bi-4-circle-fill"></i> Playback Settings:</a></h6>
 			<div class="settings-stage">
 				<div class="setting-group">
 					<div class="input-group">
@@ -325,19 +325,19 @@
 		<h5 style="text-align: center;">How to generate a Sierpiński Triangle</h5>
 		<ol>
 			<li>Select the triangle shape from stage <i class="bi bi-1-circle-fill"></i></li>
-			<img src="/static/img/help/triangle-shape-type.jpg" loading="lazy" alt="Triangle Shape Type" class="help-menu-image"/>
+			<img src="/static/img/help/shape-type-triangle.jpg" loading="lazy" alt="Triangle Shape Type" class="help-menu-image"/>
 			<li>
 				Keep shape settings from stage <i class="bi bi-2-circle-fill"></i> default for the purpose of this tutorial
 				(descriptions of the shape settings can be seen <a class="link-primary" href="#help-shape-settings">here</a>)
 			</li>
-			<img src="/static/img/help/triangle-shape-settings.jpg" loading="lazy" alt="Triangle Shape Settings" class="help-menu-image"/>
+			<img src="/static/img/help/shape-settings-preset.jpg" loading="lazy" alt="Triangle Shape Settings" class="help-menu-image"/>
 			<li>Click <code>Generate Points</code> in stage <i class="bi bi-3-circle-fill"></i></li>
-			<img src="/static/img/help/triangle-generate-points.jpg" loading="lazy" alt="Triangle Generate Points" class="help-menu-image"/>
+			<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Triangle Generate Points" class="help-menu-image"/>
 			<li>
 				Click Play <i class="bi bi-play-fill"></i> in stage <i class="bi bi-4-circle-fill"></i>
 				(descriptions of the playback settings can be seen <a class="link-primary" href="#help-playback-settings">here</a>)
 			</li>
-			<img src="/static/img/help/triangle-playback-settings.jpg" loading="lazy" alt="Triangle Playback Settings" class="help-menu-image"/>
+			<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Triangle Playback Settings" class="help-menu-image"/>
 			<li>Watch as the triangle on the grid is filled with points</li>
 			<img src="/static/img/help/triangle-points.gif" alt="Triangle Points" class="help-menu-image"/>
 		</ol>
@@ -346,24 +346,134 @@
 
 		<div data-help-section="help-shape-type">
 			<h5 style="text-align: center;"><i class="bi bi-1-circle-fill"></i> Shape Type</h5>
+			<img src="/static/img/help/shape-type.jpg" loading="lazy" alt="Shape Type" class="help-menu-image"/>
+			Initially you will need to select a shape type. There are two classes of shape types:
+			<ul>
+				<li>
+					<b>Regular</b> - These include <code>Polygon</code> and the preset shapes (although preset shapes are in their own class)
+				</li>
+				<li>
+					<b>Preset</b> - These include <code>Triangle</code>, <code>Square</code>, <code>Pentagon</code> and <code>Hexagon</code>,
+					preset shapes are just regular shapes with the settings already set for you
+				</li>
+				<li>
+					<b>Irregular</b> - The only option in this class is <code>Custom</code> which requires
+					extra steps in other stages
+				</li>
+			</ul>
 		</div>
 
 		<hr/>
 
 		<div data-help-section="help-shape-settings">
 			<h5 style="text-align: center;"><i class="bi bi-2-circle-fill"></i> Shape Settings</h5>
+			The shape settings are different depending on the class of the shape type.
+			The settings that are common to all classes are:
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Setting</th>
+						<th scope="col">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">Side Length</th>
+						<td>The length of each side of the shape</td>
+					</tr>
+					<tr>
+						<th scope="row">Points Count</th>
+						<td>The number of points to be generated</td>
+					</tr>
+					<tr>
+						<th scope="row">Line Proportion</th>
+						<td>The proportion of the line to be drawn between the current point and the vertex (with 0% being at the point in the shape)</td>
+					</tr>
+					<tr>
+						<th scope="row">Vertex Rules</th>
+						<td>
+							Vertex rules are the rules that the program will follow when picking a random vertex,
+							the variables that can be used are:
+							<ul>
+								<li>
+									<code>difference</code> (abbr. <code>d</code>) - The difference between the current point and the vertex,
+									always inbetween <code>-x/2</code> and <code>x/2</code> where <code>x</code> is the number
+									of sides (preferring the positive value)
+								</li>
+								<li><code>old</code> (abbr. <code>o</code>) - The previous vertex index that was chosen</li>
+								<li><code>new</code> (abbr. <code>n</code>) - The new vertex index that has been chosen</li>
+							</ul>
+							<p>
+								The operations that can be used are <code>*</code>, <code>/</code>,
+								<code>%</code> (divides the left side by the right side and returns the remainder), <code>+</code>, <code>-</code>
+								(order of operations is followed, with <code>%</code> having the same precedence as <code>*</code> and <code>/</code>)
+							</p>
+							<p>
+								The equators that can be used are <code>=</code>, <code>≠</code> (accessed by typing <code>=</code> then <code>!</code>),
+								<code>&lt;</code>, <code>≤</code> (accessed by typing <code>&lt;</code> then <code>!</code>),
+								<code>&gt;</code>, <code>≥</code> (accessed by typing <code>&gt;</code> then <code>!</code>)
+							</p>
+							<p>
+								When using an inequality equator, the right side must be a singular numberic value<br/>
+								When using any other equator, the right side can be a singular numberic value
+								or a list of values contained in curly brackets (<code>{}</code>) and separated by commas<br/>
+								Any number in the right hand side can use the <code>±</code> operator infront of a number to
+								test both the positive and negative values of the number
+							</p>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+
+			The settings that are specific to each class are:
+			<br/><br/>
+			<ul>
+				<li>
+					<h6>Regular</h6>
+					<img src="/static/img/help/shape-settings-regular.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
+					<table class="table table-striped table-hover">
+						<thead>
+							<tr>
+								<th scope="col">Setting</th>
+								<th scope="col">Description</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<th scope="row">Side Count</th>
+								<td>The number of sides to have in the shape</td>
+							</tr>
+							<tr>
+								<th scope="row">Rotate Shape</th>
+								<td>The number of degrees to rotate the shape clockwise</td>
+							</tr>
+						</tbody>
+					</table>
+				</li>
+				<li>
+					<h6>Preset</h6>
+					<img src="/static/img/help/shape-settings-preset.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
+				</li>
+				<li>
+					<h6>Irregular</h6>
+					<img src="/static/img/help/shape-settings-irregular.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
+				</li>
+			</ul>
 		</div>
 
 		<hr/>
 
 		<div data-help-section="help-generate-points">
 			<h5 style="text-align: center;"><i class="bi bi-3-circle-fill"></i> Generate Points</h5>
+			<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Generate Points" class="help-menu-image"/>
+			<img src="/static/img/help/generate-points-error.jpg" loading="lazy" alt="Generate Points Error" class="help-menu-image"/>
 		</div>
 
 		<hr/>
 
 		<div data-help-section="help-playback-settings">
 			<h5 style="text-align: center;"><i class="bi bi-4-circle-fill"></i> Playback Settings</h5>
+			<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Playback Settings" class="help-menu-image"/>
 		</div>
 	</div>
 
