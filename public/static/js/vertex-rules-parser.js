@@ -205,11 +205,6 @@ class VertexRule {
 		return output;
 	}
 
-	testExecuteCache(oldIndex, newIndex, maxIndex) {
-		const key = `${oldIndex},${newIndex},${maxIndex}`;
-		return this.executeCache[key];
-	}
-
 	static executeInner(equation, parameters) {
 		switch (equation.type) {
 		case 'variable':
