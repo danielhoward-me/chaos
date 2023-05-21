@@ -80,6 +80,7 @@ class VertexRule {
 
 		this.rule = this.rule.replace(/\s/g, '');
 		this.parse();
+		this.rule = this.formatVertexRule(this.equation);
 
 		if (this.variables.length === 0) {
 			throw new Error(`'${this.rule}' is an invalid vertex rule as it does not contain any variables`);
@@ -256,12 +257,39 @@ class VertexRule {
 
 	static calulateDifference(oldIndex, newIndex, indexCount) {
 		const difference = newIndex - oldIndex;
+	
+		let boundDifference = difference;
 		if (difference > indexCount / 2) {
-			return difference - indexCount;
+			boundDifference = difference - indexCount;
 		} else if (difference < -indexCount / 2) {
-			return difference + indexCount;
-		} else {
-			return difference;
+			boundDifference = difference + indexCount;
+		}
+
+		// If the difference is half the index count, then we need to take the positive value
+		if (Math.abs(boundDifference) === indexCount / 2) {
+			boundDifference = Math.abs(boundDifference);
+		}
+
+		return boundDifference;
+	}
+
+	formatVertexRule() {
+		const formattedEquation = VertexRule.formatVertexRuleEquation(this.equation);
+		const valueSet = this.valueSet.length === 1 ? this.valueSet[0] : `{${this.valueSet.join(', ')}}`;
+		return `${formattedEquation} ${this.equator} ${valueSet}`;
+	}
+
+	static formatVertexRuleEquation(equation) {
+		switch (equation.type) {
+		case 'variable':
+			return equation.variable;
+		case 'number':
+			return equation.number;
+		case 'equation':
+			const left = VertexRule.formatVertexRuleEquation(equation.left);
+			const right = VertexRule.formatVertexRuleEquation(equation.right);
+
+			return `${left} ${equation.operator} ${right}`;
 		}
 	}
 }

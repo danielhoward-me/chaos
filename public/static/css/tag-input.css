@@ -17,6 +17,7 @@ tag-input input {
 	outline: none;
 	border: none;
 	background: inherit;
+	max-width: 100%;
 }
 
 tag-input span.tag {

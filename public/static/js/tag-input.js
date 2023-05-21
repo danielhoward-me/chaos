@@ -13,6 +13,10 @@ class TagInput extends HTMLElement {
 		this.input = document.createElement('input');
 		this.input.type = 'text';
 		this.input.placeholder = this.getAttribute('placeholder') || '';
+		this.input.autocapitalize = 'off';
+		this.input.autocomplete = 'off';
+		this.input.autocorrect = 'off';
+		this.input.spellcheck = false;
 		
 		this.appendChild(this.input);
 		this.registerInputEvents();
@@ -71,17 +75,22 @@ class TagInput extends HTMLElement {
 	}
 
 	addTag(tag) {
-		if (tag !== '') {
-			const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
-				detail: {tag},
-				cancelable: true,
-			}));
-			if (eventCancelled) return;
+		if (tag === '') return;
 
-			this.tags.push(tag);
-			this.input.value = '';
-			this.renderTags();
-		}
+		const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
+			detail: {
+				tag,
+				changeTag: (newTag) => {
+					tag = newTag;
+				},
+			},
+			cancelable: true,
+		}));
+		if (eventCancelled) return;
+
+		this.tags.push(tag);
+		this.input.value = '';
+		this.renderTags();
 	}
 
 	removeTag(index) {
