@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.2.1](https://github.com/Toffee1347/chaos-game)
+## [v1.2.1](https://github.com/Toffee1347/chaos-game/tree/v1.2.1)
 - Update repositories [README.md](https://github.com/Toffee1347/chaos-game/blob/v1.2.1/README.md)
 - Update the help page to add much more detail
 
