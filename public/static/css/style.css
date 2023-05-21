@@ -61,6 +61,12 @@ body {
 	z-index: 100;
 }
 
+
+.side-overlay-help {
+	transition-delay: 0s;
+	width: 600px;
+}
+
 @media screen and (max-width: 768px) {
 	.side-overlay {
 		width: calc(100vw - 30px);
@@ -81,6 +87,10 @@ body {
 	.fullscreen-playback {
 		width: calc(100vw - 87px);
 	}
+}
+
+.side-overlay-help {
+	height: calc(100% - 30px);
 }
 
 .settings-stage {
