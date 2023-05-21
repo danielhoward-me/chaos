@@ -31,7 +31,7 @@
 </head>
 <body>
 	<div id="settingsBox" class="side-overlay-base side-overlay settings-box">
-		<button class="btn btn-outline-primary close-settings" onclick="toggleSettings()">
+		<button class="btn btn-primary close-settings" onclick="toggleSettings()">
 			<i class="bi bi-x-lg"></i>
 		</button>
 		<h3 style="text-align: center;">Settings</h3>
@@ -344,6 +344,58 @@
 
 		<hr/>
 
+		<div data-help-section="help-general">
+			<h5 style="text-align: center;">General</h5>
+			Whilst using this site, there are a number of keyboard shortcuts that can be used to make the experience easier:
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Key</th>
+						<th scope="col">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row"><code>s</code></th>
+						<td>Toggle settings box</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>h</code></th>
+						<td>Toggle help box</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>esc</code></th>
+						<td>Close the current pannel (either help or settings)</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>+</code></th>
+						<td>Zoom in</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>-</code></th>
+						<td>Zoom out</td>
+					</tr>
+					<tr class="table-active">
+						<td colspan="2">The following are only available when points have been generated</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>Space</code></th>
+						<td>Toggle play/pause</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>Arrow Left</code></th>
+						<td>Go back one point</td>
+					</tr>
+					<tr>
+						<th scope="row"><code>Arrow Right</code></th>
+						<td>Go forward one point</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+
+		<hr/>
+
 		<div data-help-section="help-shape-type">
 			<h5 style="text-align: center;"><i class="bi bi-1-circle-fill"></i> Shape Type</h5>
 			<img src="/static/img/help/shape-type.jpg" loading="lazy" alt="Shape Type" class="help-menu-image"/>
@@ -422,7 +474,8 @@
 								When using an inequality equator, the right side must be a singular numberic value<br/>
 								When using any other equator, the right side can be a singular numberic value
 								or a list of values contained in curly brackets (<code>{}</code>) and separated by commas<br/>
-								Any number in the right hand side can use the <code>±</code> operator infront of a number to
+								Any number in the right hand side can use the <code>±</code> operator
+								(accessed by typing <code>+</code> then <code>-</code>) infront of a number to
 								test both the positive and negative values of the number
 							</p>
 							Example vertex rules are:

@@ -111,3 +111,18 @@ function getCurrentScreenCenter() {
 
 	return center;
 }
+
+window.addEventListener('keydown', (e) => {
+	switch (e.code) {
+	case 'KeyS': toggleSettings(); break;
+	case 'KeyH': toggleHelp(); break;
+	case 'Equal': zoomIn(); break;
+	case 'Minus': zoomOut(); break;
+	case 'Escape': 
+		if (!helpBox.classList.contains('closed')) {
+			toggleHelp();
+		} else if (!settingsBox.classList.contains('closed')) {
+			toggleSettings();
+		}
+	}
+});

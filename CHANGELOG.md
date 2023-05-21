@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.2.2](https://github.com/Toffee1347/chaos-game/tree/v1.2.2)
+- Add keybings to allow pannels to be toggled easily
+- Make close button sticky for more intuitive UI
+
 ## [v1.2.1](https://github.com/Toffee1347/chaos-game/tree/v1.2.1)
 - Update repositories [README.md](https://github.com/Toffee1347/chaos-game/blob/v1.2.1/README.md)
 - Update the help page to add much more detail

@@ -53,18 +53,19 @@ body {
 	bottom: 0;
 }
 .close-settings {
-	position: absolute;
-	right: 10px;
-	top: 10px;
+	top: 0px;
 	font-size: larger;
 	border-radius: 50%;
 	z-index: 100;
+	float: right;
+	position: sticky;
 }
 
 
 .side-overlay-help {
 	transition-delay: 0s;
 	width: 600px;
+	z-index: 200;
 }
 
 @media screen and (max-width: 768px) {
