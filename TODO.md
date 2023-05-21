@@ -23,10 +23,10 @@
 ### Features
 
 - [x] Write README
+- [x] Write help menu
 - [ ] Add saves feature which allows a user to download and upload configurations
   - [ ] This could be extended by using `localstorage` to save configurations
   - [ ] Also allows presets to be created
-- [ ] Write help menu
 - [ ] Update vertex rules to add conditons to each rule using a unicode arrow
 - [ ] Add an OR option to vertex rules
 - [ ] Optimise point displaying to cache the result as an image, then draw that image onto the canvas
