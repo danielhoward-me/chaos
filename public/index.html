@@ -358,13 +358,9 @@
 				<tbody>
 					<tr>
 						<th scope="row">Regular</th>
-						<td>Includes <code>Polygon</code> and the preset shapes (although preset shapes are in their own class)</td>
-					</tr>
-					<tr>
-						<th scope="row">Preset</th>
 						<td>
-							Includes <code>Triangle</code>, <code>Square</code>, <code>Pentagon</code> and <code>Hexagon</code>,
-							preset shapes are just regular shapes with the settings already set for you
+							Includes <code>Polygon</code> and the preset shapes which are <code>Triangle</code>,
+							<code>Square</code>, <code>Pentagon</code> and <code>Hexagon</code>
 						</td>
 					</tr>
 					<tr>
@@ -390,10 +386,6 @@
 				</thead>
 				<tbody>
 					<tr>
-						<th scope="row">Side Length</th>
-						<td>The length of each side of the shape</td>
-					</tr>
-					<tr>
 						<th scope="row">Points Count</th>
 						<td>The number of points to be generated</td>
 					</tr>
@@ -408,12 +400,13 @@
 							the variables that can be used are:
 							<ul>
 								<li>
-									<code>difference</code> (abbr. <code>d</code>) - The clockwise difference between the current point and the vertex,
+									<code>difference</code> (abbr. <code>d</code>) - The clockwise difference between the old and new vertex index,
 									always inbetween <code>-x/2</code> and <code>x/2</code> where <code>x</code> is the number
 									of sides (preferring the positive value)
 								</li>
 								<li><code>old</code> (abbr. <code>o</code>) - The previous vertex index that was chosen</li>
 								<li><code>new</code> (abbr. <code>n</code>) - The new vertex index that has been chosen</li>
+								<small class="text-muted">Note: Index is the number that each vertex is assigned, starting from 0 and going clockwise</small>
 							</ul>
 							<p>
 								The operations that can be used are <code>*</code>, <code>/</code>,
@@ -450,6 +443,7 @@
 				<li>
 					<h6>Regular</h6>
 					<img src="/static/img/help/shape-settings-regular.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
+					<p>If you have selected a preset shape, <code>Side Count</code> and <code>Rotate Shape</code> aren't available</p>
 					<table class="table table-striped table-hover">
 						<thead>
 							<tr>
@@ -458,6 +452,10 @@
 							</tr>
 						</thead>
 						<tbody>
+							<tr>
+								<th scope="row">Side Length</th>
+								<td>The length of each side of the shape</td>
+							</tr>
 							<tr>
 								<th scope="row">Side Count</th>
 								<td>The number of sides to have in the shape</td>
@@ -470,17 +468,14 @@
 					</table>
 				</li>
 				<li>
-					<h6>Preset</h6>
-					<img src="/static/img/help/shape-settings-preset.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
-					<p>
-						There are no extra options in preset type as these have the values set for you
-					</p>
-				</li>
-				<li>
 					<h6>Irregular</h6>
 					<img src="/static/img/help/shape-settings-irregular.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
 					<p>
-
+						To create an irregular shape, click the <code>Start Recording Vertices</code> button then click
+						on the grid to create the vertices of the shape, once you have finished, click the
+						<code>Stop Recording Vertices</code> button. If you need to reset the vertices, click the
+						<code><i class="bi bi-trash3-fill"></i></code> button. You will only be able to go
+						onto the next stage when you have at least 3 vertices
 					</p>
 				</li>
 			</ul>
@@ -491,6 +486,14 @@
 		<div data-help-section="help-generate-points">
 			<h5 style="text-align: center;"><i class="bi bi-3-circle-fill"></i> Generate Points</h5>
 			<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Generate Points" class="help-menu-image"/>
+			<p>
+				To generate the points configued in the previous stages, click the <code><i class="bi bi-play-fill"></i>  Generate Points</code> button,
+				a loading bar may momentarily appear, but this shouldn't take more than a few seconds
+			</p>
+			<p>
+				In some cases, you may get an error that looks similar to the error below, this means that the program
+				has tried every combination of points but has found that the combination of vertex rules stop any further points being generated
+			</p>
 			<img src="/static/img/help/generate-points-error.jpg" loading="lazy" alt="Generate Points Error" class="help-menu-image"/>
 		</div>
 
@@ -499,6 +502,45 @@
 		<div data-help-section="help-playback-settings">
 			<h5 style="text-align: center;"><i class="bi bi-4-circle-fill"></i> Playback Settings</h5>
 			<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Playback Settings" class="help-menu-image"/>
+			<p>
+				The playback settings set out how the points that were just generated are displayed back to you.
+				The options are:
+			</p>
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th scope="col">Setting</th>
+						<th scope="col">Description</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th scope="row">Playback Speed</th>
+						<td>The number of points that will be played per second whilst it is playing, a higher playback spped will decrease the playback time</td>
+					</tr>
+					<tr>
+						<th scope="row">Show Lines</th>
+						<td>
+							Show the lines used when generating points, whilst this might look hectic when
+							playing back, if playing back slowly or seeking point by point it can be interesting.
+							Once this option is enabled, you can also change the colour of the lines
+						</td>
+					</tr>
+					<tr>
+						<th scope="row">Show Start Point</th>
+						<td>
+							Show the point used at the start of the question.
+							Once this option is enabled, you can also change the colour of the lines
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			<p>
+				Once you settings are decided, you can begin playing by clicking the <code><i class="bi bi-play-fill"></i></code>,
+				you can also seek back and forward one point by clicking <code><i class="bi bi-skip-backward-fill"></i></code> and <code><i class="bi bi-skip-forward-fill"></i></code>
+				respectively. You can also seek to any point by clicking on the progress bar. If you close the settings pannel, you will notice
+				another player pannel appear on the bottom left of your screen. Back arrow, space and forward arrow will seek back, play/pause and seek forward respectively
+			</p>
 		</div>
 	</div>
 
