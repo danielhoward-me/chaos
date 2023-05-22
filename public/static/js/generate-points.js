@@ -43,7 +43,10 @@ function generateChaosPoints(vertices, pointsCount, lineProportion, vertexRules)
 		currentResolve = resolve;
 	});
 }
-generatePointsButton.addEventListener('click', async () => {
+
+generatePointsButton.addEventListener('click', generatePoints);
+
+async function generatePoints() {
 	setSetupStage(3);
 	showLoadingProgress(0);
 	loadingBar.classList.remove('hidden');
@@ -68,7 +71,7 @@ generatePointsButton.addEventListener('click', async () => {
 	}, 2000);
 
 	setChaosPoints(points);
-});
+}
 
 function impossibleRules(oldVar) {
 	showNoPossiblePointsWarning(true, oldVar);
