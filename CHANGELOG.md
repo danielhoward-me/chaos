@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.2.4](https://github.com/Toffee1347/chaos-game) (Unreleased)
+
+- Add functionality to download and upload saves
+
 ## [v1.2.3](https://github.com/Toffee1347/chaos-game/tree/v1.2.2)
 
 - Fix zooming issue on safari mobile
