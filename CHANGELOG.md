@@ -1,5 +1,10 @@
 # Changelog
 
+## [v1.2.3](https://github.com/Toffee1347/chaos-game/tree/v1.2.2)
+
+- Fix zooming issue on safari mobile
+- Fix typo in help text
+
 ## [v1.2.2](https://github.com/Toffee1347/chaos-game/tree/v1.2.2)
 - Add keybings to allow pannels to be toggled easily
 - Make close button sticky for more intuitive UI
