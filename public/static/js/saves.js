@@ -1,5 +1,5 @@
 const uploadConfigInput = $('uploadConfig');
-const uploadConfigError = $('uploadConfigError');
+const configError = $('configError');
 
 function getCurrentConfig() {
 	const config = {version: 1, stages: {}};
@@ -23,7 +23,14 @@ function getCurrentConfig() {
 }
 
 function downloadCurrentConfig() {
+	showConfigError('');
 	const config = getCurrentConfig();
+
+	if (config.stages['1'].shapeType === '') {
+		showConfigError('Please select a shape type before downloading the config file');
+		return;
+	}
+
 	const configString = JSON.stringify(config);
 	const configData = new Blob([configString], {type: 'application/json'});
 	const configUrl = URL.createObjectURL(configData);
@@ -35,7 +42,7 @@ function downloadCurrentConfig() {
 }
 
 function loadConfig(config) {
-	uploadConfigError.style.display = 'none';
+	showConfigError('');
 	setSetupStage(0);
 
 	switch (config.version) {
@@ -69,9 +76,13 @@ function uploadConfigFile(file) {
 			loadConfig(config);
 		} catch (error) {
 			console.error(error);
-			uploadConfigError.innerText = `Failed to load config file: ${error}`;
-			uploadConfigError.style.display = 'block';
+			showConfigError(`Failed to load config file: ${error}`);
 		}
 	}
 	reader.readAsText(file);
+}
+
+function showConfigError(message) {
+	configError.innerText = message;
+	configError.style.display = message === '' ? 'none' : 'block';
 }
