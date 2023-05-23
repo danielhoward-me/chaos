@@ -33,9 +33,38 @@ const polygonSideCount = stages[2].elements.polygonSideCount.element;
 const pointsCount = stages[2].elements.pointsCount.element;
 const lineProportion = stages[2].elements.lineProportion.element;
 const vertexRules = stages[2].elements.vertexRules.element;
-const shapePoints = stages[2].elements.shapePoints.element;
+const shapeVerticesInput = stages[2].elements.shapeVertices.element;
 
 let listeningForVertices = false;
+
+let shapeVertices = [];
+const shapeVerticesAssetId = 'shapeVertices';
+function addShapeVertices(...vertices) {
+	shapeVertices.push(...vertices);
+	removeAsset(shapeVerticesAssetId);
+	addAssets({
+		id: shapeVerticesAssetId,
+		type: 'polygon',
+		points: shapeVertices,
+		stroke: true,
+		lineWidth: 2,
+	});
+	shapeVerticesInput.value = shapeVertices.map((vertex) => vertex.join(',')).join(' ');
+}
+function clearShapeVertices() {
+	shapeVertices = [];
+	removeAsset(shapeVerticesAssetId);
+	shapeVerticesInput.value = '';
+}
+
+shapeVerticesInput.addEventListener('input', () => {
+	const value = shapeVerticesInput.value.trim();
+	if (!value) return;
+
+	clearShapeVertices();
+	const vertices = value.split(' ').map((vertex) => vertex.split(',').map((value) => parseFloat(value)));
+	addShapeVertices(...vertices);
+});
 
 function setShapeSettingsViewable(isRegular) {
 	let hideAll = isRegular === null;

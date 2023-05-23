@@ -1,5 +1,6 @@
 body {
 	overscroll-behavior: contain;
+	overflow: hidden;
 }
 
 .hidden {

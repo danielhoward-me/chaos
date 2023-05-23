@@ -26,8 +26,10 @@ function downloadCurrentConfig() {
 	showConfigError('');
 	const config = getCurrentConfig();
 
-	if (config.stages['1'].shapeType === '') {
-		showConfigError('Please select a shape type before downloading the config file');
+	if (setupStage < 3) {
+		const shapeType = config.stages['1'].shapeType;
+		const error = `Please ${shapeType === 'custom' ? 'draw atleast three points' : 'select a shape type'} before downloading the config file`;
+		showConfigError(error);
 		return;
 	}
 

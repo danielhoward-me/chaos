@@ -113,6 +113,8 @@ function getCurrentScreenCenter() {
 }
 
 window.addEventListener('keydown', (e) => {
+	if (e.target.tagName === 'INPUT') return;
+
 	switch (e.code) {
 	case 'KeyS': toggleSettings(); break;
 	case 'KeyH': toggleHelp(); break;

@@ -193,7 +193,7 @@
 						<div id="vertexRuleFeedback" class="invalid-feedback hidden"></div>
 					</div>
 				</div>
-				<input type="text" id="shapePoints" class="hidden">
+				<input type="text" id="shapeVertices" class="hidden">
 			</div>
 		</div>
 
@@ -285,8 +285,8 @@
 			<input type="file" class="hidden" id="uploadConfig" accept=".json" onchange="uploadConfigFile(this.files[0])"/>
 			<div style="margin-bottom: 10px;">
 				<div class="btn-group">
-					<button id="downloadCurrentConfig" type="button" class="btn btn-primary" onclick="downloadCurrentConfig()"><i class="bi bi-download"></i> Download</button>
-					<button type="button" class="btn btn-primary" onclick="uploadConfigInput.click()"><i class="bi bi-upload"></i> Upload</button>
+					<button id="downloadCurrentConfig" type="button" class="btn btn-primary" onclick="downloadCurrentConfig()"><i class="bi bi-download"></i> Save</button>
+					<button type="button" class="btn btn-primary" onclick="uploadConfigInput.click()"><i class="bi bi-upload"></i> Import</button>
 				</div>
 				<div class="invalid-feedback" id="configError"></div>
 			</div>

@@ -59,8 +59,8 @@ const stages = {
 					default: [],
 				},
 			},
-			shapePoints: {
-				element: $('shapePoints'),
+			shapeVertices: {
+				element: $('shapeVertices'),
 				sanitisation: {
 					default: '',
 				},
@@ -127,24 +127,6 @@ const stages = {
 
 const stageCount = 4;
 let setupStage = 1;
-
-let shapeVertices = [];
-const shapeVerticesAssetId = 'shapeVertices';
-function addShapeVertices(...vertices) {
-	shapeVertices.push(...vertices);
-	removeAsset(shapeVerticesAssetId);
-	addAssets({
-		id: shapeVerticesAssetId,
-		type: 'polygon',
-		points: shapeVertices,
-		stroke: true,
-		lineWidth: 2,
-	});
-}
-function clearShapeVertices() {
-	shapeVertices = [];
-	removeAsset(shapeVerticesAssetId);
-}
 
 function setSetupStage(stage) {
 	if (stage === setupStage) return;
