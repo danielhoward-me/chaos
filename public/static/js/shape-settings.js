@@ -33,6 +33,7 @@ const polygonSideCount = stages[2].elements.polygonSideCount.element;
 const pointsCount = stages[2].elements.pointsCount.element;
 const lineProportion = stages[2].elements.lineProportion.element;
 const vertexRules = stages[2].elements.vertexRules.element;
+const shapePoints = stages[2].elements.shapePoints.element;
 
 let listeningForVertices = false;
 

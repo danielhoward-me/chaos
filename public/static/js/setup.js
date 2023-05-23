@@ -59,6 +59,12 @@ const stages = {
 					default: [],
 				},
 			},
+			shapePoints: {
+				element: $('shapePoints'),
+				sanitisation: {
+					default: '',
+				},
+			},
 		},
 		onStageReset: () => {
 			setShapeSettingsViewable(null);
