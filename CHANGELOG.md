@@ -1,5 +1,9 @@
 # Changelog
 
+## [v1.2.6](https://github.com/Toffee1347/chaos-game/) (Unreleased)
+
+- Put missing line break in vertex rules where one was missing
+
 ## [v1.2.5](https://github.com/Toffee1347/chaos-game/tree/v1.2.5)
 
 - Add saving settings to help menu
