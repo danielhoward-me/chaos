@@ -70,7 +70,9 @@ const helpBox = $('helpBox');
 function toggleHelp(force = undefined) {
 	const isHidden = helpBox.classList.toggle('closed', force === undefined ? undefined : !force);
 	const newHash = isHidden ? '' : window.location.hash.startsWith('#help') ? window.location.hash : '#help';
-	window.history.pushState(null, null, window.location.pathname + newHash);
+	if (newHash !== window.location.hash) {
+		window.history.pushState(null, null, window.location.pathname + newHash);
+	}
 }
 function readHelpHash() {
 	const hash = window.location.hash;

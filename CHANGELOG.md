@@ -1,5 +1,11 @@
 # Changelog
 
+## [v1.2.5](https://github.com/Toffee1347/chaos-game/tree/v1.2.5)
+
+- Add saving settings to help menu
+- Add contents section to help menu to improve navigation
+- Fix problem in help menu where it was spamming the history log with repeated entries
+
 ## [v1.2.4](https://github.com/Toffee1347/chaos-game/tree/v1.2.4)
 
 - Add functionality to download and upload saves

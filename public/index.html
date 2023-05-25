@@ -286,7 +286,7 @@
 			<div style="margin-bottom: 10px;">
 				<div class="btn-group">
 					<button id="downloadCurrentConfig" type="button" class="btn btn-primary" onclick="downloadCurrentConfig()"><i class="bi bi-download"></i> Save</button>
-					<button type="button" class="btn btn-primary" onclick="uploadConfigInput.click()"><i class="bi bi-upload"></i> Import</button>
+					<button type="button" class="btn btn-primary" onclick="uploadConfigInput.click()"><i class="bi bi-download"></i> Load</button>
 				</div>
 				<div class="invalid-feedback" id="configError"></div>
 			</div>
@@ -315,41 +315,58 @@
 		</button>
 		<h3 style="text-align: center;">Help</h3>
 
-		The <a href="https://en.wikipedia.org/wiki/Chaos_game" target="_blank" class="link-primary">Chaos Game</a>
-		is a mathematical method of drawing fractals. It uses a polygon shape and a random point within
-		the shape as a starting point. The steps for then generating the points are as follows:
-		<ol>
-			<li>Pick a random vertex</li>
-			<li>Draw a new point halfway inbetween the current point and the vertex</li>
-			<li>Go back to step 1, using the previously generated point</li>
-		</ol>
-		Once this process has been repeated a large number of times with a triangle, it will create the triangle known as the
-		<a href="https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle" target="_blank" class="link-primary">Sierpiński Triangle</a>
-		which looks like the following:
-		<br/>
-		<img src="/static/img/help/sierpinski-triangle.jpg" loading="lazy" alt="Sierpiński Triangle" class="help-menu-image"/>
+		<ul>
+			<li><a href="#help-the-chaos-game" class="link-primary">The Chaos Game</a></li>
+			<li><a href="#help-tutorial" class="link-primary">Tutorial</a></li>
+			<li><a href="#help-general" class="link-primary">General</a></li>
+			<li><a href="#help-shape-type" class="link-primary">Shape Type Settings</a></li>
+			<li><a href="#help-shape-settings" class="link-primary">Shape Settings</a></li>
+			<li><a href="#help-generate-points" class="link-primary">Generate Points</a></li>
+			<li><a href="#help-playback-settings" class="link-primary">Playback Settings</a></li>
+		</ul>
+		
+		<hr/>
+
+		<div data-help-section="help-the-chaos-game">
+			<h5 style="text-align: center;">The Chaos Game</h5>
+			The <a href="https://en.wikipedia.org/wiki/Chaos_game" target="_blank" class="link-primary">Chaos Game</a>
+			is a mathematical method of drawing fractals. It uses a polygon shape and a random point within
+			the shape as a starting point. The steps for then generating the points are as follows:
+			<ol>
+				<li>Pick a random vertex</li>
+				<li>Draw a new point halfway inbetween the current point and the vertex</li>
+				<li>Go back to step 1, using the previously generated point</li>
+			</ol>
+			Once this process has been repeated a large number of times with a triangle, it will create the triangle known as the
+			<a href="https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle" target="_blank" class="link-primary">Sierpiński Triangle</a>
+			which looks like the following:
+			<br/>
+			<img src="/static/img/help/sierpinski-triangle.jpg" loading="lazy" alt="Sierpiński Triangle" class="help-menu-image"/>
+		</div>
 
 		<hr/>
 
-		<h5 style="text-align: center;">How to generate a Sierpiński Triangle</h5>
-		<ol>
-			<li>Select the triangle shape from stage <i class="bi bi-1-circle-fill"></i></li>
-			<img src="/static/img/help/shape-type-triangle.jpg" loading="lazy" alt="Triangle Shape Type" class="help-menu-image"/>
-			<li>
-				Keep shape settings from stage <i class="bi bi-2-circle-fill"></i> default for the purpose of this tutorial
-				(descriptions of the shape settings can be seen <a class="link-primary" href="#help-shape-settings">here</a>)
-			</li>
-			<img src="/static/img/help/shape-settings-preset.jpg" loading="lazy" alt="Triangle Shape Settings" class="help-menu-image"/>
-			<li>Click <code>Generate Points</code> in stage <i class="bi bi-3-circle-fill"></i></li>
-			<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Triangle Generate Points" class="help-menu-image"/>
-			<li>
-				Click Play <i class="bi bi-play-fill"></i> in stage <i class="bi bi-4-circle-fill"></i>
-				(descriptions of the playback settings can be seen <a class="link-primary" href="#help-playback-settings">here</a>)
-			</li>
-			<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Triangle Playback Settings" class="help-menu-image"/>
-			<li>Watch as the triangle on the grid is filled with points</li>
-			<img src="/static/img/help/triangle-points.gif" alt="Triangle Points" class="help-menu-image"/>
-		</ol>
+		<div data-help-section="help-tutorial">
+			<h5 style="text-align: center;">How to generate a Sierpiński Triangle</h5>
+			<ol>
+				<li>Select the triangle shape from stage <i class="bi bi-1-circle-fill"></i></li>
+				<img src="/static/img/help/shape-type-triangle.jpg" loading="lazy" alt="Triangle Shape Type" class="help-menu-image"/>
+				<li>
+					Keep shape settings from stage <i class="bi bi-2-circle-fill"></i> default for the purpose of this tutorial
+					(descriptions of the shape settings can be seen <a class="link-primary" href="#help-shape-settings">here</a>)
+				</li>
+				<img src="/static/img/help/shape-settings-preset.jpg" loading="lazy" alt="Triangle Shape Settings" class="help-menu-image"/>
+				<li>Click <code>Generate Points</code> in stage <i class="bi bi-3-circle-fill"></i></li>
+				<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Triangle Generate Points" class="help-menu-image"/>
+				<li>
+					Click Play <i class="bi bi-play-fill"></i> in stage <i class="bi bi-4-circle-fill"></i>
+					(descriptions of the playback settings can be seen <a class="link-primary" href="#help-playback-settings">here</a>)
+				</li>
+				<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Triangle Playback Settings" class="help-menu-image"/>
+				<li>Watch as the triangle on the grid is filled with points</li>
+				<img src="/static/img/help/triangle-points.gif" alt="Triangle Points" class="help-menu-image"/>
+			</ol>
+		</div>
 
 		<hr/>
 
@@ -401,6 +418,12 @@
 					</tr>
 				</tbody>
 			</table>
+			If you want to save a configuartion, you can do this by interacting with these buttons at the bottom on the settings pannel
+			<img src="/static/img/help/saves.jpg" alt="Save Buttons" class="help-menu-image"/>
+			When clicking <code><i class="bi bi-download"></i> Save</code>, the <a href="https://en.wikipedia.org/wiki/JSON" target="_blank" class="link-primary">JSON</a>
+			data of your settings will be downloaded to your device. Then when clicking <code><i class="bi bi-upload"></i> Load</code>, you will need to select the downloaded
+			file. When loading a file, the site will attempt to generate the points, because of this, you can only save a configuration once you are at a point where
+			points can be generated
 		</div>
 
 		<hr/>
