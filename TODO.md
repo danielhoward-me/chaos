@@ -18,8 +18,11 @@
   - [ ] Update vertex rules to add conditons to each rule using a unicode arrow
   - [ ] Add an OR option to vertex rules
   - [ ] Optimise point displaying to cache the result as an image, then draw that image onto the canvas
-  - [ ] Change vertex rules to require the set equator when working with sets
+  - [x] Change vertex rules to require the set equator when working with sets
+    - [ ] Update help menu to explain this
+    - [ ] Bump saves to new version to allow for this breaking change
   - [ ] Allow for `2old` to be used in vertex rules to represent `2 * old`
+  - [ ] Change the vertex rules error message to have a link to the help section
 
 
 ## For release [v1.2.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v120)

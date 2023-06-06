@@ -187,17 +187,23 @@ vertexRules.addEventListener('input', () => {
 	vertexRules.parentElement.classList.remove('is-invalid');
 	vertexRuleFeedback.classList.add('hidden');
 
+	let origionalSelectionStart = vertexRules.input.selectionStart;
 	let value = vertexRules.input.value;
 
 	characterSetEntries.forEach(([replacement, characterCombinations]) => {
 		characterCombinations.forEach((characters) => {
 			while (value.includes(characters)) {
+				if (value.indexOf(characters) < origionalSelectionStart) {
+					origionalSelectionStart -= characters.length - 1;
+				}
+
 				value = value.replace(characters, replacement);
 			}
 		});
 	});
 
 	vertexRules.input.value = value;
+	vertexRules.input.setSelectionRange(origionalSelectionStart, origionalSelectionStart);
 });
 
 vertexRules.addEventListener('newtag', (e) => {
@@ -205,9 +211,10 @@ vertexRules.addEventListener('newtag', (e) => {
 
 	try {
 		const rule = new VertexRule(tag);
-		e.detail.changeTag(rule.rule);
+		e.detail.changeTag(rule.formatRule());
 	} catch (err) {
 		e.preventDefault();
+		console.error(err);
 
 		vertexRules.parentElement.classList.add('is-invalid');
 		vertexRuleFeedback.innerText = err.message;

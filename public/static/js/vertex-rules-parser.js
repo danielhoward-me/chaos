@@ -24,11 +24,13 @@ const leftComponentRegex = new RegExp(createSpacedRegexText(
 	bracketRegexText(singleComponentFragmentRegex.source), ')*',
 ));
 
-const valueSetEquators = ['=', '≠'];
+const valueSetEquators = ['∈', '∉'];
 const valueSetEquatorsRegex = new RegExp(valueSetEquators.join('|'));
+const valueEqualEquators = ['=', '≠'];
+const valueEqualEquatorsRegex = new RegExp(valueEqualEquators.join('|'));
 const singleValueEquators = ['<', '>', '≤', '≥'];
 const singleValueEquatorsRegex = new RegExp(singleValueEquators.join('|'));
-const allowedEquatorsRegex = new RegExp(`${valueSetEquatorsRegex.source}|${singleValueEquatorsRegex.source}`);
+const allowedEquatorsRegex = new RegExp(`${valueSetEquatorsRegex.source}|${valueEqualEquatorsRegex.source}|${singleValueEquatorsRegex.source}`);
 
 const rightNumberRegex = /[-+±]?\d+/;
 const valueSetRegex = new RegExp(createSpacedRegexText(
@@ -80,12 +82,16 @@ class VertexRule {
 
 		this.rule = this.rule.replace(/\s/g, '');
 		this.parse();
-		this.rule = this.formatVertexRule(this.equation);
 
+		const errorPrefix = `'${this.formatRule()}' is an invalid vertex rule as `;
 		if (this.variables.length === 0) {
-			throw new Error(`'${this.rule}' is an invalid vertex rule as it does not contain any variables`);
-		} else if (this.valueSet.length !== 1 && !valueSetEquatorsRegex.test(this.equator)) {
-			throw new Error(`'${this.rule}' is an invalid vertex rule as it contains multiple values but doesn't use = or ≠`);
+			throw new Error(`${errorPrefix}it does not contain any variables`);
+		} else if (singleValueEquatorsRegex.test(this.equator) && (valueSetRegex.test(this.rule) || this.rule.includes('±'))) {
+			throw new Error(`${errorPrefix}single values should be used with <, >, ≤ and ≥`);
+		} else if (valueEqualEquatorsRegex.test(this.equator) && valueSetRegex.test(this.rule)) {
+			throw new Error(`${errorPrefix}single values should be used with = and ≠`);
+		} else if (valueSetEquatorsRegex.test(this.equator) && !valueSetRegex.test(this.rule) && !this.rule.includes('±')) {
+			throw new Error(`${errorPrefix}sets should be used with ∈ and ∉`);
 		}
 
 		this.executeCache = {};
@@ -95,7 +101,7 @@ class VertexRule {
 		this.variables = [];
 		this.equator = VertexRule.parseEquator(this.rule);
 
-		let [equation, valueSet] = this.rule.split(this.equator);
+		let [equation, valueSet] = this.rule.split(allowedEquatorsRegex);
 		this.equation = this.parseEquation(equation);
 		this.valueSet = VertexRule.parsevalueSet(valueSet);
 	}
@@ -147,7 +153,14 @@ class VertexRule {
 	static parseEquator(rule) {
 		const equatorMatch = allowedEquatorsRegex.exec(rule);
 		if (!equatorMatch) return false;
-		return equatorMatch[0];
+		const equator = equatorMatch[0];
+
+		// If ± is used, then we need to change the equator to ∈ or ∉
+		if (rule.includes('±') && !valueSetRegex.test(rule) && valueEqualEquatorsRegex.test(equator)) {
+			return equator === '=' ? '∈' : '∉';
+		}
+
+		return equator;
 	}
 
 	static parsevalueSet(valueSetString) {
@@ -190,6 +203,7 @@ class VertexRule {
 		const cachedValue = this.executeCache[key];
 		if (cachedValue !== undefined) return cachedValue;
 
+		// If this is the first vertex being chosen, only the new variable has any meaning
 		if ((this.variables.includes('old') || this.variables.includes('difference')) && oldIndex === -1) return true;
 
 		const parameters = {
@@ -248,8 +262,10 @@ class VertexRule {
 		} else {
 			switch (this.equator) {
 			case '=':
+			case '∈':
 				return this.valueSet.includes(value);
 			case '≠':
+			case '∉':
 				return !this.valueSet.includes(value);
 			}
 		}
@@ -273,7 +289,8 @@ class VertexRule {
 		return boundDifference;
 	}
 
-	formatVertexRule() {
+	formatRule() {
+		this.valueSet.sort((a, b) => a - b);
 		const formattedEquation = VertexRule.formatVertexRuleEquation(this.equation);
 		const valueSet = this.valueSet.length === 1 ? this.valueSet[0] : `{${this.valueSet.join(', ')}}`;
 		return `${formattedEquation} ${this.equator} ${valueSet}`;

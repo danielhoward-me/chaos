@@ -4,7 +4,9 @@
 
 - Put missing line break in vertex rules help where one was missing
 - Refactor vertex rules input system to find every permutation of characters which allows a word to be matched instead of single characters
-- Add `∈` and `∉` characters to the vertex rules input
+- Add `∈` and `∉` characters to the vertex rules input and enforce the use of them when using sets
+- Fix bug with generate points loading bar which wouldn't update until 100% was reached
+- Fix bug where the cursour would always move to the end of the input when using special characters
 
 ## [v1.2.5](https://github.com/Toffee1347/chaos-game/tree/v1.2.5)
 

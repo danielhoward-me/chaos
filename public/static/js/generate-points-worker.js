@@ -1,4 +1,4 @@
-importScripts('/static/js/vertex-rules-parser.js')
+importScripts('/static/js/vertex-rules-parser.js');
 
 onmessage = function(e) {
 	const {
@@ -48,7 +48,7 @@ function calculatePoints(vertices, startPoint, pointsCount, lineProportion, vert
 			index: randomVertex.index,
 		});
 
-		if (i % (pointsCount / 100) === 0) {
+		if (i % Math.round(pointsCount / 100) === 0) {
 			reportProgress(i, pointsCount);
 		}
 	}
