@@ -2,7 +2,9 @@
 
 ## [v1.2.6](https://github.com/Toffee1347/chaos-game/) (Unreleased)
 
-- Put missing line break in vertex rules where one was missing
+- Put missing line break in vertex rules help where one was missing
+- Refactor vertex rules input system to find every permutation of characters which allows a word to be matched instead of single characters
+- Add `∈` and `∉` characters to the vertex rules input
 
 ## [v1.2.5](https://github.com/Toffee1347/chaos-game/tree/v1.2.5)
 

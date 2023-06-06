@@ -164,34 +164,40 @@ function shapeSettingsInputHandler(updateGraph) {
 	}
 }
 
+function getArrayPermutations(arr) {
+	let combinations = arr.length <= 2 ? (
+		[arr.join(''), arr.reverse().join('')]
+	) : arr.reduce(
+		(acc, letter, i) => acc.concat(getArrayPermutations(arr.slice(0, i).concat(arr.slice(i + 1))).map(val => letter + val)),
+		[],
+	);
+
+	return Array.from(new Set(combinations));
+}
 const characterSets = {
 	'≠': ['!', '='],
 	'≤': ['<', '='],
 	'≥': ['>', '='],
 	'±': ['+', '-'],
+	'∈': ['in'],
+	'∉': ['!', '∈'],
 };
-const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, characters.sort()]);
+const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, getArrayPermutations(characters)]);
 vertexRules.addEventListener('input', () => {
 	vertexRules.parentElement.classList.remove('is-invalid');
 	vertexRuleFeedback.classList.add('hidden');
 
-	const value = vertexRules.input.value;
+	let value = vertexRules.input.value;
 
-	for (let i = 0; i < value.length; i++) {
-		characterSetEntries.forEach(([replacement, characters]) => {
-			if (i + characters.length > value.length) return;
-
-			const valueCharacters = [];
-			for (let j = 0; j < characters.length; j++) {
-				valueCharacters.push(value[i + j]);
-			}
-			valueCharacters.sort();
-
-			if (valueCharacters.join('') === characters.join('')) {
-				vertexRules.input.value = value.slice(0, i) + replacement + value.slice(i + characters.length);
+	characterSetEntries.forEach(([replacement, characterCombinations]) => {
+		characterCombinations.forEach((characters) => {
+			while (value.includes(characters)) {
+				value = value.replace(characters, replacement);
 			}
 		});
-	}
+	});
+
+	vertexRules.input.value = value;
 });
 
 vertexRules.addEventListener('newtag', (e) => {
