@@ -183,15 +183,20 @@
 					/>
 				</div>
 				<div class="setting-group">
-					<div class="input-group has-validation">
-						<span class="input-group-text">Vertex Rules</span>
-						<div class="form-control vertex-rules-container">
-							<tag-input id="vertexRules" placeholder="difference ≠ 1">
-								<input type="text" placeholder="difference ≠ 1">
-							</tag-input>
+					<details class="vertex-rules-details" id="vertexRulesDetails">
+						<summary style="text-align: left;">
+							Vertex Rules
+							<a class="settings-help-link" href="#help-shape-settings-vertex-rules"><i class="bi bi-question-circle-fill"></i></a>
+						</summary>
+						<div class="input-group has-validation">
+							<div class="form-control vertex-rules-container">
+								<tag-input id="vertexRules" placeholder="difference ≠ 1">
+									<input type="text" placeholder="difference ≠ 1">
+								</tag-input>
+							</div>
+							<div id="vertexRulesFeedback" class="invalid-feedback hidden"></div>
 						</div>
-						<div id="vertexRuleFeedback" class="invalid-feedback hidden"></div>
-					</div>
+					</details>
 				</div>
 				<input type="text" id="shapeVertices" class="hidden">
 			</div>
@@ -477,7 +482,7 @@
 						<th scope="row">Line Proportion</th>
 						<td>The proportion of the line to be drawn between the current point and the vertex (with 0% being at the point in the shape)</td>
 					</tr>
-					<tr>
+					<tr data-help-section="help-shape-settings-vertex-rules">
 						<th scope="row">Vertex Rules</th>
 						<td>
 							Vertex rules are the rules that the program will follow when picking a random vertex,
@@ -491,7 +496,10 @@
 								<li><code>old</code> (abbr. <code>o</code>) - The previous vertex index that was chosen</li>
 								<li><code>new</code> (abbr. <code>n</code>) - The new vertex index that has been chosen</li>
 								<li style="list-style: none;">
-									<small class="text-muted">Note: Index is the number that each vertex is assigned, starting from 0 and going clockwise</small>
+									<small class="text-muted">
+										Note: Index is the number that each vertex is assigned, starting from 0 and going clockwise
+										(a custom shape will have the vertices assigned in the order that they were created)
+									</small>
 								</li>
 							</ul>
 							<p>
@@ -500,25 +508,60 @@
 								(order of operations is followed, with <code>%</code> having the same precedence as <code>*</code> and <code>/</code>)
 							</p>
 							<p>
-								The equators that can be used are <code>=</code>, <code>≠</code> (accessed by typing <code>=</code> then <code>!</code>),
-								<code>&lt;</code>, <code>≤</code> (accessed by typing <code>&lt;</code> then <code>=</code>),
-								<code>&gt;</code>, <code>≥</code> (accessed by typing <code>&gt;</code> then <code>=</code>)
+								The equators that can be used are <code>=</code>, <code>≠</code> (accessed by typing <code>!=</code>),
+								<code>∈</code> (accessed by typing <code>in</code>), <code>∉</code> (accessed by typing <code>!in</code>),
+								<code>&lt;</code>, <code>≤</code> (accessed by typing <code>&lt;=</code>),
+								<code>&gt;</code>, <code>≥</code> (accessed by typing <code>&gt;=</code>)
 							</p>
 							<p>
-								When using an inequality equator, the right side must be a singular numberic value<br/>
-								When using any other equator, the right side can be a singular numberic value
-								or a list of values contained in curly brackets (<code>{}</code>) and separated by commas<br/>
+								When using an inequality or equals equator, the right side must be a singular numberic value.
+								When using a set equator, the right side should be alist of values contained in curly brackets (<code>{}</code>) and separated by commas.
 								Any number in the right hand side can use the <code>±</code> operator
-								(accessed by typing <code>+</code> then <code>-</code>) infront of a number to
-								test both the positive and negative values of the number
+								(accessed by typing <code>+-</code>) infront of a number to
+								test both the positive and negative values of the number (this can not be used when using inequalities)
 							</p>
 							Example vertex rules are:
 							<ul>
-								<li><code>difference = {0, ±1, 2}</code> - All vertices will either be repeated one, next to the previous one or 2 to the right</li>
+								<li><code>difference ∈ {0, ±1, 2}</code> - All vertices will either be repeated one, next to the previous one or 2 to the right</li>
 								<li><code>old + new = 3</code> - The value of the old index + the new index must equal 3</li>
 								<li><code>difference * 2 ≤ 5</code> - Double the difference must be less than or equal to 5</li>
 							</ul>
-							To make a vertex rule, type it into the box then click enter
+							All the special characters accessible in the vertex rules input are:
+							<table class="table">
+								<thead>
+									<tr>
+										<th scope="col">Character</th>
+										<th scope="col">Accessible by</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<th scope="row"><code>≠</code></th>
+										<td><code>!=</code></td>
+									</tr>
+									<tr>
+										<th scope="row"><code>≤</code></th>
+										<td><code>&lt;=</code></td>
+									</tr>
+									<tr>
+										<th scope="row"><code>≥</code></th>
+										<td><code>&gt;=</code></td>
+									</tr>
+									<tr>
+										<th scope="row"><code>∈</code></th>
+										<td><code>in</code></td>
+									</tr>
+									<tr>
+										<th scope="row"><code>∉</code></th>
+										<td><code>!in</code></td>
+									</tr>
+									<tr>
+										<th scope="row"><code>±</code></th>
+										<td><code>+-</code></td>
+									</tr>
+								</tbody>
+							</table>
+							To make a vertex rule, type it into the box then click enter<br/>
 						</td>
 					</tr>
 				</tbody>

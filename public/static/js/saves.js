@@ -1,8 +1,20 @@
+/*
+Save file version changelog:
+  1:
+    - Initial version
+	- Breaking change was added to vertex rules by adding the set symbol
+	- This updates rules to the new format then uses version 2
+  2:
+    - Same as version 1 but without the breaking change
+*/
+
+const CURRENT_SAVE_VERSION = 2;
+
 const uploadConfigInput = $('uploadConfig');
 const configError = $('configError');
 
 function getCurrentConfig() {
-	const config = {version: 1, stages: {}};
+	const config = {version: CURRENT_SAVE_VERSION, stages: {}};
 
 	Object.keys(stages).forEach((stageI) => {
 		const stageInputs = {};
@@ -49,11 +61,22 @@ function loadConfig(config) {
 
 	switch (config.version) {
 		case 1: loadConfigVersion1(config.stages); break;
+		case 2: loadConfigVersion2(config.stages); break;
 		default: throw new Error(`Unknown config version: ${config.version}`);
 	}
 }
 
 function loadConfigVersion1(config) {
+	config['2'].vertexRules?.forEach((rule, i) => {
+		if (valueEqualEquatorsRegex.test(rule) && valueSetRegex.test(rule)) {
+			config['2'].vertexRules[i] = rule.includes('=') ? rule.replace('=', '∈') : rule.replace('≠', '∉');
+		}
+	});
+
+	return loadConfigVersion2(config);
+}
+
+function loadConfigVersion2(config) {
 	Object.keys(config).forEach(async (stageI) => {
 		const stageData = stages[stageI];
 		if (!stageData) return;

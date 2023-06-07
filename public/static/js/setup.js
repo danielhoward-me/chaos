@@ -70,6 +70,8 @@ const stages = {
 			setShapeSettingsViewable(null);
 			setPolygonSettingsVisible(false);
 			clearShapeVertices();
+			setVertexRulesDetailsDisabled(false);
+			setVertexRulesDetailsOpen(false);
 		},
 		onStageExit: () => {
 			setRecordVerticesButtonActive(false);

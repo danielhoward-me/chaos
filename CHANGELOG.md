@@ -7,6 +7,9 @@
 - Add `∈` and `∉` characters to the vertex rules input and enforce the use of them when using sets
 - Fix bug with generate points loading bar which wouldn't update until 100% was reached
 - Fix bug where the cursour would always move to the end of the input when using special characters
+- Fix bug where the indexes of the vertexes went anticlockwise instead of clockwise
+- Fix annoyance when mobiles would auto capitalise in vertex rules
+- Move vertex rules into a details drop down to make the UI feel cleaner
 
 ## [v1.2.5](https://github.com/Toffee1347/chaos-game/tree/v1.2.5)
 

@@ -25,7 +25,8 @@ const polygonSettings = $('polygonSettings');
 const recordVerticesButton = $('recordVertices');
 const recordVerticesText = $('recordVerticesText');
 const shapeTypeText = $('shapeTypeText');
-const vertexRuleFeedback = $('vertexRuleFeedback');
+const vertexRulesFeedback = $('vertexRulesFeedback');
+const vertexRulesDetails = $('vertexRulesDetails');
 
 const polygonRotate = stages[2].elements.polygonRotate.element;
 const regularSideLength = stages[2].elements.regularSideLength.element;
@@ -117,7 +118,7 @@ function generatePolygonVertices(sideLength, sideCount) {
 	const angleModifier = (Math.PI / 2) - userRotation - defaultRotation;
 
 	for (let sideI = 0; sideI < sideCount; sideI++) {
-		const angle = (sideI * internalMiddleAngle) + angleModifier;
+		const angle = -(sideI * internalMiddleAngle) + angleModifier;
 		vertices.push([
 			radius * Math.cos(angle),
 			radius * Math.sin(angle),
@@ -178,14 +179,14 @@ const characterSets = {
 	'≠': ['!', '='],
 	'≤': ['<', '='],
 	'≥': ['>', '='],
-	'±': ['+', '-'],
 	'∈': ['in'],
 	'∉': ['!', '∈'],
+	'±': ['+', '-'],
 };
 const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, getArrayPermutations(characters)]);
 vertexRules.addEventListener('input', () => {
 	vertexRules.parentElement.classList.remove('is-invalid');
-	vertexRuleFeedback.classList.add('hidden');
+	vertexRulesFeedback.classList.add('hidden');
 
 	let origionalSelectionStart = vertexRules.input.selectionStart;
 	let value = vertexRules.input.value;
@@ -202,9 +203,16 @@ vertexRules.addEventListener('input', () => {
 		});
 	});
 
-	vertexRules.input.value = value;
+	vertexRules.input.value = value.toLowerCase();
 	vertexRules.input.setSelectionRange(origionalSelectionStart, origionalSelectionStart);
 });
+
+function setVertexRulesDetailsDisabled(disabled) {
+	vertexRulesDetails.toggleAttribute('disabled', disabled);
+}
+function setVertexRulesDetailsOpen(open) {
+	vertexRulesDetails.toggleAttribute('open', open);
+}
 
 vertexRules.addEventListener('newtag', (e) => {
 	const tag = e.detail.tag;
@@ -217,13 +225,27 @@ vertexRules.addEventListener('newtag', (e) => {
 		console.error(err);
 
 		vertexRules.parentElement.classList.add('is-invalid');
-		vertexRuleFeedback.innerText = err.message;
-		vertexRuleFeedback.classList.remove('hidden');
+		vertexRulesFeedback.innerText = err.message;
+		vertexRulesFeedback.classList.remove('hidden');
 	}
+
+	setVertexRulesDetailsDisabled(true);
+	setVertexRulesDetailsOpen(true);
 });
 
 vertexRules.addEventListener('removetag', () => {
+	if (vertexRules.tags.length === 0) {
+		setVertexRulesDetailsDisabled(false);
+	}
+
 	setSetupStage(3);
+});
+
+// Triggered when the value is set directly
+vertexRules.addEventListener('tagschanged', () => {
+	const rulesInUse = vertexRules.tags.length !== 0;
+	setVertexRulesDetailsDisabled(rulesInUse);
+	setVertexRulesDetailsOpen(rulesInUse);
 });
 
 Object.values(stages[2].elements || []).forEach(({element}) => {

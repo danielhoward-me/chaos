@@ -105,6 +105,7 @@ body {
 .settings-help-link {
 	text-decoration: none;
 	color: black;
+	cursor: help;
 }
 .settings-help-link:hover {
 	text-decoration: underline;
@@ -208,4 +209,20 @@ small a, small a:hover, small a:visited {
 .help-menu-image {
 	width: calc(100% - 40px);
 	margin: 20px;
+}
+
+details summary {
+	user-select: none;
+}
+
+details summary.text-muted,
+details[disabled] summary,
+a.text-muted {
+	pointer-events: none;
+	cursor: default;
+}
+
+.vertex-rules-details[disabled] summary a {
+	pointer-events: all;
+	cursor: help;
 }
