@@ -1,0 +1,46 @@
+{
+    "extends": [
+		"eslint:recommended",
+		"plugin:@typescript-eslint/recommended",
+        "google",
+		"plugin:import/typescript"
+    ],
+    "plugins": [
+		"import",
+        "@typescript-eslint"
+    ],
+	"settings": {
+		"import/resolver": {
+			"node": {
+				"paths": ["src"],
+				"extensions": [".js", ".jsx", ".ts", ".tsx"]
+			}
+		}
+	},
+    "parser": "@typescript-eslint/parser",
+	"root": true,
+    "rules": {
+		"require-jsdoc": "off",
+		"indent": ["warn", "tab"],
+		"no-tabs": ["warn", {"allowIndentationTabs": true}],
+		"no-unused-vars": "off",
+		"@typescript-eslint/consistent-type-imports": "warn",
+		"import/order": ["warn", {
+			"groups": [
+				["internal", "parent", "sibling", "index"],
+				"builtin",
+				"external",
+				"type"
+			],
+			"newlines-between": "always",
+			"alphabetize": {
+				"order": "asc",
+				"caseInsensitive": true
+			}
+		}],
+		"max-len": "off",
+		"linebreak-style": ["warn", "windows"],
+		"new-cap": "off",
+		"semi": "off"
+	}
+}

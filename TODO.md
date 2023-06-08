@@ -25,6 +25,7 @@
   - [ ] Allow an image to be downloaded of the shape (could link into the image cache)
 - [ ] Display numbers on grid + change frequency of grid lines as you zoom in/out
 - [ ] Allow user to change the colour of the points, depending on the vertex they were generated from
+- [ ] Migrate project to typescript and compile with webpack
 
 
 ## For release [v1.2.6](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v126-unreleased)

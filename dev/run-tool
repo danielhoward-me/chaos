@@ -1,0 +1,35 @@
+#!/bin/bash
+
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
+on_error(){
+	echo "An error occurred, cleaning up"
+	rm -rf $OUT_DIR
+	exit 1
+}
+ 
+trap 'on_error' ERR
+
+if [ -z "$1" ]; then
+	echo "Please specify a tool to run"
+	exit 1
+fi
+
+OUT_DIR="$(pwd)/cache"
+FILENAME=$1
+FILENAME_TS="$1.ts"
+FILENMAE_JS="$1.js"
+
+if [ ! -f "tools/$FILENAME_TS" ]; then
+	echo "$FILENAME tool does not exist"
+	exit 1
+fi
+
+echo "Compiling tool $FILENAME"
+yarn tsc "$(pwd)/tools/$FILENAME_TS" --outDir $OUT_DIR
+
+echo "Running tool $FILENAME"
+node $OUT_DIR/dev/tools/$FILENMAE_JS
+
+echo "Finished running tool $FILENAME, cleaning up"
+rm -rf $OUT_DIR

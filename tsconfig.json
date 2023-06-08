@@ -1,0 +1,21 @@
+{
+	"compilerOptions": {
+		// "module": "CommonJS",
+		// "target": "ESNext",
+		// "skipLibCheck": false,
+		// "moduleResolution": "node"
+		"sourceMap": true,
+		"outDir": "dist",
+		"target": "ESNext",
+		"module": "CommonJS",
+		"strict": true,
+		"lib": ["esnext"],
+		"esModuleInterop": true
+	},
+	"include": [
+		"**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}  
