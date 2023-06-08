@@ -28,7 +28,7 @@
 - [ ] Migrate project to typescript and compile with webpack
 
 
-## For release [v1.2.6](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v126-unreleased)
+## For release [v1.3.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v130)
 
 ### Features
 
@@ -36,7 +36,7 @@
   - [x] Update help menu to explain this
   - [x] Bump saves to new version to allow for this breaking change
 - [x] Change the vertex rules error message to have a link to the help section
-- [ ] Update help images with new vertex rules input design
+- [x] Update help images with new vertex rules input design
 
 
 ## For release [v1.2.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v120)

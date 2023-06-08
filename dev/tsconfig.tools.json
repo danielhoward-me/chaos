@@ -1,0 +1,15 @@
+{
+	"compilerOptions": {
+		"module": "ESNext",
+		"target": "ESNext",
+		"skipLibCheck": true,
+		"allowSyntheticDefaultImports": true,
+		"moduleResolution": "node"
+	},
+	"include": [
+		"tools/**/*.ts"
+	],
+	"exclude": [
+		"node_modules"
+	]
+}  

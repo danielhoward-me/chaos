@@ -2,13 +2,24 @@
 
 cd "$( dirname "${BASH_SOURCE[0]}" )"
 
-on_error(){
-	echo "An error occurred, cleaning up"
+function clean_up() {
 	rm -rf $OUT_DIR
+}
+
+function on_exit() {
+	echo "Program is exiting, cleaning up"
+	clean_up
+	exit 0
+}
+
+function on_error() {
+	echo "Program has errored, cleaning up"
+	clean_up
 	exit 1
 }
- 
-trap 'on_error' ERR
+
+trap on_error ERR
+trap on_exit SIGINT
 
 if [ -z "$1" ]; then
 	echo "Please specify a tool to run"
@@ -25,11 +36,11 @@ if [ ! -f "tools/$FILENAME_TS" ]; then
 	exit 1
 fi
 
-echo "Compiling tool $FILENAME"
-yarn tsc "$(pwd)/tools/$FILENAME_TS" --outDir $OUT_DIR
+echo "Compiling tools"
+yarn tsc -p $(pwd)/tsconfig.tools.json --outDir $OUT_DIR
 
 echo "Running tool $FILENAME"
-node $OUT_DIR/dev/tools/$FILENMAE_JS
+node $OUT_DIR/$FILENMAE_JS
 
 echo "Finished running tool $FILENAME, cleaning up"
-rm -rf $OUT_DIR
+clean_up

@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.2.6](https://github.com/Toffee1347/chaos-game/) (Unreleased)
+## [v1.3.0](https://github.com/Toffee1347/chaos-game/tree/v1.3.0) (Unreleased)
 
 - Put missing line break in vertex rules help where one was missing
 - Refactor vertex rules input system to find every permutation of characters which allows a word to be matched instead of single characters
@@ -10,6 +10,7 @@
 - Fix bug where the indexes of the vertexes went anticlockwise instead of clockwise
 - Fix annoyance when mobiles would auto capitalise in vertex rules
 - Move vertex rules into a details drop down to make the UI feel cleaner
+- Turn the project into a node project and create tools to generate help images automatically
 
 ## [v1.2.5](https://github.com/Toffee1347/chaos-game/tree/v1.2.5)
 

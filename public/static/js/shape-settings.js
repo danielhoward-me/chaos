@@ -27,6 +27,7 @@ const recordVerticesText = $('recordVerticesText');
 const shapeTypeText = $('shapeTypeText');
 const vertexRulesFeedback = $('vertexRulesFeedback');
 const vertexRulesDetails = $('vertexRulesDetails');
+const vertexRulesDetailsSummary = vertexRulesDetails.querySelector('summary');
 
 const polygonRotate = stages[2].elements.polygonRotate.element;
 const regularSideLength = stages[2].elements.regularSideLength.element;
@@ -209,6 +210,7 @@ vertexRules.addEventListener('input', () => {
 
 function setVertexRulesDetailsDisabled(disabled) {
 	vertexRulesDetails.toggleAttribute('disabled', disabled);
+	vertexRulesDetailsSummary[disabled ? 'setAttribute' : 'removeAttribute']('tabindex', '-1');
 }
 function setVertexRulesDetailsOpen(open) {
 	vertexRulesDetails.toggleAttribute('open', open);
