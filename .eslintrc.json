@@ -40,7 +40,6 @@
 		}],
 		"max-len": "off",
 		"linebreak-style": ["warn", "windows"],
-		"new-cap": "off",
-		"semi": "off"
+		"new-cap": "off"
 	}
 }
