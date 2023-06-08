@@ -1,6 +1,6 @@
 # Changelog
 
-## [v1.3.0](https://github.com/Toffee1347/chaos-game/tree/v1.3.0) (Unreleased)
+## [v1.3.0](https://github.com/Toffee1347/chaos-game/tree/v1.3.0)
 
 - Put missing line break in vertex rules help where one was missing
 - Refactor vertex rules input system to find every permutation of characters which allows a word to be matched instead of single characters
