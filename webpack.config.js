@@ -1,9 +1,13 @@
+import packageData from './package.json' assert {type: 'json'};
+
 import path from 'path';
 import {fileURLToPath, URL} from 'url';
 
 import CopyPlugin from 'copy-webpack-plugin';
+import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
+
 
 /** @type {import('webpack').Configuration} */
 export default {
@@ -19,6 +23,16 @@ export default {
 				test: /\.css$/,
 				use: [MiniCssExtractPlugin.loader, 'css-loader'],
 			},
+			{
+				test: /\.svg$/,
+				type: 'asset',
+			},
+		],
+	},
+	optimization: {
+		minimizer: [
+			'...',
+			new CssMinimizerPlugin(),
 		],
 	},
 	plugins: [
@@ -27,7 +41,7 @@ export default {
 				{
 					from: 'public',
 					globOptions: {
-						ignore: ['**/*.html', '**/*.css', '**/*.js', '**/*.svg'],
+						ignore: ['**/*.html', '**/*.css'],
 					},
 				},
 			],
@@ -37,6 +51,10 @@ export default {
 		}),
 		new HtmlWebpackPlugin({
 			template: './public/index.html',
+			templateParameters: {
+				version: packageData.version,
+			},
+			hash: true,
 		}),
 	],
 	resolve: {
@@ -46,7 +64,7 @@ export default {
 		filename: 'static/js/index.[contenthash].js',
 		path: path.join(fileURLToPath(new URL('.', import.meta.url)), 'dist'),
 		clean: true,
-		publicPath: './public/',
+		publicPath: '/',
 	},
 	mode: 'production',
 };

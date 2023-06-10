@@ -28,6 +28,27 @@
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.10.5.min.css">
 </head>
 <body>
+	<% function playbackSettingsBar() { %>
+		<div class="playback-container">
+			<button id="playbackPrevious" class="playback-button">
+				<i class="bi bi-skip-backward-fill"></i>
+			</button>
+			<button id="playbackPlay" class="playback-button">
+				<i id="playbackPlayIcon" class="bi bi-play-fill"></i>
+				<i id="playbackPauseIcon" class="bi bi-pause-fill hidden"></i>
+			</button>
+			<button id="playbackNext" class="playback-button">
+				<i class="bi bi-skip-forward-fill"></i>
+			</button>
+			<div class="playback-seek">
+				<input id="playbackSeek" type="range" class="form-range" value="0" min="0" max="100" step="0.01"/>
+			</div>
+			<div class="playback-time">
+				<span id="playbackTimeCurrent">0:00</span>/<span id="playbackTimeTotal">0:00</span>
+			</div>
+		</div>
+	<% } %>
+
 	<div id="settingsBox" class="side-overlay-base side-overlay settings-box">
 		<button class="btn btn-primary close-settings" onclick="toggleSettings()" id="settingsCloseButton">
 			<i class="bi bi-x-lg"></i>
@@ -35,59 +56,67 @@
 		<h3 style="text-align: center;">Settings</h3>
 
 		<div data-setup-stage="1">
+			<% const shapeTypes = [
+				'polygon',
+				'custom',
+				'triangle',
+				'square',
+				'pentagon',
+				'hexagon',
+			]; %>
+
 			<h6><a class="settings-help-link" href="#help-shape-type"><i class="bi bi-1-circle-fill"></i> Shape Type:</a></h6>
 			<div class="settings-stage type-selection">
-				<div data-shape-type="polygon" class="card">
-					<div class="card-body">
-						<img width="100" height="100" src="/static/img/polygon.svg" alt="n Maths Symbol">
-						<h6 class="card-title">Polygon</h6>
+				<% function shapeTypeCard(shapeType) { %>
+					<div data-shape-type="<%- shapeType %>" class="card">
+						<div class="card-body">
+							<img width="100" height="100" src="/static/img/<%- shapeType %>.svg" alt="<%- _.capitalize(shapeType) %> Shape">
+							<h6 class="card-title"><%- _.capitalize(shapeType) %></h6>
+						</div>
 					</div>
-				</div>
-				<div data-shape-type="custom" class="card">
-					<div class="card-body">
-						<img width="100" height="100" src="/static/img/custom.svg" alt="Custom Shape">
-						<h6 class="card-title">Custom</h6>
-					</div>
-				</div>
-				<div data-shape-type="triangle" class="card">
-					<div class="card-body">
-						<img width="100" height="100" src="/static/img/triangle.svg" alt="Triangle Shape">
-						<h6 class="card-title">Triangle</h6>
-					</div>
-				</div>
-				<div data-shape-type="square" class="card">
-					<div class="card-body">
-						<img width="100" height="100" src="/static/img/square.svg" alt="Square Shape">
-						<h6 class="card-title">Square</h6>
-					</div>
-				</div>
-				<div data-shape-type="pentagon" class="card">
-					<div class="card-body">
-						<img width="100" height="100" src="/static/img/pentagon.svg" alt="Pentagon Shape">
-						<h6 class="card-title">Pentagon</h6>
-					</div>
-				</div>
-				<div data-shape-type="hexagon" class="card">
-					<div class="card-body">
-						<img width="100" height="100" src="/static/img/hexagon.svg" alt="Hexagon Shape">
-						<h6 class="card-title">Hexagon</h6>
-					</div>
-				</div>
+				<% } %>
+
+				<% _.forEach(shapeTypes, shapeTypeCard) %>
 			</div>
 			<small class="form-text">All the preset shapes are normal regular shapes</small>
 
 			<select id="shapeType" class="hidden">
-				<option value=""></option>
-				<option value="polygon"></option>
-				<option value="custom"></option>
-				<option value="triangle"></option>
-				<option value="square"></option>
-				<option value="pentagon"></option>
-				<option value="hexagon"></option>
+				<% _.forEach(_.concat([''], shapeTypes), function (shapeType) { %>
+					<option value="<%- shapeType %>"></option>
+				<% }) %>
 			</select>
 		</div>
 
 		<hr/>
+
+		<% function rangeInput(options) { %>
+			<div class="setting-group">
+				<div class="input-group">
+					<span class="input-group-text">
+						<% if (options.extraNameTextId) { %><span id="<%- options.extraNameTextId %>"></span><% } %>
+						<%- options.name %>
+					</span>
+					<input
+						class="form-control" type="number" id="<% options.id %>"
+						value="<%- options.value %>" 
+						<% if (options.min !== undefined) { %>min="<%- options.min %>"<% } %>
+						<% if (options.max !== undefined) { %>max="<%- options.max %>"<% } %>
+						oninput="updateInputWithRange(this, '<%- options.id %>Range')"
+						<% if (options.customInputAttributes) options.customInputAttributes %>
+					/>
+					<% if (options.extraText) { %>
+						<span class="input-group-text"><%- options.extraText %></span>
+					<% } %>
+				</div>
+				<input
+					tabindex="-1" type="range" class="form-range" id="<%- options.id %>Range"
+					value="<%- options.value %>" step="<%- options.rangeStep %>"
+					<% if (options.rangeMin !== undefined) { %>min="<%- options.rangeMin %>"<% } %>
+					<% if (options.rangeMax !== undefined) { %>max="<%- options.rangeMax %>"<% } %>
+					oninput="updateInputWithRange(this, '<%- options.id %>', true)"
+				/>
+			</div>
+		<% } %>
 
 		<div data-setup-stage="2">
 			<h6><a class="settings-help-link" href="#help-shape-settings"><i class="bi bi-2-circle-fill"></i> Shape Settings:</a></h6>
@@ -100,86 +129,66 @@
 					<small class="form-text">At least three vertices need to be selected</small>
 				</div>
 				<div class="hidden" id="regularShapeSettings">
-					<div class="setting-group">
-						<div class="input-group">
-							<span style="white-space: pre;" class="input-group-text"><span id="shapeTypeText"></span>Side Length</span>
-							<input
-								class="form-control" type="number" id="regularShapeSideLength"
-								value="50" min="1" data-update-graph
-								oninput="updateInputWithRange(this, 'regularShapeSideLengthRange')"
-							/>
-						</div>
-						<input
-							tabindex="-1" type="range" class="form-range" id="regularShapeSideLengthRange"
-							value="50" min="10" max="500" step="1"
-							oninput="updateInputWithRange(this, 'regularShapeSideLength', true)"
-						/>
-					</div>
+					<% rangeInput({
+						name: 'Side Length',
+						extraNameTextId: 'shapeTypeText',
+						id: 'regularShapeSideLength',
+						customInputAttributes: 'data-update-graph',
+						value: 50,
+						min: 1,
+						rangeStep: 1,
+						rangeMin: 10,
+						rangeMax: 500,
+					}) %>
 					<div class="hidden" id="polygonSettings">
-						<div class="setting-group">
-							<div class="input-group">
-								<span class="input-group-text">Side Count</span>
-								<input
-									class="form-control" type="number" id="polygonSideCount"
-									value="5" min="3" data-update-graph
-									oninput="updateInputWithRange(this, 'polygonSideCountRange')"
-								/>
-							</div>
-							<input
-								tabindex="-1" type="range" class="form-range" id="polygonSideCountRange"
-								value="5" min="3" max="20" step="1"
-								oninput="updateInputWithRange(this, 'polygonSideCount', true)"
-							/>
-						</div>
-						<div class="setting-group">
-							<div class="input-group">
-								<span class="input-group-text">Rotate Shape</span>
-								<input
-									class="form-control" type="number" id="polygonRotate"
-									value="0" min="0" max="360" data-update-graph
-									oninput="updateInputWithRange(this, 'polygonRotateRange')"
-								/>
-								<span class="input-group-text">&deg;</span>
-							</div>
-							<input
-								tabindex="-1" type="range" class="form-range" id="polygonRotateRange"
-								value="0" min="0" max="360" step="1"
-								oninput="updateInputWithRange(this, 'polygonRotate', true)"
-							/>
-						</div>
+						<% _.forEach([
+							{
+								name: 'Side Count',
+								id: 'polygonSideCount',
+								customInputAttributes: 'data-update-graph',
+								value: 5,
+								min: 3,
+								rangeMin: 3,
+								rangeMax: 20,
+								rangeStep: 1,
+							},
+							{
+								name: 'Rotate Shape',
+								id: 'polygonRotate',
+								customInputAttributes: 'data-update-graph',
+								value: 0,
+								min: 0,
+								max: 360,
+								rangeMin: 0,
+								rangeMax: 360,
+								rangeStep: 1,
+								extraText: '°',
+							},
+						], rangeInput) %>
 					</div>
 				</div>
-				<div class="setting-group">
-					<div class="input-group">
-						<span class="input-group-text">Points Count</span>
-						<input
-							class="form-control" type="number" id="pointsCount"
-							value="1000" min="1"
-							oninput="updateInputWithRange(this, 'pointsCountRange')"
-						/>
-					</div>
-					<input
-						tabindex="-1" type="range" class="form-range" id="pointsCountRange"
-						value="1000" min="1" max="100000" step="1"
-						oninput="updateInputWithRange(this, 'pointsCount', true)"
-					/>
-				</div>
-				<div class="setting-group">
-					<div class="input-group">
-						<span class="input-group-text">Line Proportion</span>
-						<input
-							class="form-control" type="number" id="lineProportion"
-							value="50" min="0" max="100"
-							oninput="updateInputWithRange(this, 'lineProportionRange')"
-						/>
-						<span class="input-group-text">%</span>
-					</div>
-					<input
-						tabindex="-1" type="range" class="form-range" id="lineProportionRange"
-						value="50" min="0" max="100" step="1"
-						oninput="updateInputWithRange(this, 'lineProportion', true)"
-					/>
-				</div>
+				<% _.forEach([
+					{
+						name: 'Points Count',
+						id: 'pointsCount',
+						value: 1000,
+						min: 1,
+						rangeMin: 1,
+						rangeMax: 100000,
+						rangeStep: 1,
+					},
+					{
+						name: 'Line Proportion',
+						id: 'lineProportion',
+						value: 50,
+						min: 0,
+						max: 100,
+						rangeMin: 0,
+						rangeMax: 100,
+						rangeStep: 1,
+						extraText: '%',
+					},
+				], rangeInput) %>
 				<div class="setting-group">
 					<details class="vertex-rules-details" id="vertexRulesDetails">
 						<summary style="text-align: left;">
@@ -261,24 +270,7 @@
 					</div>
 				</div>
 
-				<div class="playback-container">
-					<button id="playbackPrevious" class="playback-button">
-						<i class="bi bi-skip-backward-fill"></i>
-					</button>
-					<button id="playbackPlay" class="playback-button">
-						<i id="playbackPlayIcon" class="bi bi-play-fill"></i>
-						<i id="playbackPauseIcon" class="bi bi-pause-fill hidden"></i>
-					</button>
-					<button id="playbackNext" class="playback-button">
-						<i class="bi bi-skip-forward-fill"></i>
-					</button>
-					<div class="playback-seek">
-						<input id="playbackSeek" type="range" class="form-range" value="0" min="0" max="100" step="0.01"/>
-					</div>
-					<div class="playback-time">
-						<span id="playbackTimeCurrent">0:00</span>/<span id="playbackTimeTotal">0:00</span>
-					</div>
-				</div>
+				<% playbackSettingsBar() %>
 			</div>
 		</div>
 
@@ -301,11 +293,11 @@
 		<br/>
 		<div style="text-align: center;">
 			<small class="form-text">
-				<a target="_blank" href="https://github.com/Toffee1347/chaos-game/tree/%APP_VERSION%">
-					%APP_VERSION%
+				<a target="_blank" href="https://github.com/Toffee1347/chaos-game/tree/<%- version %>">
+					<%- version %>
 				</a>
 				&#x25cf;
-				<a target="_blank" href="https://github.com/Toffee1347/chaos-game/blob/%APP_VERSION%/CHANGELOG.md">
+				<a target="_blank" href="https://github.com/Toffee1347/chaos-game/blob/<%- version %>/CHANGELOG.md">
 					Notes
 				</a>
 			</small>
@@ -676,24 +668,7 @@
 		<i class="bi bi-gear-fill"></i>
 	</div>
 	<div class="side-overlay-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings">
-		<div class="playback-container">
-			<button id="playbackPrevious" class="playback-button">
-				<i class="bi bi-skip-backward-fill"></i>
-			</button>
-			<button id="playbackPlay" class="playback-button">
-				<i id="playbackPlayIcon" class="bi bi-play-fill"></i>
-				<i id="playbackPauseIcon" class="bi bi-pause-fill hidden"></i>
-			</button>
-			<button id="playbackNext" class="playback-button">
-				<i class="bi bi-skip-forward-fill"></i>
-			</button>
-			<div class="playback-seek">
-				<input id="playbackSeek" type="range" class="form-range" value="0" min="0" max="100" step="0.01"/>
-			</div>
-			<div class="playback-time">
-				<span id="playbackTimeCurrent">0:00</span>/<span id="playbackTimeTotal">0:00</span>
-			</div>
-		</div>
+		<% playbackSettingsBar() %>
 	</div>
 
 	<canvas id="canvas" class="canvas"></canvas>
