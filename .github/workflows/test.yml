@@ -1,11 +1,10 @@
 name: Test and Lint code
 
 on:
+  push:
   pull_request:
     branches:
       - main
-  branches:
-    - main
 
 jobs:
   print:
