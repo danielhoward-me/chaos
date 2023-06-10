@@ -8,6 +8,7 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
+const version = `v${packageData.version}`;
 
 /** @type {import('webpack').Configuration} */
 export default {
@@ -52,7 +53,7 @@ export default {
 		new HtmlWebpackPlugin({
 			template: './public/index.html',
 			templateParameters: {
-				version: packageData.version,
+				version,
 			},
 			hash: true,
 		}),

@@ -1,0 +1,14 @@
+name: Test and Lint code
+
+on:
+  pull_request:
+    branches:
+      - main
+  branches:
+    - main
+
+jobs:
+  print:
+    runs-on: ubuntu-latest
+    steps:
+      - run: echo "Running!"
