@@ -1,7 +1,9 @@
+import config from './../../../webpack.config.js';
 import {resolvePath} from './path.js';
 
 import express from 'express';
 import puppeteer from 'puppeteer';
+import webpack from 'webpack';
 
 import type {Server} from 'http';
 import type {Browser, Page} from 'puppeteer';
@@ -12,12 +14,17 @@ interface Site {
 	page: Page;
 }
 
-export function createServer(publicPath = './../../public', port = 3000): Server {
+export function compileWebpack() {
+	console.log('Compiling webpack');
+	webpack(config);
+}
+
+export function createServer(publicPath = './../../dist', port = 3000): Server {
 	const app = express();
 	app.use(express.static(resolvePath(publicPath)));
 	app.get('*', (_, res) => {
 		res.status(404);
-		res.sendFile(resolvePath('./../../public/404.html'));
+		res.sendFile(resolvePath(`${publicPath}/404.html`));
 	});
 	return app.listen(port, () => {
 		console.log(`Static server listening at http://localhost:${port}`);
@@ -25,6 +32,8 @@ export function createServer(publicPath = './../../public', port = 3000): Server
 }
 
 export async function openSite(headless = true): Promise<Site> {
+	compileWebpack();
+
 	const server = createServer();
 
 	const browser = await puppeteer.launch({

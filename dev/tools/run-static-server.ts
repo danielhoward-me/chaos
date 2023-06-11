@@ -1,3 +1,4 @@
-import {createServer} from './utils/sandbox.js';
+import {createServer, compileWebpack} from './utils/sandbox.js';
 
+compileWebpack();
 createServer();
