@@ -1,4 +1,4 @@
-class TagInput extends HTMLElement {
+export default class TagInput extends HTMLElement {
 	private tags: string[] = [];
 	public input: HTMLInputElement;
 
@@ -105,18 +105,6 @@ class TagInput extends HTMLElement {
 	public set value(value) {
 		this.tags = value;
 		this.renderTags();
-	}
-
-	public getValue() {
-		return this.value;
-	}
-	public setValue(value: string[]) {
-		this.value = value;
-		this.dispatchEvent(new CustomEvent('tagschanged'));
-
-		if (value?.length === 0) {
-			this.input.value = '';
-		}
 	}
 }
 

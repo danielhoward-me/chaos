@@ -50,7 +50,7 @@
 	<% } %>
 
 	<div id="settingsBox" class="side-overlay-base side-overlay settings-box">
-		<button class="btn btn-primary close-settings" onclick="toggleSettings()" id="settingsCloseButton">
+		<button class="btn btn-primary close-settings" id="closeSettingsButton">
 			<i class="bi bi-x-lg"></i>
 		</button>
 		<h3 style="text-align: center;">Settings</h3>
@@ -90,7 +90,7 @@
 		<hr/>
 
 		<% function rangeInput(options) { %>
-			<div class="setting-group">
+			<div class="setting-group" data-input-range-pair>
 				<div class="input-group">
 					<span class="input-group-text">
 						<% if (options.extraNameTextId) { %><span id="<%- options.extraNameTextId %>"></span><% } %>
@@ -101,7 +101,6 @@
 						value="<%- options.value %>" 
 						<% if (options.min !== undefined) { %>min="<%- options.min %>"<% } %>
 						<% if (options.max !== undefined) { %>max="<%- options.max %>"<% } %>
-						oninput="updateInputWithRange(this, '<%- options.id %>Range')"
 						<% if (options.customInputAttributes) options.customInputAttributes %>
 					/>
 					<% if (options.extraText) { %>
@@ -109,11 +108,10 @@
 					<% } %>
 				</div>
 				<input
-					tabindex="-1" type="range" class="form-range" id="<%- options.id %>Range"
+					tabindex="-1" type="range" class="form-range"
 					value="<%- options.value %>" step="<%- options.rangeStep %>"
 					<% if (options.rangeMin !== undefined) { %>min="<%- options.rangeMin %>"<% } %>
 					<% if (options.rangeMax !== undefined) { %>max="<%- options.rangeMax %>"<% } %>
-					oninput="updateInputWithRange(this, '<%- options.id %>', true)"
 				/>
 			</div>
 		<% } %>
@@ -286,7 +284,7 @@
 				<div class="invalid-feedback" id="configError"></div>
 			</div>
 			<div class="btn-group">
-				<button type="button" class="btn btn-primary" onclick="toggleHelp()"><i class="bi bi-info-circle"></i> Help</button>
+				<button type="button" class="btn btn-primary" id="openHelpButton"><i class="bi bi-info-circle"></i> Help</button>
 				<button type="button" class="btn btn-danger" onclick="setSetupStage(0)"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
@@ -303,7 +301,7 @@
 	</div>
 
 	<div id="helpBox" class="side-overlay-base side-overlay closed side-overlay-help">
-		<button class="btn btn-primary close-settings" onclick="toggleHelp()">
+		<button class="btn btn-primary close-settings" id="closeHelpButton">
 			<i class="bi bi-x-lg"></i>
 		</button>
 		<h3 style="text-align: center;">Help</h3>
@@ -646,7 +644,7 @@
 		</div>
 	</div>
 
-	<div class="side-overlay-base close-settings-popup open-settings-button" onclick="toggleSettings()">
+	<div class="side-overlay-base close-settings-popup open-settings-button" id="openSettingsButton">
 		<i class="bi bi-gear-fill"></i>
 	</div>
 	<div class="side-overlay-base close-settings-popup fullscreen-playback hidden" id="fullscreenPlaybackSettings">
@@ -657,10 +655,10 @@
 
 	<div class="zoom">
 		<div class="btn-group-vertical">
-			<button class="btn btn-light" onclick="zoomIn()" id="zoomInButton">
+			<button class="btn btn-light" id="zoomInButton">
 				<i class="bi bi-zoom-in"></i>
 			</button>
-			<button class="btn btn-light" onclick="zoomOut()">
+			<button class="btn btn-light" id="zoomOutButton">
 				<i class="bi bi-zoom-out"></i>
 			</button>
 		</div>
