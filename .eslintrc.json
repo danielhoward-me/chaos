@@ -35,6 +35,14 @@
 				"external",
 				"type"
 			],
+			"pathGroups": [
+				{
+					// import/order thinks canvas is a builtin module
+					// when only production dependencies are installed
+					"pattern": "canvas",
+					"group": "external"
+				}
+			],
 			"newlines-between": "always",
 			"alphabetize": {
 				"order": "asc",
