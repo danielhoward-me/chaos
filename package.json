@@ -13,7 +13,7 @@
     "css-minimizer-webpack-plugin": "^5.0.0",
     "eslint": "^8.42.0",
     "eslint-config-google": "^0.14.0",
-    "eslint-plugin-import": "2.26.0",
+    "eslint-plugin-import": "^2.27.5",
     "html-webpack-plugin": "^5.5.1",
     "mini-css-extract-plugin": "^2.7.6",
     "ts-loader": "^9.4.3",
