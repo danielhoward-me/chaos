@@ -18,6 +18,9 @@
 		}
 	},
     "parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"warnOnUnsupportedTypeScriptVersion": false
+	},
 	"root": true,
     "rules": {
 		"require-jsdoc": "off",
