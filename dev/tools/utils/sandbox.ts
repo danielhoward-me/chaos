@@ -35,7 +35,7 @@ export async function openSite(headless = true): Promise<Site> {
 	const page = pages[0];
 	await page.goto('http://localhost:3000');
 
-	console.log('Site opened in browser')
+	console.log('Site opened in browser');
 
 	return {server, browser, page};
 }

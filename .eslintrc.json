@@ -12,7 +12,7 @@
 	"settings": {
 		"import/resolver": {
 			"node": {
-				"paths": ["dev/tools"],
+				"paths": ["dev/tools", "src"],
 				"extensions": [".ts"]
 			}
 		}
