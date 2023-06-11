@@ -55,7 +55,6 @@ export default {
 			templateParameters: {
 				version,
 			},
-			hash: true,
 		}),
 	],
 	resolve: {

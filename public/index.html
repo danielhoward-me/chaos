@@ -118,6 +118,20 @@
 			</div>
 		<% } %>
 
+		<% function checkboxInput(options) { %>
+			<div class="setting-group">
+				<div class="input-group">
+					<span class="input-group-text"><%- options.name %></span>
+					<div class="input-group-text form-control">
+						<input type="checkbox" id="<%- options.checkboxId %>" style="margin: 0 auto;"/>
+					</div>
+					<div class="input-group-text form-control">
+						<input type="color" class="form-control-color" id="<%- options.colourInputId %>" value="<%- options.colourInputValue %>" style="margin: 0 auto;"/>
+					</div>
+				</div>
+			</div>
+		<% } %>
+
 		<div data-setup-stage="2">
 			<h6><a class="settings-help-link" href="#help-shape-settings"><i class="bi bi-2-circle-fill"></i> Shape Settings:</a></h6>
 			<div class="settings-stage">
@@ -231,44 +245,30 @@
 		<div data-setup-stage="4">
 			<h6><a class="settings-help-link" href="#help-playback-settings"><i class="bi bi-4-circle-fill"></i> Playback Settings:</a></h6>
 			<div class="settings-stage">
-				<div class="setting-group">
-					<div class="input-group">
-						<span class="input-group-text">Playback Speed</span>
-						<input
-							class="form-control" type="number" id="playbackSpeed"
-							value="100" min="1"
-							oninput="updateInputWithRange(this, 'playbackSpeedRange')"
-						/>
-						<span class="input-group-text">points/s</span>
-					</div>
-					<input
-						tabindex="-1" type="range" class="form-range" id="playbackSpeedRange"
-						value="100" min="1" max="10000" step="1"
-						oninput="updateInputWithRange(this, 'playbackSpeed', true)"
-					/>
-				</div>
-				<div class="setting-group">
-					<div class="input-group">
-						<span class="input-group-text">Show Lines</span>
-						<div class="input-group-text form-control">
-							<input type="checkbox" id="showLines" style="margin: 0 auto;"/>
-						</div>
-						<div class="input-group-text form-control">
-							<input type="color" class="form-control-color" id="lineColour" value="#ff0000" style="margin: 0 auto;"/>
-						</div>
-					</div>
-				</div>
-				<div class="setting-group">
-					<div class="input-group">
-						<span class="input-group-text">Show Start Point</span>
-						<div class="input-group-text form-control">
-							<input type="checkbox" id="showStartPoint" style="margin: 0 auto;"/>
-						</div>
-						<div class="input-group-text form-control">
-							<input type="color" class="form-control-color" id="startPointColour" value="#00ff00" style="margin: 0 auto;"/>
-						</div>
-					</div>
-				</div>
+				<% rangeInput({
+					name: 'Playback Speed',
+					id: 'playbackSpeed',
+					value: 100,
+					min: 1,
+					rangeMin: 1,
+					rangeMax: 10000,
+					rangeStep: 1,
+				}) %>
+
+				<% _.forEach([
+					{
+						name: 'Show Lines',
+						checkboxId: 'showLines',
+						colourInputId: 'lineColour',
+						colourInputValue: '#ff0000',
+					},
+					{
+						name: 'Show Start Point',
+						checkboxId: 'showStartPoint',
+						colourInputId: 'startPointColour',
+						colourInputValue: '#00ff00',
+					},
+				], checkboxInput) %>
 
 				<% playbackSettingsBar() %>
 			</div>
@@ -309,16 +309,24 @@
 		<h3 style="text-align: center;">Help</h3>
 
 		<ul>
-			<li><a href="#help-the-chaos-game" class="link-primary">The Chaos Game</a></li>
-			<li><a href="#help-tutorial" class="link-primary">Tutorial</a></li>
-			<li><a href="#help-general" class="link-primary">General</a></li>
-			<li><a href="#help-shape-type" class="link-primary">Shape Type Settings</a></li>
-			<li><a href="#help-shape-settings" class="link-primary">Shape Settings</a></li>
-			<li><a href="#help-generate-points" class="link-primary">Generate Points</a></li>
-			<li><a href="#help-playback-settings" class="link-primary">Playback Settings</a></li>
+			<% _.forEach([
+				['The Chaos Game', 'the-chaos-game'],
+				['Tutorial', 'tutorial'],
+				['General', 'general'],
+				['Shape Type Settings', 'shape-type'],
+				['Shape Settings', 'shape-settings'],
+				['Generate Points', 'generate-points'],
+				['Playback Settings', 'playback-settings'],
+			], function ([name, id]) { %>
+				<li><a href="#help-<%- id %>" class="link-primary"><%- name %></a></li>
+			<% }) %>
 		</ul>
-		
+
 		<hr/>
+
+		<% function helpImage(src, alt) { %>
+			<img src="/static/img/help/<%- src %>" loading="lazy" alt="<% alt %>" class="help-menu-image"/>
+		<% } %>
 
 		<div data-help-section="help-the-chaos-game">
 			<h5 style="text-align: center;">The Chaos Game</h5>
@@ -334,7 +342,7 @@
 			<a href="https://en.wikipedia.org/wiki/Sierpi%C5%84ski_triangle" target="_blank" class="link-primary">Sierpiński Triangle</a>
 			which looks like the following:
 			<br/>
-			<img src="/static/img/help/sierpinski-triangle.jpg" loading="lazy" alt="Sierpiński Triangle" class="help-menu-image"/>
+			<% helpImage('sierpinski-triangle.jpg', 'Sierpiński Triangle') %>
 		</div>
 
 		<hr/>
@@ -343,21 +351,21 @@
 			<h5 style="text-align: center;">How to generate a Sierpiński Triangle</h5>
 			<ol>
 				<li>Select the triangle shape from stage <i class="bi bi-1-circle-fill"></i></li>
-				<img src="/static/img/help/shape-type-triangle.jpg" loading="lazy" alt="Triangle Shape Type" class="help-menu-image"/>
+				<% helpImage('shape-type-triangle.jpg', 'Triangle Shape Type') %>
 				<li>
 					Keep shape settings from stage <i class="bi bi-2-circle-fill"></i> default for the purpose of this tutorial
 					(descriptions of the shape settings can be seen <a class="link-primary" href="#help-shape-settings">here</a>)
 				</li>
-				<img src="/static/img/help/shape-settings-preset.jpg" loading="lazy" alt="Triangle Shape Settings" class="help-menu-image"/>
+				<% helpImage('shape-settings-preset.jpg', 'Shape Settings') %>
 				<li>Click <code>Generate Points</code> in stage <i class="bi bi-3-circle-fill"></i></li>
-				<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Triangle Generate Points" class="help-menu-image"/>
+				<% helpImage('generate-points.jpg', 'Generate Points') %>
 				<li>
 					Click Play <i class="bi bi-play-fill"></i> in stage <i class="bi bi-4-circle-fill"></i>
 					(descriptions of the playback settings can be seen <a class="link-primary" href="#help-playback-settings">here</a>)
 				</li>
-				<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Triangle Playback Settings" class="help-menu-image"/>
+				<% helpImage('playback-settings.jpg', 'Playback Settings') %>
 				<li>Watch as the triangle on the grid is filled with points</li>
-				<img src="/static/img/help/triangle-points.gif" alt="Triangle Points" class="help-menu-image"/>
+				<% helpImage('triangle-points.gif', 'Triangle Points') %>
 			</ol>
 		</div>
 
@@ -374,45 +382,31 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
-						<th scope="row"><code>s</code></th>
-						<td>Toggle settings box</td>
-					</tr>
-					<tr>
-						<th scope="row"><code>h</code></th>
-						<td>Toggle help box</td>
-					</tr>
-					<tr>
-						<th scope="row"><code>esc</code></th>
-						<td>Close the current pannel (either help or settings)</td>
-					</tr>
-					<tr>
-						<th scope="row"><code>+</code></th>
-						<td>Zoom in</td>
-					</tr>
-					<tr>
-						<th scope="row"><code>-</code></th>
-						<td>Zoom out</td>
-					</tr>
+					<% function keybindTableRow([key, description]) { %>
+						<tr>
+							<th scope="row"><code><%- key %></code></th>
+							<td><%- description %></td>
+						</tr>
+					<% } %>
+					<% _.forEach([
+						['s', 'Toggle settings box'],
+						['h', 'Toggle help box'],
+						['esc', 'Close the current pannel (either help or settings)'],
+						['+', 'Zoom in'],
+						['-', 'Zoom out'],
+					], keybindTableRow) %>
 					<tr class="table-active">
 						<td colspan="2">The following are only available when points have been generated</td>
 					</tr>
-					<tr>
-						<th scope="row"><code>Space</code></th>
-						<td>Toggle play/pause</td>
-					</tr>
-					<tr>
-						<th scope="row"><code>Arrow Left</code></th>
-						<td>Go back one point</td>
-					</tr>
-					<tr>
-						<th scope="row"><code>Arrow Right</code></th>
-						<td>Go forward one point</td>
-					</tr>
+					<% _.forEach([
+						['Space', 'Toggle play/pause'],
+						['Arrow Left', 'Go back one point'],
+						['Arrow Right', 'Go forward one point'],
+					], keybindTableRow) %>
 				</tbody>
 			</table>
 			If you want to save a configuartion, you can do this by interacting with these buttons at the bottom on the settings pannel
-			<img src="/static/img/help/saves.jpg" alt="Save Buttons" class="help-menu-image"/>
+			<% helpImage('saves.jpg', 'Save Buttons') %>
 			When clicking <code><i class="bi bi-download"></i> Save</code>, the <a href="https://en.wikipedia.org/wiki/JSON" target="_blank" class="link-primary">JSON</a>
 			data of your settings will be downloaded to your device. Then when clicking <code><i class="bi bi-upload"></i> Load</code>, you will need to select the downloaded
 			file. When loading a file, the site will attempt to generate the points, because of this, you can only save a configuration once you are at a point where
@@ -423,7 +417,7 @@
 
 		<div data-help-section="help-shape-type">
 			<h5 style="text-align: center;"><i class="bi bi-1-circle-fill"></i> Shape Type</h5>
-			<img src="/static/img/help/shape-type.jpg" loading="lazy" alt="Shape Type" class="help-menu-image"/>
+			<% helpImage('shape-type.jpg', 'Shape Type') %>
 			Initially you will need to select a shape type. There are two classes of shape types:
 			<table class="table table-striped table-hover">
 				<thead>
@@ -523,30 +517,20 @@
 									</tr>
 								</thead>
 								<tbody>
-									<tr>
-										<th scope="row"><code>≠</code></th>
-										<td><code>!=</code></td>
-									</tr>
-									<tr>
-										<th scope="row"><code>≤</code></th>
-										<td><code>&lt;=</code></td>
-									</tr>
-									<tr>
-										<th scope="row"><code>≥</code></th>
-										<td><code>&gt;=</code></td>
-									</tr>
-									<tr>
-										<th scope="row"><code>∈</code></th>
-										<td><code>in</code></td>
-									</tr>
-									<tr>
-										<th scope="row"><code>∉</code></th>
-										<td><code>!in</code></td>
-									</tr>
-									<tr>
-										<th scope="row"><code>±</code></th>
-										<td><code>+-</code></td>
-									</tr>
+									<% function specialCharacterRow([character, accessibleBy]) { %>
+										<tr>
+											<th scope="row"><code><%- character %></code></th>
+											<td><code><%- accessibleBy %></code></td>
+										</tr>
+									<% } %>
+									<% _.forEach([
+										['≠', '!='],
+										['≤', '<='],
+										['≥', '>='],
+										['∈', 'in'],
+										['∉', '!in'],
+										['±', '+-'],
+									], specialCharacterRow) %> 
 								</tbody>
 							</table>
 							To make a vertex rule, type it into the box then click enter<br/>
@@ -560,7 +544,7 @@
 			<ul>
 				<li>
 					<h6>Regular</h6>
-					<img src="/static/img/help/shape-settings-regular.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
+					<% helpImage('shape-settings-regular.jpg', 'Shape Settings') %>
 					<p>If you have selected a preset shape, <code>Side Count</code> and <code>Rotate Shape</code> aren't available</p>
 					<table class="table table-striped table-hover">
 						<thead>
@@ -587,7 +571,7 @@
 				</li>
 				<li>
 					<h6>Irregular</h6>
-					<img src="/static/img/help/shape-settings-irregular.jpg" loading="lazy" alt="Shape Settings" class="help-menu-image"/>
+					<% helpImage('shape-settings-irregular.jpg', 'Shape Settings') %>
 					<p>
 						To create an irregular shape, click the <code>Start Recording Vertices</code> button then click
 						on the grid to create the vertices of the shape, once you have finished, click the
@@ -603,7 +587,7 @@
 
 		<div data-help-section="help-generate-points">
 			<h5 style="text-align: center;"><i class="bi bi-3-circle-fill"></i> Generate Points</h5>
-			<img src="/static/img/help/generate-points.jpg" loading="lazy" alt="Generate Points" class="help-menu-image"/>
+			<% helpImage('generate-points.jpg', 'Generate Points') %>
 			<p>
 				To generate the points configued in the previous stages, click the <code><i class="bi bi-play-fill"></i>  Generate Points</code> button,
 				a loading bar may momentarily appear, but this shouldn't take more than a few seconds
@@ -612,14 +596,14 @@
 				In some cases, you may get an error that looks similar to the error below, this means that the program
 				has tried every combination of points but has found that the combination of vertex rules stop any further points being generated
 			</p>
-			<img src="/static/img/help/generate-points-error.jpg" loading="lazy" alt="Generate Points Error" class="help-menu-image"/>
+			<% helpImage('generate-points-error.jpg', 'Generate Points Error') %>
 		</div>
 
 		<hr/>
 
 		<div data-help-section="help-playback-settings">
 			<h5 style="text-align: center;"><i class="bi bi-4-circle-fill"></i> Playback Settings</h5>
-			<img src="/static/img/help/playback-settings.jpg" loading="lazy" alt="Playback Settings" class="help-menu-image"/>
+			<% helpImage('playback-settings.jpg', 'Playback Settings') %>
 			<p>
 				The playback settings set out how the points that were just generated are displayed back to you.
 				The options are:

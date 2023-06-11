@@ -139,7 +139,7 @@ function setSetupStage(stage) {
 		const container = getSetupStageContainer(stageI);
 		const enabled = stageI <= stage;
 		setStageEnabled(container, enabled);
-		
+
 		// Reset stage if it is being disabled
 		if (!enabled) {
 			resetStageInputs(stageI);

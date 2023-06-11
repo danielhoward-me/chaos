@@ -134,7 +134,7 @@ class VertexRule {
 			const operatorMatch = operatorMatches[operatorMatches.length - 1];
 			const foundOperator = operatorMatch[1];
 			const operatorIndex = operatorMatch.index + operatorMatch[0].indexOf(foundOperator);
-			
+
 			const left = equation.slice(0, operatorIndex);
 			const right = equation.slice(operatorIndex + foundOperator.length);
 
@@ -273,7 +273,7 @@ class VertexRule {
 
 	static calulateDifference(oldIndex, newIndex, indexCount) {
 		const difference = newIndex - oldIndex;
-	
+
 		let boundDifference = difference;
 		if (difference > indexCount / 2) {
 			boundDifference = difference - indexCount;
