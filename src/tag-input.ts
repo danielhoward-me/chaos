@@ -1,6 +1,7 @@
 export default class TagInput extends HTMLElement {
 	private tags: string[] = [];
 	public input: HTMLInputElement;
+	public type = 'tags';
 
 	constructor() {
 		super();

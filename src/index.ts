@@ -3,10 +3,14 @@ import './styles/tag-input.css';
 
 import './tag-input';
 
-import {onload as canvasOnload} from './canvas-utils/canvas';
+import {onload as canvasOnload} from './canvas/canvas';
 import {onload as coreOnload} from './core';
+import {onload as savesOnload} from './saves';
+import {onload as setupOnload} from './setup/setup';
 
 window.addEventListener('DOMContentLoaded', () => {
 	coreOnload();
 	canvasOnload();
+	savesOnload();
+	setupOnload();
 });

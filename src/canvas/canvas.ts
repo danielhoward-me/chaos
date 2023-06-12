@@ -1,14 +1,15 @@
 import {
+	AssetType,
 	DEFAULT_ZOOM_LEVEL,
 	GRID_LINE_FREQUENCY,
 	MAJOR_GRID_LINE_ALPHA,
 	MAX_ZOOM_LEVEL,
 	MINOR_GRID_LINE_ALPHA,
 	MIN_ZOOM_LEVEL,
-} from './../constants';
-import {$, canvas, screenIsInMobileMode} from './../core';
+} from '../constants';
+import {$, canvas, screenIsInMobileMode} from '../core';
 
-import type {Asset, Coordinate} from './../types.d';
+import type {Asset, Coordinate} from '../types.d';
 
 const ctx = canvas.getContext('2d');
 const fpsCounter = $('fpsCounter');
@@ -193,7 +194,7 @@ function drawAssets(assets: Asset[]) {
 		ctx.beginPath();
 
 		switch (asset.type) {
-		case 'polygon': {
+		case AssetType.Polygon: {
 			const points = [];
 			asset.points.forEach((point) => {
 				points.push(convertGraphPointToCanvasPoint(point));
@@ -205,7 +206,7 @@ function drawAssets(assets: Asset[]) {
 			});
 			break;
 		}
-		case 'circle': {
+		case AssetType.Circle: {
 			const center = convertGraphPointToCanvasPoint(asset.center);
 			const radius = (asset.radius || 5) / scale;
 

@@ -1,3 +1,79 @@
+import TagInput from '../tag-input';
+import {$} from './../core';
+
+import type {SingleStageData} from './../types.d';
+
+export function getStageData(): SingleStageData {
+	return {
+		elements: {
+			regularSideLength: {
+				element: $<HTMLInputElement>('regularShapeSideLength'),
+				sanitisation: {
+					isFloat: true,
+					default: 50,
+					mt: 0,
+				},
+			},
+			polygonSideCount: {
+				element: $<HTMLInputElement>('polygonSideCount'),
+				sanitisation: {
+					isInt: true,
+					default: 5,
+					mte: 3,
+				},
+			},
+			polygonRotate: {
+				element: $<HTMLInputElement>('polygonRotate'),
+				sanitisation: {
+					isFloat: true,
+					default: 0,
+					mte: 0,
+					lte: 360,
+				},
+			},
+			pointsCount: {
+				element: $<HTMLInputElement>('pointsCount'),
+				sanitisation: {
+					isInt: true,
+					default: 1000,
+					mte: 1,
+				},
+			},
+			lineProportion: {
+				element: $<HTMLInputElement>('lineProportion'),
+				sanitisation: {
+					isFloat: true,
+					default: 50,
+					mte: 0,
+					lte: 100,
+				},
+			},
+			vertexRules: {
+				element: $<TagInput>('vertexRules'),
+				sanitisation: {
+					default: [],
+				},
+			},
+			shapeVertices: {
+				element: $<HTMLInputElement>('shapeVertices'),
+				sanitisation: {
+					default: '',
+				},
+			},
+		},
+		onStageReset: () => {
+			setShapeSettingsViewable(null);
+			setPolygonSettingsVisible(false);
+			clearShapeVertices();
+			setVertexRulesDetailsDisabled(false);
+			setVertexRulesDetailsOpen(false);
+		},
+		onStageExit: () => {
+			setRecordVerticesButtonActive(false);
+		},
+	};
+}
+
 const polygonShapeNames = {
 	3: 'triangle',
 	4: 'square',

@@ -1,3 +1,16 @@
+import {PointsWorkerMessage} from './../constants';
+import {$} from './../core';
+
+import type {SingleStageData} from './../types.d';
+
+export function getStageData(): SingleStageData {
+	return {
+		onStageReset: () => {
+			showNoPossiblePointsWarning(false);
+		},
+	};
+}
+
 const generatePointsButton = $('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');
 const loadingBarBody = loadingBar.querySelector('div');
@@ -5,7 +18,7 @@ const loadingBarBody = loadingBar.querySelector('div');
 const impossibleVertexRulesWarning = $('impossibleVertexRulesWarning');
 const impossibleVertexRulesOldVar = $('impossibleVertexRulesOldVar');
 
-const worker = new Worker('/static/js/generate-points-worker.js');
+const worker = new Worker(new URL('./../process-points.js', import.meta.url));
 worker.onmessage = function(e) {
 	const {
 		type,
@@ -13,18 +26,18 @@ worker.onmessage = function(e) {
 	} = e.data;
 
 	switch (type) {
-	case 'points':
+	case PointsWorkerMessage.Points:
 		currentResolve(data);
 		currentResolve = null;
 		break;
-	case 'loadingProgress':
+	case PointsWorkerMessage.LoadingProgress:
 		showLoadingProgress(data);
 		break;
-	case 'impossibleRules':
+	case PointsWorkerMessage.ImpossibleRules:
 		impossibleRules(data);
 		break;
 	}
-}
+};
 
 let currentResolve;
 function generateChaosPoints(vertices, pointsCount, lineProportion, vertexRules) {

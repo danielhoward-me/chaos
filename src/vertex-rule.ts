@@ -1,3 +1,5 @@
+import {VertexRuleEquationType} from './constants';
+
 import type {ParsedVertexRule} from './types.d';
 
 const allowedOperators = ['+', '-', '*', '/', '%'].map(cleanCharactersForRegex);
@@ -115,12 +117,12 @@ export default class VertexRule {
 				const variable = variableAliases[equation] || equation;
 				if (!this.variables.includes(variable)) this.variables.push(variable);
 				return {
-					type: 'variable',
+					type: VertexRuleEquationType.Variable,
 					variable,
 				};
 			} else if (regexMatchWholeString(leftNumberRegex).test(equation)) {
 				return {
-					type: 'number',
+					type: VertexRuleEquationType.Number,
 					number: parseInt(equation),
 				};
 			} else {
@@ -140,7 +142,7 @@ export default class VertexRule {
 			const right = equation.slice(operatorIndex + foundOperator.length);
 
 			return {
-				type: 'equation',
+				type: VertexRuleEquationType.Equation,
 				left: this.parseEquation(left),
 				operator: foundOperator,
 				right: this.parseEquation(right),
@@ -230,11 +232,11 @@ export default class VertexRule {
 
 	static executeInner(equation: ParsedVertexRule, parameters: {[key: string]: number}): number {
 		switch (equation.type) {
-		case 'variable':
+		case VertexRuleEquationType.Variable:
 			return parameters[equation.variable];
-		case 'number':
+		case VertexRuleEquationType.Number:
 			return equation.number;
-		case 'equation': {
+		case VertexRuleEquationType.Equation: {
 			const left = VertexRule.executeInner(equation.left, parameters);
 			const right = VertexRule.executeInner(equation.right, parameters);
 
@@ -307,11 +309,11 @@ export default class VertexRule {
 
 	static formatVertexRuleEquation(equation: ParsedVertexRule): string {
 		switch (equation.type) {
-		case 'variable':
+		case VertexRuleEquationType.Variable:
 			return equation.variable;
-		case 'number':
+		case VertexRuleEquationType.Number:
 			return equation.number.toString();
-		case 'equation': {
+		case VertexRuleEquationType.Equation: {
 			const left = VertexRule.formatVertexRuleEquation(equation.left);
 			const right = VertexRule.formatVertexRuleEquation(equation.right);
 
@@ -319,4 +321,15 @@ export default class VertexRule {
 		}
 		}
 	}
+}
+
+// Used in saves system to convert old style saves to use set equator
+export function useSetEquator(rule: string): string {
+	// If the rule uses an equals equator and a set, convert the equals to a set symbol
+	// The equals was valid syntax in previous versions
+	if (valueEqualEquatorsRegex.test(rule) && valueSetRegex.test(rule)) {
+		rule = rule.includes('=') ? rule.replace('=', '∈') : rule.replace('≠', '∉');
+	}
+
+	return rule;
 }

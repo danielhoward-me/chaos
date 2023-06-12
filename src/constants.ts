@@ -7,3 +7,27 @@ export const MAX_ZOOM_LEVEL = 10;
 export const GRID_LINE_FREQUENCY = 50;
 export const MINOR_GRID_LINE_ALPHA = 0.2;
 export const MAJOR_GRID_LINE_ALPHA = 0.5;
+
+export enum AssetType {
+	Circle,
+	Polygon,
+}
+
+export enum VertexRuleEquationType {
+	Equation,
+	Number,
+	Variable,
+}
+
+export enum PointsWorkerMessage {
+	LoadingProgress,
+	ImpossibleRules,
+	Points,
+}
+
+export enum SetupStage {
+	ShapeType,
+	ShapeSettings,
+	GeneratePoints,
+	Playback,
+}

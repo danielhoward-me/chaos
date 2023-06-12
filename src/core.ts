@@ -1,6 +1,8 @@
-import {topLeftPoint, scale, handleZoom} from './canvas-utils/canvas';
+import {topLeftPoint, scale, handleZoom} from './canvas/canvas';
 import {MINIMUM_SCREEN_WIDTH_FOR_MOBILE} from './constants';
 import TagInput from './tag-input';
+
+import type {InputElement} from './types.d';
 
 export function $<T extends HTMLElement = HTMLElement>(id: string): T {
 	return <T> document.getElementById(id);
@@ -67,26 +69,29 @@ const toggleSettingsBox = makeClassToggler(settingsBox, 'closed', true, (isOpen)
 });
 
 // Allows a general function to be called to not worry about element type and make sure the correct events are triggered
-export function setInputValue(input: HTMLInputElement | HTMLSelectElement, value: string | boolean, triggerEvent?: boolean): void
+export function setInputValue(input: HTMLInputElement | HTMLSelectElement, value: string | number | boolean, triggerEvent?: boolean): void
 export function setInputValue(input: TagInput, value: string[], triggerEvent?: boolean): void
-export function setInputValue(input: HTMLInputElement | HTMLSelectElement | TagInput, value: string | boolean | string[], triggerEvent?: boolean): void {
+export function setInputValue(input: InputElement, value: string | number | boolean | string[], triggerEvent?: boolean): void
+export function setInputValue(input: InputElement, value: string | number | boolean | string[], triggerEvent?: boolean): void {
+	const newValue = Number.isFinite(value) ? value.toString() : value as string | boolean | string[];
+
 	let eventName: string;
 
 	if (input instanceof HTMLInputElement) {
 		switch (input.type) {
 		case 'checkbox':
-			input.checked = <boolean> value;
+			input.checked = <boolean> newValue;
 			break;
 		default:
-			input.value = <string> value;
+			input.value = <string> newValue;
 		}
 
 		eventName = 'input';
 	} else if (input instanceof HTMLSelectElement) {
-		input.value = <string> value;
+		input.value = <string> newValue;
 		eventName = 'change';
 	} else if (input instanceof TagInput) {
-		input.value = <string[]> value;
+		input.value = <string[]> newValue;
 		eventName = 'tagschanged';
 	}
 
@@ -96,7 +101,8 @@ export function setInputValue(input: HTMLInputElement | HTMLSelectElement | TagI
 // Allows a general function to be called to not worry about element type
 export function getInputValue(input: HTMLInputElement | HTMLSelectElement): string | boolean
 export function getInputValue(input: TagInput): string[]
-export function getInputValue(input: HTMLInputElement | HTMLSelectElement | TagInput): string | boolean | string[] {
+export function getInputValue(input: InputElement): string | boolean | string[]
+export function getInputValue(input: InputElement): string | boolean | string[] {
 	if (input instanceof HTMLInputElement && input.type === 'checkbox') {
 		return input.checked;
 	} else {

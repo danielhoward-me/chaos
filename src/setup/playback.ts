@@ -1,3 +1,53 @@
+import {$} from './../core';
+
+import type {SingleStageData} from './../types.d';
+
+export function getStageData(): SingleStageData {
+	return {
+		elements: {
+			playbackSpeed: {
+				element: $<HTMLInputElement>('playbackSpeed'),
+				sanitisation: {
+					isFloat: true,
+					default: 100,
+					mt: 0,
+				},
+			},
+			showLines: {
+				element: $<HTMLInputElement>('showLines'),
+				sanitisation: {
+					default: false,
+				},
+			},
+			lineColour: {
+				element: $<HTMLInputElement>('lineColour'),
+				sanitisation: {
+					default: '#ff0000',
+				},
+			},
+			showStartPoint: {
+				element: $<HTMLInputElement>('showStartPoint'),
+				sanitisation: {
+					default: false,
+				},
+			},
+			startPointColour: {
+				element: $<HTMLInputElement>('startPointColour'),
+				sanitisation: {
+					default: '#00ff00',
+				},
+			},
+		},
+		onStageReset: () => {
+			updatePlaybackTime(true);
+			setPlaying(false);
+			deletePoints();
+			setFullscreenPlaybackSettingsVisible(false);
+			setKeyboardEnabled(false);
+		},
+	};
+}
+
 const playbackSeek = document.querySelectorAll('#playbackSeek');
 const playbackPlay = document.querySelectorAll('#playbackPlay');
 const playbackPrevious = document.querySelectorAll('#playbackPrevious');

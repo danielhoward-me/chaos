@@ -1,3 +1,20 @@
+import {$} from './../core';
+
+import type {SingleStageData} from './../types.d';
+
+export function getStageData(): SingleStageData {
+	return {
+		elements: {
+			shapeType: {
+				element: $<HTMLSelectElement>('shapeType'),
+				sanitisation: {
+					default: '',
+				},
+			},
+		},
+	};
+}
+
 const shapeTypeSelect = stages[1].elements.shapeType.element;
 
 const shapesArray = Array.from(document.querySelectorAll('.type-selection .card'));

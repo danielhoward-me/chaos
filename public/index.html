@@ -275,11 +275,11 @@
 		<br/>
 
 		<div style="text-align: center;">
-			<input type="file" class="hidden" id="uploadConfig" accept=".json" onchange="uploadConfigFile(this.files[0])"/>
+			<input type="file" class="hidden" id="configUploadInput" accept=".json" onchange="uploadConfigFile(this.files[0])"/>
 			<div style="margin-bottom: 10px;" id="saveButtons">
 				<div class="btn-group">
-					<button id="downloadCurrentConfig" type="button" class="btn btn-primary" onclick="downloadCurrentConfig()"><i class="bi bi-download"></i> Save</button>
-					<button type="button" class="btn btn-primary" onclick="uploadConfigInput.click()"><i class="bi bi-download"></i> Load</button>
+					<button id="downloadConfigButton" type="button" class="btn btn-primary"><i class="bi bi-download"></i> Save</button>
+					<button id="uploadConfigButton" type="button" class="btn btn-primary" onclick="uploadConfigInput.click()"><i class="bi bi-download"></i> Load</button>
 				</div>
 				<div class="invalid-feedback" id="configError"></div>
 			</div>

@@ -1,4 +1,9 @@
+import type {AssetType, SetupStage, VertexRuleEquationType, PointsWorkerMessage} from './constants';
+import type TagInput from './tag-input';
+
 export type Coordinate = number[];
+
+export type InputElement = HTMLInputElement | HTMLSelectElement | TagInput;
 
 interface AssetBase {
 	fillStyle?: string | CanvasGradient | CanvasPattern;
@@ -10,28 +15,106 @@ interface AssetBase {
 	id?: string;
 }
 interface CircleAsset extends AssetBase {
-	type: 'circle';
+	type: AssetType.Circle;
 	center: Coordinate;
 	radius: number;
 }
 interface PolygonAsset extends AssetBase {
-	type: 'polygon';
+	type: AssetType.Polygon;
 	points: Coordinate[];
 }
 export type Asset = CircleAsset | PolygonAsset;
 
 interface ParsedVertexRuleVariable {
-	type: 'variable';
+	type: VertexRuleEquationType.Variable;
 	variable: string;
 }
 interface ParsedVertexRuleNumber {
-	type: 'number';
+	type: VertexRuleEquationType.Number;
 	number: number;
 }
 interface ParsedVertexRuleEquation {
-	type: 'equation';
+	type: VertexRuleEquationType.Equation;
 	left: ParsedVertexRule;
 	operator: string;
 	right: ParsedVertexRule;
 }
 export type ParsedVertexRule = ParsedVertexRuleEquation | ParsedVertexRuleVariable | ParsedVertexRuleNumber;
+
+export interface SaveConfig {
+	version: number;
+	stages: {
+		[stage in SetupStage]: {
+			[inputName: string]: string | number | boolean | string[];
+		};
+	};
+}
+
+export interface PointsWorkerStartMessage {
+	vertices: Coordinate[];
+	startPoint: Coordinate;
+	pointsCount: number;
+	lineProportion: number;
+	rawVertexRules: string[];
+}
+
+interface PointsWorkerMessagePoints {
+	type: PointsWorkerMessage.Points;
+	data: PointsWorkerPoint[];
+}
+interface PointsWorkerMessageImpossibleRules {
+	type: PointsWorkerMessage.ImpossibleRules;
+	data: number;
+}
+interface PointsWorkerMessageLoadingProgress {
+	type: PointsWorkerMessage.LoadingProgress;
+	data: number;
+}
+export type PointsWorkerMessageType =
+	PointsWorkerMessagePoints |
+	PointsWorkerMessageImpossibleRules |
+	PointsWorkerMessageLoadingProgress;
+
+export interface PointsWorkerPoint {
+	point: Coordinate;
+	vertexIndex: number;
+}
+
+export interface PointsWorkerRandomVertex {
+	vertex: Coordinate;
+	index: number;
+}
+
+export interface RandomPointBoundData {
+	min: Coordinate;
+	max: Coordinate;
+}
+
+export interface SingleStageElementInput {
+	element: HTMLInputElement | HTMLSelectElement;
+	sanitisation: {
+		default: string | number | boolean;
+		isFloat?: boolean;
+		isInt?: boolean;
+		lte?: number;
+		mte?: number;
+		lt?: number;
+		mt?: number;
+	};
+}
+interface SingleStageElementTagInput {
+	element: TagInput;
+	sanitisation: {
+		default: string[];
+	};
+}
+export interface SingleStageData {
+	elements?: {
+		[name: string]: SingleStageElementInput | SingleStageElementTagInput;
+	};
+	onStageReset?: () => void;
+	onStageExit?: () => void;
+}
+export type StageData = {
+	[stage in SetupStage]: SingleStageData;
+};
