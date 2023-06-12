@@ -6,7 +6,7 @@ import {setSetupStage, stages} from './setup';
 import {shapeVertices} from './shape-settings';
 
 import type TagInput from './../tag-input';
-import type {ChaosGamePoint, Coordinate, PointsWorkerMessageResponse, SingleStageData} from './../types.d';
+import type {ChaosGamePoint, Coordinate, PointsWorkerMessageResponse, SingleStageData, PointsWorkerStartMessage} from './../types.d';
 
 export function getStageData(): SingleStageData {
 	return {
@@ -52,16 +52,15 @@ let currentResolve: (points: ChaosGamePoint[]) => void;
 function generateChaosPoints(vertices: Coordinate[], pointsCount: number, lineProportion: number, vertexRules: string[]): Promise<ChaosGamePoint[]> {
 	if (currentResolve) return Promise.reject(new Error('Already generating points'));
 	return new Promise<ChaosGamePoint[]>((resolve) => {
-		const startPoint = getRandomPointInShape(...vertices);
-
-		worker.postMessage({
+		const startMessage: PointsWorkerStartMessage = {
 			vertices,
-			startPoint,
 			pointsCount,
 			lineProportion,
-			vertexRules,
-		});
+			rawVertexRules: vertexRules,
+			startPoint: getRandomPointInShape(...vertices),
+		};
 
+		worker.postMessage(startMessage);
 		currentResolve = resolve;
 	});
 }

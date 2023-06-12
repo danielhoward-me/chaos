@@ -51,6 +51,13 @@
 		}],
 		"max-len": "off",
 		"linebreak-style": "off",
-		"new-cap": "off"
+		"new-cap": "off",
+		"no-restricted-imports": "off",
+		"@typescript-eslint/no-restricted-imports": [
+			"warn",
+			{
+				"patterns": ["../*"]
+			}
+		]
 	}
 }
