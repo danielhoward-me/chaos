@@ -19,3 +19,19 @@ interface PolygonAsset extends AssetBase {
 	points: Coordinate[];
 }
 export type Asset = CircleAsset | PolygonAsset;
+
+interface ParsedVertexRuleVariable {
+	type: 'variable';
+	variable: string;
+}
+interface ParsedVertexRuleNumber {
+	type: 'number';
+	number: number;
+}
+interface ParsedVertexRuleEquation {
+	type: 'equation';
+	left: ParsedVertexRule;
+	operator: string;
+	right: ParsedVertexRule;
+}
+export type ParsedVertexRule = ParsedVertexRuleEquation | ParsedVertexRuleVariable | ParsedVertexRuleNumber;
