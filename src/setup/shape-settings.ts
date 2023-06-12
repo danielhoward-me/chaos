@@ -1,6 +1,6 @@
-import TagInput from '../tag-input';
 import {$} from './../core';
 
+import type TagInput from './../tag-input';
 import type {SingleStageData} from './../types.d';
 
 export function getStageData(): SingleStageData {
@@ -145,7 +145,7 @@ shapeVerticesInput.addEventListener('input', () => {
 });
 
 function setShapeSettingsViewable(isRegular) {
-	let hideAll = isRegular === null;
+	const hideAll = isRegular === null;
 	regularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'remove' : 'add')]('hidden');
 	irregularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'add' : 'remove')]('hidden');
 }
@@ -185,7 +185,7 @@ function clearRecordedShape() {
 function generatePolygonVertices(sideLength, sideCount) {
 	const {radius, internalMiddleAngle} = getShapeBaseData(sideLength, sideCount);
 
-	let vertices = [];
+	const vertices = [];
 
 	// Modify the angle to start at the top of the shape
 	// and allow the shape to be rotated
@@ -206,7 +206,7 @@ function generatePolygonVertices(sideLength, sideCount) {
 }
 
 function getShapeBaseData(sideLength, sideCount) {
-	const internalMiddleAngle = (2 * Math.PI) / sideCount; 
+	const internalMiddleAngle = (2 * Math.PI) / sideCount;
 	const internalSideAngle = ((sideCount - 2) * Math.PI) / sideCount;
 	const radius = (sideLength * Math.sin(internalSideAngle / 2)) / Math.sin(internalMiddleAngle);
 
@@ -243,10 +243,10 @@ function shapeSettingsInputHandler(updateGraph) {
 }
 
 function getArrayPermutations(arr) {
-	let combinations = arr.length <= 2 ? (
+	const combinations = arr.length <= 2 ? (
 		[arr.join(''), arr.reverse().join('')]
 	) : arr.reduce(
-		(acc, letter, i) => acc.concat(getArrayPermutations(arr.slice(0, i).concat(arr.slice(i + 1))).map(val => letter + val)),
+		(acc, letter, i) => acc.concat(getArrayPermutations(arr.slice(0, i).concat(arr.slice(i + 1))).map((val) => letter + val)),
 		[],
 	);
 

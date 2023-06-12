@@ -27,7 +27,7 @@ const vertexRules = <TagInput> stages[SetupStage.ShapeSettings].elements.vertexR
 const impossibleVertexRulesWarning = $('impossibleVertexRulesWarning');
 const impossibleVertexRulesOldVar = $('impossibleVertexRulesOldVar');
 
-const worker = new Worker(new URL('./../process-points.js', import.meta.url));
+const worker = new Worker(new URL('./../process-points.ts', import.meta.url));
 worker.onmessage = function(e: MessageEvent<PointsWorkerMessageResponse>) {
 	const {
 		type,
@@ -66,7 +66,7 @@ function generateChaosPoints(vertices: Coordinate[], pointsCount: number, linePr
 	});
 }
 
-async function generatePoints() {
+export async function generatePoints() {
 	setSetupStage(SetupStage.GeneratePoints);
 	showLoadingProgress(0);
 	loadingBar.classList.remove('hidden');

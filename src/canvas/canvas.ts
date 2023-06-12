@@ -6,10 +6,10 @@ import {
 	MAX_ZOOM_LEVEL,
 	MINOR_GRID_LINE_ALPHA,
 	MIN_ZOOM_LEVEL,
-} from '../constants';
-import {$, canvas, screenIsInMobileMode} from '../core';
+} from './../constants';
+import {$, canvas, screenIsInMobileMode} from './../core';
 
-import type {Asset, Coordinate} from '../types.d';
+import type {Asset, Coordinate} from './../types.d';
 
 const ctx = canvas.getContext('2d');
 const fpsCounter = $('fpsCounter');

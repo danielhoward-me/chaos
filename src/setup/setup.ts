@@ -2,6 +2,7 @@ import {SetupStage} from './../constants';
 import {setInputValue} from './../core';
 import TagInput from './../tag-input';
 import {getStageData as getGeneratePointsStageData} from './generate-points';
+import {onload as generatePointsOnload} from './generate-points';
 import {getStageData as getPlaybackStageData} from './playback';
 import {getStageData as getShapeSettingsStageData} from './shape-settings';
 import {getStageData as getShapeTypeStageData} from './shape-type';
@@ -112,5 +113,7 @@ export function sanitiseInputsInStage(stage: SetupStage) {
 }
 
 export function onload() {
+	generatePointsOnload();
+
 	setSetupStage(0);
 }

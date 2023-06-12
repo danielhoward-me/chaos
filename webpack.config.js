@@ -61,7 +61,7 @@ export default {
 		extensions: ['.ts'],
 	},
 	output: {
-		filename: 'static/js/index.[contenthash].js',
+		filename: 'static/js/[contenthash].js',
 		path: path.join(fileURLToPath(new URL('.', import.meta.url)), 'dist'),
 		clean: true,
 		publicPath: '/',
