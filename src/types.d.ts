@@ -60,7 +60,7 @@ export interface PointsWorkerStartMessage {
 
 interface PointsWorkerMessagePoints {
 	type: PointsWorkerMessage.Points;
-	data: PointsWorkerPoint[];
+	data: ChaosGamePoint[];
 }
 interface PointsWorkerMessageImpossibleRules {
 	type: PointsWorkerMessage.ImpossibleRules;
@@ -70,12 +70,12 @@ interface PointsWorkerMessageLoadingProgress {
 	type: PointsWorkerMessage.LoadingProgress;
 	data: number;
 }
-export type PointsWorkerMessageType =
+export type PointsWorkerMessageResponse =
 	PointsWorkerMessagePoints |
 	PointsWorkerMessageImpossibleRules |
 	PointsWorkerMessageLoadingProgress;
 
-export interface PointsWorkerPoint {
+export interface ChaosGamePoint {
 	point: Coordinate;
 	vertexIndex: number;
 }

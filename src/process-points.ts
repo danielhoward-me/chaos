@@ -3,9 +3,10 @@ import VertexRule from './vertex-rule';
 
 import type {
 	PointsWorkerStartMessage,
-	PointsWorkerPoint,
+	ChaosGamePoint,
 	Coordinate,
 	PointsWorkerRandomVertex,
+	PointsWorkerMessageResponse,
 } from './types.d';
 
 self.onmessage = function(e: MessageEvent<PointsWorkerStartMessage>) {
@@ -15,21 +16,25 @@ self.onmessage = function(e: MessageEvent<PointsWorkerStartMessage>) {
 	const points = calculatePoints({...messageData, vertexRules});
 	if (!points) return;
 
-	self.postMessage({
+	postMessage({
 		type: PointsWorkerMessage.Points,
 		data: points,
 	});
 };
 
+function postMessage(data: PointsWorkerMessageResponse) {
+	self.postMessage(data);
+}
+
 function reportProgress(currentCount: number, totalCount: number) {
-	self.postMessage({
+	postMessage({
 		type: PointsWorkerMessage.LoadingProgress,
 		data: Math.round(currentCount / totalCount * 100),
 	});
 }
 
-function calculatePoints({vertices, startPoint, pointsCount, lineProportion, vertexRules}: PointsWorkerStartMessage & {vertexRules: VertexRule[]}): PointsWorkerPoint[] {
-	const points: PointsWorkerPoint[] = [{
+function calculatePoints({vertices, startPoint, pointsCount, lineProportion, vertexRules}: PointsWorkerStartMessage & {vertexRules: VertexRule[]}): ChaosGamePoint[] {
+	const points: ChaosGamePoint[] = [{
 		point: startPoint,
 		vertexIndex: -1,
 	}];
@@ -37,7 +42,7 @@ function calculatePoints({vertices, startPoint, pointsCount, lineProportion, ver
 	for (let i = 0; i < pointsCount; i++) {
 		const randomVertex = getRandomVertex(vertices, vertexRules, points[i].vertexIndex);
 		if (randomVertex === null) {
-			self.postMessage({
+			postMessage({
 				type: PointsWorkerMessage.ImpossibleRules,
 				data: points[i].vertexIndex,
 			});

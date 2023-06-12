@@ -1,7 +1,12 @@
-import {PointsWorkerMessage} from './../constants';
+import getRandomPointInShape from './../canvas/random-point';
+import {PointsWorkerMessage, SetupStage} from './../constants';
 import {$} from './../core';
+import {setChaosPoints} from './playback';
+import {setSetupStage, stages} from './setup';
+import {shapeVertices} from './shape-settings';
 
-import type {SingleStageData} from './../types.d';
+import type TagInput from './../tag-input';
+import type {ChaosGamePoint, Coordinate, PointsWorkerMessageResponse, SingleStageData} from './../types.d';
 
 export function getStageData(): SingleStageData {
 	return {
@@ -11,15 +16,19 @@ export function getStageData(): SingleStageData {
 	};
 }
 
-const generatePointsButton = $('generatePoints');
+const generatePointsButton = $<HTMLButtonElement>('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');
 const loadingBarBody = loadingBar.querySelector('div');
+
+const pointsCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.pointsCount.element;
+const lineProportion = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.lineProportion.element;
+const vertexRules = <TagInput> stages[SetupStage.ShapeSettings].elements.vertexRules.element;
 
 const impossibleVertexRulesWarning = $('impossibleVertexRulesWarning');
 const impossibleVertexRulesOldVar = $('impossibleVertexRulesOldVar');
 
 const worker = new Worker(new URL('./../process-points.js', import.meta.url));
-worker.onmessage = function(e) {
+worker.onmessage = function(e: MessageEvent<PointsWorkerMessageResponse>) {
 	const {
 		type,
 		data,
@@ -39,10 +48,10 @@ worker.onmessage = function(e) {
 	}
 };
 
-let currentResolve;
-function generateChaosPoints(vertices, pointsCount, lineProportion, vertexRules) {
-	if (currentResolve) return Promise.reject('Already generating points');
-	return new Promise((resolve) => {
+let currentResolve: (points: ChaosGamePoint[]) => void;
+function generateChaosPoints(vertices: Coordinate[], pointsCount: number, lineProportion: number, vertexRules: string[]): Promise<ChaosGamePoint[]> {
+	if (currentResolve) return Promise.reject(new Error('Already generating points'));
+	return new Promise<ChaosGamePoint[]>((resolve) => {
 		const startPoint = getRandomPointInShape(...vertices);
 
 		worker.postMessage({
@@ -57,17 +66,15 @@ function generateChaosPoints(vertices, pointsCount, lineProportion, vertexRules)
 	});
 }
 
-generatePointsButton.addEventListener('click', generatePoints);
-
 async function generatePoints() {
-	setSetupStage(3);
+	setSetupStage(SetupStage.GeneratePoints);
 	showLoadingProgress(0);
 	loadingBar.classList.remove('hidden');
 	generatePointsButton.disabled = true;
 	showNoPossiblePointsWarning(false);
 
-	const pointsCountValue = pointsCount.value;
-	const lineProportionValue = lineProportion.value/100;
+	const pointsCountValue = parseInt(pointsCount.value);
+	const lineProportionValue = parseInt(lineProportion.value)/100;
 	const vertexRulesValue = vertexRules.value;
 	const points = await generateChaosPoints(shapeVertices, pointsCountValue, lineProportionValue, vertexRulesValue);
 	if (!points) return;
@@ -86,22 +93,26 @@ async function generatePoints() {
 	setChaosPoints(points);
 }
 
-function impossibleRules(oldVar) {
+function impossibleRules(oldVar: number) {
 	showNoPossiblePointsWarning(true, oldVar);
 	generatePointsButton.disabled = false;
 	loadingBar.classList.add('hidden');
 	showLoadingProgress(0);
-	currentResolve();
+	currentResolve([]);
 	currentResolve = null;
 }
 
-function showLoadingProgress(progess) {
+function showLoadingProgress(progess: number) {
 	loadingBarBody.style.width = `${progess}%`;
 	loadingBarBody.innerText = progess === 100 ? 'Completed' : `${progess}%`;
 	loadingBarBody.classList.toggle('bg-success', progess === 100);
 }
 
-function showNoPossiblePointsWarning(show, oldVar) {
+function showNoPossiblePointsWarning(show: boolean, oldVar?: number) {
 	impossibleVertexRulesWarning.classList.toggle('hidden', !show);
-	impossibleVertexRulesOldVar.innerText = oldVar ?? '';
+	impossibleVertexRulesOldVar.innerText = oldVar.toString() ?? '';
+}
+
+export function onload() {
+	generatePointsButton.addEventListener('click', generatePoints);
 }
