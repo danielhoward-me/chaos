@@ -5,11 +5,9 @@ env:
   STAGING_BUILD: true
 on:
   workflow_run:
-    workflows: ["Test"]
-    branches:
-      - staging
-    types:
-      - completed
+    workflows: [Test]
+    types: [completed]
+    branches: [staging]
 
 jobs:
   check-for-tests-sucsess:
