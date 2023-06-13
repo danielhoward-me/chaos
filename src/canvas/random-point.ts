@@ -1,13 +1,6 @@
-/**
- * @typedef {int[]} Point
- */
+import type {Coordinate, RandomPointBoundData} from './../types.d';
 
-/**
- * Returns a random coordinate within the shape defined by the vertices
- * @param  {...Point} vertices The vertices of the shape
- * @returns {Point} The random point
- */
-function getRandomPointInShape(...vertices) {
+export default function getRandomPointInShape(...vertices: Coordinate[]): Coordinate {
 	const bounds = getBoundPoints(vertices);
 	const width = bounds.max[0] - bounds.min[0];
 	const height = bounds.max[1] - bounds.min[1];
@@ -27,14 +20,8 @@ function getRandomPointInShape(...vertices) {
 	return randomPoint.map((coord, i) => coord + bounds.min[i]);
 }
 
-/**
- * Creates a canvas with the given dimensions, and the shape filled in
- * @param {int} height The max height of the shape
- * @param {int} width The max width of the shape
- * @param  {[]]Point} vertices The vertices of the shape 
- * @returns {ImageData} The image data of the shape
- */
-function getShapeData(height, width, vertices) {
+// Creates a canvas with the given dimensions, and the shape filled in
+function getShapeData(height: number, width: number, vertices: Coordinate[]): ImageData {
 	const canvas = document.createElement('canvas');
 	canvas.width = width;
 	canvas.height = height;
@@ -42,9 +29,9 @@ function getShapeData(height, width, vertices) {
 	ctx.fillStyle = 'black';
 
 	ctx.beginPath();
-	ctx.moveTo(...vertices[0]);
+	ctx.moveTo(vertices[0][0], vertices[0][1]);
 	vertices.slice(1).forEach((point) => {
-		ctx.lineTo(...point);
+		ctx.lineTo(point[0], point[1]);
 	});
 	ctx.closePath();
 	ctx.fill();
@@ -52,17 +39,7 @@ function getShapeData(height, width, vertices) {
 	return ctx.getImageData(0, 0, width, height);
 }
 
-/**
- * @typedef {Object} BoundValues
- * @property {Point} min The minimum x and y values
- * @property {Point} max The maximum x and y values
- */
-/**
- * Gets the min and max x and y values as two points
- * @param {int[][]} vertices The vertices of the shape
- * @returns {BoundValues} The min and max points
- */
-function getBoundPoints(vertices) {
+function getBoundPoints(vertices: Coordinate[]): RandomPointBoundData {
 	const min = [Infinity, Infinity];
 	const max = [-Infinity, -Infinity];
 
@@ -77,25 +54,14 @@ function getBoundPoints(vertices) {
 	return {min, max};
 }
 
-/**
- * Returns a random point within the defined rectangle
- * @param {int} width The width of the rectangle
- * @param {int} height The height of the rectangle
- */
-function getRandomPointInRect(width, height) {
+function getRandomPointInRect(width: number, height: number): Coordinate {
 	return [
 		Math.round(Math.random() * width),
 		Math.round(Math.random() * height),
 	];
 }
 
-/**
- * Tests if the given point is within the shape
- * @param {Point} point The Point to test
- * @param {ImageData} shapeData The shape data of the vertices
- * @returns {boolean} True if the point is in the shape
- */
-function isPointInShape(point, shapeData) {
+function isPointInShape(point: Coordinate, shapeData: ImageData): boolean {
 	// shapeData.data is a 1D array of RGBA values
 	// We need to get the A value
 	const index = (point[1] * shapeData.width + point[0]) * 4 + 3;

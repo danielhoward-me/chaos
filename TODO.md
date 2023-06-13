@@ -28,6 +28,22 @@
 - [ ] Migrate project to typescript and compile with webpack
 
 
+## For release [v2.0.0]
+
+### Bugs
+
+- [x] Shape name doesn't have a space next to it in the input label
+  - Fixed by setting all the text in javascript
+- [x] The total time doesn't update in the playback settings
+  - Fixed by making sure the `setInputValue` function fires the event for ranges
+- [x] The incorrect options are displayed when on regular shapes
+  - Fixed by enabling `invert` on the `makeClassToggler` function
+- [x] Inputs don't trigger updates in the graph
+  - Fixed by moving away from old system and declaring which inputs should trigger updates
+- [x] Playback keybinds don't work
+  - Fixed by changing the space code from ` ` to `Space`
+
+
 ## For release [v1.3.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v130)
 
 ### Features

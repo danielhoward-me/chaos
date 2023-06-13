@@ -1,4 +1,5 @@
 {
-	"liveServer.settings.root": "/public",
-	"liveServer.settings.file": "/404.html"
+	"liveServer.settings.root": "/dist",
+	"liveServer.settings.file": "/404.html",
+	"liveServer.settings.fullReload": true
 }

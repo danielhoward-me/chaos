@@ -44,7 +44,7 @@ const SCREENSHOTS: Screenshot[] = [
 				el.style.width = 'unset';
 			});
 
-			const helpCloseButton = await page.$('button#settingsCloseButton');
+			const helpCloseButton = await page.$('button#closeSettingsButton');
 			await helpCloseButton?.evaluate((el) => {
 				el.classList.add('hidden');
 			});
@@ -63,7 +63,7 @@ const SCREENSHOTS: Screenshot[] = [
 			await triangle?.click();
 			await triangle?.focus();
 
-			const helpCloseButton = await page.$('button#settingsCloseButton');
+			const helpCloseButton = await page.$('button#closeSettingsButton');
 			await helpCloseButton?.evaluate((el) => {
 				el.classList.add('hidden');
 			});
