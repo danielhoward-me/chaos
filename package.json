@@ -36,6 +36,6 @@
     "lint": "eslint --ext ts --max-warnings 0 src dev"
   },
   "engines": {
-	"node": "18.16.0"
+	"node": "18.x"
   }
 }
