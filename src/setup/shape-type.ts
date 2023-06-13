@@ -10,18 +10,19 @@ import {
 
 import type {SingleStageData} from './../types.d';
 
-export function getStageData(): SingleStageData {
-	return {
-		elements: {
-			shapeType: {
-				element: $<HTMLSelectElement>('shapeType'),
-				sanitisation: {
-					default: '',
-				},
+export const stageData: SingleStageData = {
+	elements: {
+		shapeType: {
+			element: $<HTMLSelectElement>('shapeType'),
+			sanitisation: {
+				default: '',
 			},
 		},
-	};
-}
+	},
+	onStageReset() {
+		selectedShape = null;
+	},
+};
 
 const shapeTypeSelect = <HTMLInputElement> stages[SetupStage.ShapeType].elements.shapeType.element;
 
@@ -32,7 +33,7 @@ const shapes = shapesArray.reduce<{[shape: string]: HTMLDivElement}>((obj, shape
 	obj[shape.dataset.shapeType] = shape;
 	return obj;
 }, {});
-let selectedShape: string | null;
+let selectedShape: string | null = null;
 
 export function getSelectedShape(): string | null {
 	return selectedShape;
@@ -73,8 +74,8 @@ function setSingleShapeSelected(shape: HTMLDivElement, selected: boolean) {
 	shape.querySelector('img').classList.toggle('shape-image-selected', selected);
 }
 
-function setShapeSelected(shape: HTMLDivElement) {
-	selectedShape = shape.dataset.shapeType || null;
+function setShapeSelected(shape: HTMLDivElement | undefined) {
+	selectedShape = shape?.dataset.shapeType || null;
 	shapesArray.forEach((shapeCard) => {
 		setSingleShapeSelected(shapeCard, shape === shapeCard);
 	});

@@ -3,80 +3,79 @@ import {AssetType, SetupStage, polygonShapeNames} from './../constants';
 import {$, canvas, makeClassToggler} from './../core';
 import VertexRule from './../vertex-rule';
 import {sanitiseInputsInStage, setSetupStage, stages} from './setup';
+import {getSelectedShape} from './shape-type';
 
 import type TagInput from './../tag-input';
-import type {Coordinate, SingleStageData} from './../types.d';
+import type {Coordinate, NewTagEventDetails, SingleStageData} from './../types.d';
 
-export function getStageData(): SingleStageData {
-	return {
-		elements: {
-			regularSideLength: {
-				element: $<HTMLInputElement>('regularShapeSideLength'),
-				sanitisation: {
-					isFloat: true,
-					default: 50,
-					mt: 0,
-				},
-			},
-			polygonSideCount: {
-				element: $<HTMLInputElement>('polygonSideCount'),
-				sanitisation: {
-					isInt: true,
-					default: 5,
-					mte: 3,
-				},
-			},
-			polygonRotate: {
-				element: $<HTMLInputElement>('polygonRotate'),
-				sanitisation: {
-					isFloat: true,
-					default: 0,
-					mte: 0,
-					lte: 360,
-				},
-			},
-			pointsCount: {
-				element: $<HTMLInputElement>('pointsCount'),
-				sanitisation: {
-					isInt: true,
-					default: 1000,
-					mte: 1,
-				},
-			},
-			lineProportion: {
-				element: $<HTMLInputElement>('lineProportion'),
-				sanitisation: {
-					isFloat: true,
-					default: 50,
-					mte: 0,
-					lte: 100,
-				},
-			},
-			vertexRules: {
-				element: $<TagInput>('vertexRules'),
-				sanitisation: {
-					default: [],
-				},
-			},
-			shapeVertices: {
-				element: $<HTMLInputElement>('shapeVertices'),
-				sanitisation: {
-					default: '',
-				},
+export const stageData: SingleStageData = {
+	elements: {
+		regularSideLength: {
+			element: $<HTMLInputElement>('regularShapeSideLength'),
+			sanitisation: {
+				isFloat: true,
+				default: 50,
+				mt: 0,
 			},
 		},
-		onStageReset: () => {
-			setShapeSettingsViewable(null);
-			setPolygonSettingsVisible(false);
-			clearShapeVertices();
-			setVertexRulesDetailsDisabled(false);
-			setVertexRulesDetailsOpen(false);
+		polygonSideCount: {
+			element: $<HTMLInputElement>('polygonSideCount'),
+			sanitisation: {
+				isInt: true,
+				default: 5,
+				mte: 3,
+			},
 		},
-		onStageExit: () => {
-			setRecordVerticesButtonActive(false);
+		polygonRotate: {
+			element: $<HTMLInputElement>('polygonRotate'),
+			sanitisation: {
+				isFloat: true,
+				default: 0,
+				mte: 0,
+				lte: 360,
+			},
 		},
-	};
-}
+		pointsCount: {
+			element: $<HTMLInputElement>('pointsCount'),
+			sanitisation: {
+				isInt: true,
+				default: 1000,
+				mte: 1,
+			},
+		},
+		lineProportion: {
+			element: $<HTMLInputElement>('lineProportion'),
+			sanitisation: {
+				isFloat: true,
+				default: 50,
+				mte: 0,
+				lte: 100,
+			},
+		},
+		vertexRules: {
+			element: $<TagInput>('vertexRules'),
+			sanitisation: {
+				default: [],
+			},
+		},
+		shapeVertices: {
+			element: $<HTMLInputElement>('shapeVertices'),
+			sanitisation: {
+				default: '',
+			},
+		},
+	},
+	onStageReset: () => {
+		setShapeSettingsViewable(null);
+		setPolygonSettingsVisible(false);
+		clearShapeVertices();
+		setVertexRulesDetailsDisabled(false);
+		setVertexRulesDetailsOpen(false);
+	},
+	onStageExit: () => {
+		setRecordVerticesButtonActive(false);
+	},
+};
 
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
@@ -211,10 +210,11 @@ function generatePolygonVerticesHandler() {
 	shapeTypeText.innerText = shapeType ? `${shapeType?.charAt(0).toUpperCase()}${shapeType?.slice(1)} ` : '';
 }
 
-function shapeSettingsInputHandler(updateGraph: boolean) {
-	if (!selectedShape) return;
+export function shapeSettingsInputHandler(updateGraph: boolean) {
+	const selectedShape = getSelectedShape();
+	if (selectedShape === null) return;
 
-	if (!(shapeTypeSelect.value === 'custom' && shapeVertices.length < 3)) {
+	if (!(selectedShape === 'custom' && shapeVertices.length < 3)) {
 		setSetupStage(3);
 	}
 
@@ -225,7 +225,9 @@ function shapeSettingsInputHandler(updateGraph: boolean) {
 	}
 }
 
-function getArrayPermutations(arr) {
+function getArrayPermutations(arr: string[]): string[] {
+	if (arr.length === 0) return arr;
+
 	const combinations = arr.length <= 2 ? (
 		[arr.join(''), arr.reverse().join('')]
 	) : arr.reduce(
@@ -235,7 +237,9 @@ function getArrayPermutations(arr) {
 
 	return Array.from(new Set(combinations));
 }
-const characterSets = {
+const characterSets: {
+	[character: string]: string[],
+} = {
 	'≠': ['!', '='],
 	'≤': ['<', '='],
 	'≥': ['>', '='],
@@ -243,15 +247,20 @@ const characterSets = {
 	'∉': ['!', '∈'],
 	'±': ['+', '-'],
 };
-const characterSetEntries = Object.entries(characterSets).map(([replacement, characters]) => [replacement, getArrayPermutations(characters)]);
-vertexRules.addEventListener('input', () => {
+const characterSetEntries = Object.entries(characterSets).map(
+	([replacement, characters]) => ({
+		replacement,
+		characterCombinations: getArrayPermutations(characters),
+	})
+);
+function onVertexRulesInput() {
 	vertexRules.parentElement.classList.remove('is-invalid');
 	vertexRulesFeedback.classList.add('hidden');
 
 	let origionalSelectionStart = vertexRules.input.selectionStart;
 	let value = vertexRules.input.value;
 
-	characterSetEntries.forEach(([replacement, characterCombinations]) => {
+	characterSetEntries.forEach(({replacement, characterCombinations}) => {
 		characterCombinations.forEach((characters) => {
 			while (value.includes(characters)) {
 				if (value.indexOf(characters) < origionalSelectionStart) {
@@ -265,17 +274,17 @@ vertexRules.addEventListener('input', () => {
 
 	vertexRules.input.value = value.toLowerCase();
 	vertexRules.input.setSelectionRange(origionalSelectionStart, origionalSelectionStart);
-});
+}
 
-function setVertexRulesDetailsDisabled(disabled) {
+function setVertexRulesDetailsDisabled(disabled: boolean) {
 	vertexRulesDetails.toggleAttribute('disabled', disabled);
 	vertexRulesDetailsSummary[disabled ? 'setAttribute' : 'removeAttribute']('tabindex', '-1');
 }
-function setVertexRulesDetailsOpen(open) {
+function setVertexRulesDetailsOpen(open: boolean) {
 	vertexRulesDetails.toggleAttribute('open', open);
 }
 
-vertexRules.addEventListener('newtag', (e) => {
+function onNewVertexRule(e: CustomEvent<NewTagEventDetails>) {
 	const tag = e.detail.tag;
 
 	try {
@@ -292,30 +301,34 @@ vertexRules.addEventListener('newtag', (e) => {
 
 	setVertexRulesDetailsDisabled(true);
 	setVertexRulesDetailsOpen(true);
-});
+}
 
-vertexRules.addEventListener('removetag', () => {
-	if (vertexRules.tags.length === 0) {
+function onVertexRuleDelete() {
+	if (vertexRules.value.length === 0) {
 		setVertexRulesDetailsDisabled(false);
 	}
 
 	setSetupStage(3);
-});
+}
 
 // Triggered when the value is set directly
-vertexRules.addEventListener('tagschanged', () => {
-	const rulesInUse = vertexRules.tags.length !== 0;
+function onVertexRuleChange() {
+	const rulesInUse = vertexRules.value.length !== 0;
 	setVertexRulesDetailsDisabled(rulesInUse);
 	setVertexRulesDetailsOpen(rulesInUse);
-});
-
-Object.values(stages[2].elements || []).forEach(({element}) => {
-	element.addEventListener('input', () => shapeSettingsInputHandler(element.dataset.updateGraph !== undefined));
-});
+}
 
 export function onload() {
 	shapeVerticesInput.addEventListener('input', onShapeVerticesInput);
 	recordVerticesButton.addEventListener('click', onRecordVerticesClick);
 	canvas.addEventListener('click', onCanvasClick);
 	clearRecordedVerticesButton.addEventListener('click', clearRecordedShape);
+	vertexRules.addEventListener('input', onVertexRulesInput);
+	vertexRules.addEventListener('newtag', onNewVertexRule);
+	vertexRules.addEventListener('deletetag', onVertexRuleDelete);
+	vertexRules.addEventListener('tagschanged', onVertexRuleChange);
+
+	Object.values(stages[SetupStage.ShapeSettings].elements || []).forEach(({element}) => {
+		element.addEventListener('input', () => shapeSettingsInputHandler(element.dataset.updateGraph !== undefined));
+	});
 }

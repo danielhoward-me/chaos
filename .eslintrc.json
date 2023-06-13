@@ -56,7 +56,7 @@
 		"@typescript-eslint/no-restricted-imports": [
 			"warn",
 			{
-				"patterns": ["../*"]
+				"patterns": ["../*", "*types"]
 			}
 		]
 	}

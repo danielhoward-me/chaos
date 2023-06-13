@@ -1,18 +1,19 @@
 import {SetupStage} from './../constants';
-import {setInputValue} from './../core';
+import {setInputValue, $} from './../core';
 import TagInput from './../tag-input';
-import {getStageData as getGeneratePointsStageData, onload as generatePointsOnload} from './generate-points';
-import {getStageData as getPlaybackStageData, onload as playbackOnload} from './playback';
-import {getStageData as getShapeSettingsStageData, onload as shapeSettingsOnload} from './shape-settings';
-import {getStageData as getShapeTypeStageData, onload as shapeTypeOnload} from './shape-type';
+import {stageData as generatePointsStageData, onload as generatePointsOnload} from './generate-points';
+import {stageData as playbackStageData, onload as playbackOnload} from './playback';
+import {stageData as shapeSettingsStageData, onload as shapeSettingsOnload} from './shape-settings';
+import {stageData as shapeTypeStageData, onload as shapeTypeOnload} from './shape-type';
 
 import type {SingleStageElementInput, StageData} from './../types.d';
 
 export const stages: StageData = {
-	[SetupStage.ShapeType]: getShapeTypeStageData(),
-	[SetupStage.ShapeSettings]: getShapeSettingsStageData(),
-	[SetupStage.GeneratePoints]: getGeneratePointsStageData(),
-	[SetupStage.Playback]: getPlaybackStageData(),
+	[SetupStage.Reset]: {},
+	[SetupStage.ShapeType]: shapeTypeStageData,
+	[SetupStage.ShapeSettings]: shapeSettingsStageData,
+	[SetupStage.GeneratePoints]: generatePointsStageData,
+	[SetupStage.Playback]: playbackStageData,
 };
 
 let setupStage: SetupStage = SetupStage.ShapeType;
@@ -39,9 +40,9 @@ export function setSetupStage(newStage: SetupStage) {
 		}
 	});
 
-	// 0 is the same as reseting everything
+	// Reset is the same as reseting everything
 	// so we need to reenable the first stage
-	if (newStage === 0) {
+	if (newStage === SetupStage.Reset) {
 		newStage = SetupStage.ShapeType;
 		const container = getSetupStageContainer(newStage);
 		setStageEnabled(container, true);
@@ -112,10 +113,13 @@ export function sanitiseInputsInStage(stage: SetupStage) {
 }
 
 export function onload() {
+	console.log(234);
 	shapeTypeOnload();
 	shapeSettingsOnload();
 	generatePointsOnload();
+	console.log(234);
 	playbackOnload();
 
 	setSetupStage(0);
+	$('resetButton').addEventListener('click', () => setSetupStage(SetupStage.Reset));
 }

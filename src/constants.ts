@@ -26,6 +26,7 @@ export enum PointsWorkerMessage {
 }
 
 export enum SetupStage {
+	Reset,
 	ShapeType,
 	ShapeSettings,
 	GeneratePoints,

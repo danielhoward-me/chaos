@@ -8,13 +8,11 @@ import {getShapeVertices} from './shape-settings';
 import type TagInput from './../tag-input';
 import type {ChaosGamePoint, Coordinate, PointsWorkerMessageResponse, SingleStageData, PointsWorkerStartMessage} from './../types.d';
 
-export function getStageData(): SingleStageData {
-	return {
-		onStageReset: () => {
-			showNoPossiblePointsWarning(false);
-		},
-	};
-}
+export const stageData: SingleStageData = {
+	onStageReset() {
+		showNoPossiblePointsWarning(false);
+	},
+};
 
 const generatePointsButton = $<HTMLButtonElement>('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');

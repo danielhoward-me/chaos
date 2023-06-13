@@ -25,6 +25,7 @@ function getCurrentConfig(): SaveConfig {
 	const config: SaveConfig = {
 		version: CURRENT_SAVE_VERSION,
 		stages: {
+			[SetupStage.Reset]: {},
 			[SetupStage.ShapeType]: {},
 			[SetupStage.ShapeSettings]: {},
 			[SetupStage.GeneratePoints]: {},

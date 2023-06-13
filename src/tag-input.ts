@@ -1,3 +1,5 @@
+import type {NewTagEventDetails} from './types.d';
+
 export default class TagInput extends HTMLElement {
 	private tags: string[] = [];
 	public input: HTMLInputElement;
@@ -69,7 +71,7 @@ export default class TagInput extends HTMLElement {
 		tagElement.appendChild(closeIcon);
 
 		closeIcon.addEventListener('click', () => {
-			this.removeTag(index);
+			this.deleteTag(index);
 		});
 
 		this.appendChild(tagElement);
@@ -78,7 +80,7 @@ export default class TagInput extends HTMLElement {
 	public addTag(tag: string) {
 		if (tag === '') return;
 
-		const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
+		const eventCancelled = !this.dispatchEvent(new CustomEvent<NewTagEventDetails>('newtag', {
 			detail: {
 				tag,
 				changeTag: (newTag) => {
@@ -94,9 +96,9 @@ export default class TagInput extends HTMLElement {
 		this.renderTags();
 	}
 
-	private removeTag(index: number) {
+	private deleteTag(index: number) {
 		this.tags.splice(index, 1);
-		this.dispatchEvent(new CustomEvent('removetag'));
+		this.dispatchEvent(new CustomEvent('deletetag'));
 		this.renderTags();
 	}
 

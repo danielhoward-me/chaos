@@ -13,6 +13,7 @@ const version = `v${packageData.version}`;
 /** @type {import('webpack').Configuration} */
 export default {
 	entry: './src/index.ts',
+	devtool: 'source-map',
 	module: {
 		rules: [
 			{
@@ -66,5 +67,5 @@ export default {
 		clean: true,
 		publicPath: '/',
 	},
-	mode: 'production',
+	mode: 'development',
 };

@@ -122,3 +122,8 @@ export type StageData = {
 export interface Keybinds {
 	[key: string]: () => void;
 }
+
+export interface NewTagEventDetails {
+	tag: string;
+	changeTag: (newRule: string) => void;
+}
