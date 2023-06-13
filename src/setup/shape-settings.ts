@@ -1,7 +1,11 @@
-import {$} from './../core';
+import {addAssets, removeAsset, setGraphMovementDisabled, convertCanvasPointToGraphPoint} from './../canvas/canvas';
+import {AssetType, SetupStage, polygonShapeNames} from './../constants';
+import {$, canvas, makeClassToggler} from './../core';
+import VertexRule from './../vertex-rule';
+import {sanitiseInputsInStage, setSetupStage, stages} from './setup';
 
 import type TagInput from './../tag-input';
-import type {SingleStageData} from './../types.d';
+import type {Coordinate, SingleStageData} from './../types.d';
 
 export function getStageData(): SingleStageData {
 	return {
@@ -74,115 +78,94 @@ export function getStageData(): SingleStageData {
 	};
 }
 
-const polygonShapeNames = {
-	3: 'triangle',
-	4: 'square',
-	5: 'pentagon',
-	6: 'hexagon',
-	7: 'heptagon',
-	8: 'octagon',
-	9: 'nonagon',
-	10: 'decagon',
-	11: 'hendecagon',
-	12: 'dodecagon',
-	13: 'tridecagon',
-	14: 'tetradecagon',
-	15: 'pentadecagon',
-	16: 'hexadecagon',
-	17: 'heptadecagon',
-	18: 'octadecagon',
-	19: 'enneadecagon',
-	20: 'icosagon',
-};
-
 const regularShapeSettings = $('regularShapeSettings');
 const irregularShapeSettings = $('irregularShapeSettings');
 const polygonSettings = $('polygonSettings');
 const recordVerticesButton = $('recordVertices');
 const recordVerticesText = $('recordVerticesText');
+const clearRecordedVerticesButton = $('clearRecordedVertices');
 const shapeTypeText = $('shapeTypeText');
 const vertexRulesFeedback = $('vertexRulesFeedback');
 const vertexRulesDetails = $('vertexRulesDetails');
 const vertexRulesDetailsSummary = vertexRulesDetails.querySelector('summary');
 
-const polygonRotate = stages[2].elements.polygonRotate.element;
-const regularSideLength = stages[2].elements.regularSideLength.element;
-const polygonSideCount = stages[2].elements.polygonSideCount.element;
-const pointsCount = stages[2].elements.pointsCount.element;
-const lineProportion = stages[2].elements.lineProportion.element;
-const vertexRules = stages[2].elements.vertexRules.element;
-const shapeVerticesInput = stages[2].elements.shapeVertices.element;
+const polygonRotate = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonRotate.element;
+const regularSideLength = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.regularSideLength.element;
+const polygonSideCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonSideCount.element;
+const vertexRules = <TagInput> stages[SetupStage.ShapeSettings].elements.vertexRules.element;
+const shapeVerticesInput = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.shapeVertices.element;
 
 let listeningForVertices = false;
 
-let shapeVertices = [];
-const shapeVerticesAssetId = 'shapeVertices';
-function addShapeVertices(...vertices) {
+let shapeVertices: Coordinate[] = [];
+export function getShapeVertices(): Coordinate[] {
+	return shapeVertices;
+}
+const shapeVerticesAssetId = 'sv';
+function addShapeVertices(...vertices: Coordinate[]) {
 	shapeVertices.push(...vertices);
 	removeAsset(shapeVerticesAssetId);
 	addAssets({
+		type: AssetType.Polygon,
 		id: shapeVerticesAssetId,
-		type: 'polygon',
 		points: shapeVertices,
 		stroke: true,
 		lineWidth: 2,
 	});
 	shapeVerticesInput.value = shapeVertices.map((vertex) => vertex.join(',')).join(' ');
 }
-function clearShapeVertices() {
+export function clearShapeVertices() {
 	shapeVertices = [];
 	removeAsset(shapeVerticesAssetId);
 	shapeVerticesInput.value = '';
 }
 
-shapeVerticesInput.addEventListener('input', () => {
+function onShapeVerticesInput() {
 	const value = shapeVerticesInput.value.trim();
 	if (!value) return;
 
 	clearShapeVertices();
 	const vertices = value.split(' ').map((vertex) => vertex.split(',').map((value) => parseFloat(value)));
 	addShapeVertices(...vertices);
-});
+}
 
-function setShapeSettingsViewable(isRegular) {
+export function setShapeSettingsViewable(isRegular: boolean | null) {
 	const hideAll = isRegular === null;
-	regularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'remove' : 'add')]('hidden');
-	irregularShapeSettings.classList[hideAll ? 'add' : (isRegular ? 'add' : 'remove')]('hidden');
+	regularShapeSettings.classList.toggle('hidden', hideAll || !isRegular);
+	irregularShapeSettings.classList.toggle('hidden', hideAll || isRegular);
 }
 
-function setPolygonSettingsVisible(visible) {
-	polygonSettings.classList[visible ? 'remove' : 'add']('hidden');
-}
+export const setPolygonSettingsVisible = makeClassToggler(polygonSettings, 'hidden');
 
-recordVerticesButton.addEventListener('click', () => {
+function onRecordVerticesClick() {
 	setRecordVerticesButtonActive(!listeningForVertices);
 	if (!listeningForVertices && shapeVertices.length >= 3) {
 		setSetupStage(3);
 	}
-});
+}
 
-canvas.addEventListener('click', (event) => {
+function onCanvasClick(event: MouseEvent) {
 	if (!listeningForVertices) return;
 
 	const graphPoint = convertCanvasPointToGraphPoint([event.offsetX, event.offsetY]);
 	addShapeVertices(graphPoint);
-});
+}
 
-function setRecordVerticesButtonActive(active) {
+function setRecordVerticesButtonActive(active: boolean) {
 	listeningForVertices = active;
 
 	setGraphMovementDisabled(active, 'crosshair');
 
 	recordVerticesText.innerText = active ? 'Stop' : 'Start';
-	recordVerticesButton.classList[active ? 'add' : 'remove']('btn-danger');
-	recordVerticesButton.classList[active ? 'remove' : 'add']('btn-success');
+	recordVerticesButton.classList.toggle('btn-danger', active);
+	recordVerticesButton.classList.toggle('btn-success', !active);
 }
 function clearRecordedShape() {
 	clearShapeVertices();
 	setSetupStage(2);
 }
 
-function generatePolygonVertices(sideLength, sideCount) {
+function generatePolygonVertices(sideLength: number, sideCount: number): Coordinate[] {
 	const {radius, internalMiddleAngle} = getShapeBaseData(sideLength, sideCount);
 
 	const vertices = [];
@@ -205,7 +188,7 @@ function generatePolygonVertices(sideLength, sideCount) {
 	return vertices;
 }
 
-function getShapeBaseData(sideLength, sideCount) {
+export function getShapeBaseData(sideLength: number, sideCount: number): {radius: number, internalMiddleAngle: number, internalSideAngle: number} {
 	const internalMiddleAngle = (2 * Math.PI) / sideCount;
 	const internalSideAngle = ((sideCount - 2) * Math.PI) / sideCount;
 	const radius = (sideLength * Math.sin(internalSideAngle / 2)) / Math.sin(internalMiddleAngle);
@@ -228,7 +211,7 @@ function generatePolygonVerticesHandler() {
 	shapeTypeText.innerText = shapeType ? `${shapeType?.charAt(0).toUpperCase()}${shapeType?.slice(1)} ` : '';
 }
 
-function shapeSettingsInputHandler(updateGraph) {
+function shapeSettingsInputHandler(updateGraph: boolean) {
 	if (!selectedShape) return;
 
 	if (!(shapeTypeSelect.value === 'custom' && shapeVertices.length < 3)) {
@@ -329,3 +312,10 @@ vertexRules.addEventListener('tagschanged', () => {
 Object.values(stages[2].elements || []).forEach(({element}) => {
 	element.addEventListener('input', () => shapeSettingsInputHandler(element.dataset.updateGraph !== undefined));
 });
+
+export function onload() {
+	shapeVerticesInput.addEventListener('input', onShapeVerticesInput);
+	recordVerticesButton.addEventListener('click', onRecordVerticesClick);
+	canvas.addEventListener('click', onCanvasClick);
+	clearRecordedVerticesButton.addEventListener('click', clearRecordedShape);
+}

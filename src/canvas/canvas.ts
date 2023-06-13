@@ -86,7 +86,7 @@ function convertGraphPointToCanvasPoint(graphPoint: Coordinate): Coordinate {
 	];
 }
 
-function convertCanvasPointToGraphPoint(canvasPoint: Coordinate): Coordinate {
+export function convertCanvasPointToGraphPoint(canvasPoint: Coordinate): Coordinate {
 	return [
 		canvasPoint[0] * scale + topLeftPoint[0],
 		-canvasPoint[1] * scale + topLeftPoint[1],

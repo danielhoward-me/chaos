@@ -2,7 +2,7 @@ import {onUpdateAssets, findFirstAssetIndex, addAssets, removeAsset, setAssetHid
 import {AssetType, SetupStage} from './../constants';
 import {$, executeKeybind, setInputValue, setNodeListValue} from './../core';
 import {stages, setSetupStage, sanitiseInputsInStage} from './setup';
-import {getShapeBaseData, shapeVertices} from './shape-settings';
+import {getShapeBaseData, getShapeVertices} from './shape-settings';
 
 import type {ChaosGamePoint, CircleAsset, Keybinds, SingleStageData} from './../types.d';
 
@@ -260,7 +260,7 @@ function drawPointLines() {
 		const index = currentShowingCount-1;
 		const previousPoint = points[index-1].point;
 		const currentPoint = points[index].point;
-		const chosenVertex = shapeVertices[points[index].vertexIndex];
+		const chosenVertex = getShapeVertices()[points[index].vertexIndex];
 
 		const pointAssets: CircleAsset[] = ([previousPoint, currentPoint, chosenVertex].map((point) => ({
 			type: AssetType.Circle,

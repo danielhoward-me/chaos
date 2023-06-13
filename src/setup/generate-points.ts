@@ -3,7 +3,7 @@ import {PointsWorkerMessage, SetupStage} from './../constants';
 import {$} from './../core';
 import {setChaosPoints} from './playback';
 import {setSetupStage, stages} from './setup';
-import {shapeVertices} from './shape-settings';
+import {getShapeVertices} from './shape-settings';
 
 import type TagInput from './../tag-input';
 import type {ChaosGamePoint, Coordinate, PointsWorkerMessageResponse, SingleStageData, PointsWorkerStartMessage} from './../types.d';
@@ -75,7 +75,7 @@ export async function generatePoints() {
 	const pointsCountValue = parseInt(pointsCount.value);
 	const lineProportionValue = parseInt(lineProportion.value)/100;
 	const vertexRulesValue = vertexRules.value;
-	const points = await generateChaosPoints(shapeVertices, pointsCountValue, lineProportionValue, vertexRulesValue);
+	const points = await generateChaosPoints(getShapeVertices(), pointsCountValue, lineProportionValue, vertexRulesValue);
 	if (!points) return;
 
 	generatePointsButton.disabled = false;
