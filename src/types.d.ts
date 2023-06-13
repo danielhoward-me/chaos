@@ -118,3 +118,7 @@ export interface SingleStageData {
 export type StageData = {
 	[stage in SetupStage]: SingleStageData;
 };
+
+export interface Keybinds {
+	[key: string]: () => void;
+}

@@ -1,6 +1,10 @@
-import {$} from './../core';
+import {onUpdateAssets, findFirstAssetIndex, addAssets, removeAsset, setAssetHidden} from './../canvas/canvas';
+import {AssetType, SetupStage} from './../constants';
+import {$, executeKeybind, setInputValue, setNodeListValue} from './../core';
+import {stages, setSetupStage, sanitiseInputsInStage} from './setup';
+import {getShapeBaseData, shapeVertices} from './shape-settings';
 
-import type {SingleStageData} from './../types.d';
+import type {ChaosGamePoint, CircleAsset, Keybinds, SingleStageData} from './../types.d';
 
 export function getStageData(): SingleStageData {
 	return {
@@ -48,7 +52,7 @@ export function getStageData(): SingleStageData {
 	};
 }
 
-const playbackSeek = document.querySelectorAll('#playbackSeek');
+const playbackSeek = document.querySelectorAll<HTMLInputElement>('#playbackSeek');
 const playbackPlay = document.querySelectorAll('#playbackPlay');
 const playbackPrevious = document.querySelectorAll('#playbackPrevious');
 const playbackNext = document.querySelectorAll('#playbackNext');
@@ -58,17 +62,20 @@ const playbackPlayIcon = document.querySelectorAll('#playbackPlayIcon');
 const playbackPauseIcon = document.querySelectorAll('#playbackPauseIcon');
 const fullscreenPlaybackSettings = $('fullscreenPlaybackSettings');
 
-const playbackSpeed = stages[4].elements.playbackSpeed.element;
-const showLines = stages[4].elements.showLines.element;
-const lineColour = stages[4].elements.lineColour.element;
-const showStartPoint = stages[4].elements.showStartPoint.element;
-const startPointColour = stages[4].elements.startPointColour.element;
+const regularSideLength = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.regularSideLength.element;
+const polygonSideCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonSideCount.element;
+
+const playbackSpeed = <HTMLInputElement> stages[SetupStage.Playback].elements.playbackSpeed.element;
+const showLines = <HTMLInputElement> stages[SetupStage.Playback].elements.showLines.element;
+const lineColour = <HTMLInputElement> stages[SetupStage.Playback].elements.lineColour.element;
+const showStartPoint = <HTMLInputElement> stages[SetupStage.Playback].elements.showStartPoint.element;
+const startPointColour = <HTMLInputElement> stages[SetupStage.Playback].elements.startPointColour.element;
 
 const canvasPointsId = 'p';
 const canvasLinesId = 'l';
 const canvasStartPointId = 's';
 
-let points = [];
+let points: ChaosGamePoint[] = [];
 let totalPlaybackTime = 0;
 let currentPlaybackTime = 0;
 let playing = false;
@@ -77,12 +84,8 @@ let currentShowingCount = 0;
 let pointRadius = 0;
 let listenForKeyboard = false;
 
-onUpdateAssets(() => {
-	firstAssetIndex = findFirstAssetIndex(canvasPointsId);
-});
-
-function setChaosPoints(processedPoints) {
-	setSetupStage(4);
+export function setChaosPoints(processedPoints: ChaosGamePoint[]) {
+	setSetupStage(SetupStage.Playback);
 	points = processedPoints;
 
 	loadPointsIntoAssets();
@@ -98,7 +101,7 @@ function loadPointsIntoAssets() {
 	points.forEach((point) => {
 		addAssets({
 			id: canvasPointsId,
-			type: 'circle',
+			type: AssetType.Circle,
 			center: point.point,
 			radius: pointRadius,
 			fill: true,
@@ -109,8 +112,8 @@ function loadPointsIntoAssets() {
 
 // This function is very arbitrary, but makes an estimate for the best radius
 function getCircleRadius() {
-	const shapeSideLength = regularSideLength.value;
-	const shapeSideCount = polygonSideCount.value;
+	const shapeSideLength = parseInt(regularSideLength.value);
+	const shapeSideCount = parseInt(polygonSideCount.value);
 	const pointsCount = points.length;
 
 	const shapeRadius = getShapeBaseData(shapeSideLength, shapeSideCount).radius;
@@ -129,19 +132,22 @@ function deletePoints() {
 	currentShowingCount = 0;
 }
 
-function updatePlaybackTime(reset) {
+function updatePlaybackTime(reset = false) {
 	if (reset) {
 		currentPlaybackTime = 0;
 		totalPlaybackTime = 0;
 		syncAssetsWithPlaybackTime();
 	}
 
-	playbackSeek.setValue('value', totalPlaybackTime === 0 ?  0 : (currentPlaybackTime / totalPlaybackTime) * 100);
-	playbackTimeCurrent.setValue('innerText', convertSecondsToTime(currentPlaybackTime));
-	playbackTimeTotal.setValue('innerText', convertSecondsToTime(totalPlaybackTime));
+	playbackSeek.forEach((seek) => {
+		setInputValue(seek, totalPlaybackTime === 0 ? 0 : (currentPlaybackTime / totalPlaybackTime) * 100);
+	});
+
+	setNodeListValue(playbackTimeCurrent, 'innerText', convertSecondsToTime(currentPlaybackTime));
+	setNodeListValue(playbackTimeTotal, 'innerText', convertSecondsToTime(totalPlaybackTime));
 }
 
-function convertSecondsToTime(totalSeconds) {
+function convertSecondsToTime(totalSeconds: number): string {
 	const minutes = Math.floor(totalSeconds / 60);
 	const seconds = Math.round(totalSeconds % 60);
 	return `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
@@ -149,51 +155,46 @@ function convertSecondsToTime(totalSeconds) {
 
 function updateTotalPlaybackTime() {
 	const totalPoints = points.length;
-	const playbackSpeedValue = playbackSpeed.value;
+	const playbackSpeedValue = parseInt(playbackSpeed.value);
 	totalPlaybackTime = Math.round(totalPoints / playbackSpeedValue);
 
 	updatePlaybackTime();
 }
 
-playbackSpeed.addEventListener('input', () => {
-	sanitiseInputsInStage(4);
+function playbackSpeedChange() {
+	sanitiseInputsInStage(SetupStage.Playback);
 
 	setPlaying(false);
 	updatePlaybackTime(true);
 	updateTotalPlaybackTime();
-});
+}
 
-function setPlaybackIcons(isPlaying) {
+function setPlaybackIcons(isPlaying: boolean) {
 	playbackPlayIcon.forEach((icon) => icon.classList.toggle('hidden', isPlaying));
 	playbackPauseIcon.forEach((icon) => icon.classList.toggle('hidden', !isPlaying));
 }
 
-function setFullscreenPlaybackSettingsVisible(isVisible) {
+function setFullscreenPlaybackSettingsVisible(isVisible: boolean) {
 	fullscreenPlaybackSettings.classList.toggle('hidden', !isVisible);
 }
 
-function setPlaying(isPlaying) {
+function setPlaying(isPlaying: boolean) {
 	playing = isPlaying;
 	setPlaybackIcons(playing);
 }
 
-playbackPlay.forEach((play) => {
-	play.addEventListener('click', () => {
-		if (currentShowingCount === points.length) {
-			currentPlaybackTime = 0;
-			syncAssetsWithPlaybackTime();
-			updatePlaybackTime();
-		}
+function onPlay() {
+	if (currentShowingCount === points.length) {
+		currentPlaybackTime = 0;
+		syncAssetsWithPlaybackTime();
+		updatePlaybackTime();
+	}
 
-		setPlaying(!playing);
-	});
-});
+	setPlaying(!playing);
+}
 
-playbackPrevious.forEach((previous) => previous.addEventListener('click', () => seekPoints(-1)));
-playbackNext.forEach((next) => next.addEventListener('click', () => seekPoints(1)));
-
-function seekPoints(amount) {
-	const playbackSpeedValue = playbackSpeed.value;
+function seekPoints(amount: number) {
+	const playbackSpeedValue = parseInt(playbackSpeed.value);
 	currentPlaybackTime += amount/playbackSpeedValue;
 
 	if (currentPlaybackTime < 0) currentPlaybackTime = 0;
@@ -203,8 +204,10 @@ function seekPoints(amount) {
 	syncAssetsWithPlaybackTime();
 }
 
-function getCountToDisplay() {
-	const playbackSpeedValue = playbackSpeed.value;
+// Returns the number of points that should be showing
+// according to the playback time
+function getCountToDisplay(): number {
+	const playbackSpeedValue = parseInt(playbackSpeed.value);
 	const count = Math.round(playbackSpeedValue * currentPlaybackTime);
 	return count > points.length ? points.length : count;
 }
@@ -226,7 +229,7 @@ function syncAssetsWithPlaybackTimeIfNotPlaying() {
 }
 
 // Run in canvas before drawing assets
-function updateAssets(delta) {
+export function updateAssets(delta: number) {
 	if (currentShowingCount === points.length) setPlaying(false);
 	if (!playing) return;
 
@@ -257,24 +260,26 @@ function drawPointLines() {
 		const index = currentShowingCount-1;
 		const previousPoint = points[index-1].point;
 		const currentPoint = points[index].point;
-		const chosenVertex = shapeVertices[points[index].index];
+		const chosenVertex = shapeVertices[points[index].vertexIndex];
+
+		const pointAssets: CircleAsset[] = ([previousPoint, currentPoint, chosenVertex].map((point) => ({
+			type: AssetType.Circle,
+			id: canvasLinesId,
+			center: point,
+			radius: pointRadius * 1.5,
+			fill: true,
+			fillStyle: lineColour.value,
+		})));
 
 		addAssets(
 			{
+				type: AssetType.Polygon,
 				id: canvasLinesId,
-				type: 'polygon',
 				points: [previousPoint, chosenVertex],
 				stroke: true,
 				strokeStyle: lineColour.value,
 			},
-			...([previousPoint, currentPoint, chosenVertex].map((point) => ({
-				id: canvasLinesId,
-				type: 'circle',
-				center: point,
-				radius: pointRadius * 1.5,
-				fill: true,
-				fillStyle: lineColour.value,
-			}))),
+			...pointAssets,
 		);
 	}
 }
@@ -286,7 +291,7 @@ function drawStartPoint() {
 		addAssets(
 			{
 				id: canvasStartPointId,
-				type: 'circle',
+				type: AssetType.Circle,
 				center: points[0].point,
 				radius: pointRadius * 1.5,
 				fill: true,
@@ -296,43 +301,55 @@ function drawStartPoint() {
 	}
 }
 
-playbackSeek.forEach((seek) => {
-	seek.addEventListener('input', () => {
-		const seekValue = seek.value;
-		playbackSeek.setValue('value', seekValue);
-		currentPlaybackTime = (seekValue / 100) * totalPlaybackTime;
-		updatePlaybackTime();
-		syncAssetsWithPlaybackTime();
-	});
-});
+function onSeek(seekValue: number) {
+	playbackSeek.forEach((seek) => setInputValue(seek, seekValue));
+	currentPlaybackTime = (seekValue / 100) * totalPlaybackTime;
+	updatePlaybackTime();
+	syncAssetsWithPlaybackTime();
+}
 
-showLines.addEventListener('input', () => {
+function onShowLinesChange() {
 	syncAssetsWithPlaybackTimeIfNotPlaying();
 	syncLineColour();
-});
-showStartPoint.addEventListener('input', () => {
+}
+function onShowStartPointChange() {
 	syncAssetsWithPlaybackTimeIfNotPlaying();
 	syncStartPointColour();
-});
+}
 
 function syncLineColour() {
-	lineColour[showLines.checked ? 'removeAttribute' : 'setAttribute' ]('disabled', '');
+	lineColour[showLines.checked ? 'removeAttribute' : 'setAttribute']('disabled', '');
 }
 function syncStartPointColour() {
-	startPointColour[showStartPoint.checked ? 'removeAttribute' : 'setAttribute' ]('disabled', '');
+	startPointColour[showStartPoint.checked ? 'removeAttribute' : 'setAttribute']('disabled', '');
 }
 
 lineColour.addEventListener('input', syncAssetsWithPlaybackTimeIfNotPlaying);
 startPointColour.addEventListener('input', syncAssetsWithPlaybackTimeIfNotPlaying);
 
-function setKeyboardEnabled(isEnabled) {
+function setKeyboardEnabled(isEnabled: boolean) {
 	listenForKeyboard = isEnabled;
 }
 
-window.addEventListener('keydown', (event) => {
-	if (!listenForKeyboard || event.target.tagName === 'INPUT') return;
+const keybinds: Keybinds = {
+	' ': onPlay,
+	'ArrowLeft': () => seekPoints(-1),
+	'ArrowRight': () => seekPoints(1),
+};
 
-	if (event.key === 'ArrowLeft') playbackPrevious[0].click();
-	if (event.key === 'ArrowRight') playbackNext[0].click();
-	if (event.key === ' ') playbackPlay[0].click();
-});
+function handleKeyBind(event: KeyboardEvent) {
+	if (!listenForKeyboard) return;
+	executeKeybind(keybinds, event);
+}
+
+export function onload() {
+	onUpdateAssets(() => firstAssetIndex = findFirstAssetIndex(canvasPointsId));
+	playbackSpeed.addEventListener('input', playbackSpeedChange);
+	playbackPlay.forEach((play) => play.addEventListener('click', onPlay));
+	playbackPrevious.forEach((previous) => previous.addEventListener('click', () => seekPoints(-1)));
+	playbackNext.forEach((next) => next.addEventListener('click', () => seekPoints(1)));
+	playbackSeek.forEach((seek) => seek.addEventListener('input', () => onSeek(parseInt(seek.value))));
+	showLines.addEventListener('input', onShowLinesChange);
+	showStartPoint.addEventListener('input', onShowStartPointChange);
+	window.addEventListener('keydown', handleKeyBind);
+}

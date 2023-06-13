@@ -2,7 +2,7 @@ import {topLeftPoint, scale, handleZoom} from './canvas/canvas';
 import {MINIMUM_SCREEN_WIDTH_FOR_MOBILE} from './constants';
 import TagInput from './tag-input';
 
-import type {InputElement} from './types.d';
+import type {InputElement, Keybinds} from './types.d';
 
 export function $<T extends HTMLElement = HTMLElement>(id: string): T {
 	return <T> document.getElementById(id);
@@ -139,9 +139,16 @@ function readHelpHash() {
 	}
 }
 
-const keybinds: {
-	[key: string]: () => void,
-} = {
+export function executeKeybind(keybinds: Keybinds, event: KeyboardEvent) {
+	if (event.target instanceof HTMLInputElement && event.target.tagName === 'INPUT') return;
+
+	const keybindFunction = keybinds[event.code];
+	if (!keybindFunction) return;
+
+	keybindFunction();
+}
+
+const keybinds: Keybinds = {
 	'KeyS': toggleSettingsBox,
 	'KeyH': toggleHelpBox,
 	'Equal': zoomIn,
@@ -154,14 +161,6 @@ const keybinds: {
 		}
 	},
 };
-function handleKeybind(e: KeyboardEvent) {
-	if (e.target instanceof HTMLInputElement && e.target.tagName === 'INPUT') return;
-
-	const keybindFunction = keybinds[e.code];
-	if (!keybindFunction) return;
-
-	keybindFunction();
-}
 
 export function onload() {
 	window.addEventListener('resize', resizeCanvas);
@@ -199,5 +198,5 @@ export function onload() {
 		element.addEventListener('click', readHelpHash);
 	});
 
-	window.addEventListener('keydown', handleKeybind);
+	window.addEventListener('keydown', (e) => executeKeybind(keybinds, e));
 }

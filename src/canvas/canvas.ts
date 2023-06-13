@@ -8,6 +8,7 @@ import {
 	MIN_ZOOM_LEVEL,
 } from './../constants';
 import {$, canvas, screenIsInMobileMode} from './../core';
+import {updateAssets} from './../setup/playback';
 
 import type {Asset, Coordinate} from './../types.d';
 
@@ -35,8 +36,8 @@ function drawFrame() {
 	drawGridLine(topLeftPoint[0], topLeftPoint[1], canvas.width, canvas.height, false);
 	drawGridLine(topLeftPoint[1], topLeftPoint[0], canvas.height, canvas.width, true);
 
-	// Called in playback settings to update points if the user is in play state
-	// updateAssets(delta);
+	// Call in playback settings to update points if the user is in play state
+	updateAssets(delta);
 	drawAssets(assets);
 
 	window.requestAnimationFrame(drawFrame);
