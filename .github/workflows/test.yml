@@ -5,6 +5,10 @@ on:
     branches:
       - main
       - staging
+  push:
+    branches:
+      - main
+      - staging
 
 jobs:
   build:
