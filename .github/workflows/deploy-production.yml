@@ -4,9 +4,9 @@ env:
   VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
 on:
   workflow_run:
-    workflows: ["Test"]
-    types:
-      - completed
+    workflows: [Test]
+    types: [completed]
+    branches: [main]
 
 jobs:
   check-for-tests-sucsess:
