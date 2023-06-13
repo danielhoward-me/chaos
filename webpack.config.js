@@ -74,8 +74,9 @@ function getTemplateParams() {
 	const packageJson = fs.readFileSync('./package.json');
 	const packageData = JSON.parse(packageJson);
 
-	const version = `v${packageData.version}${process.env.STAGING_BUILD ? ' (staging)' : ''}`;
-	const repoLink = `https://github.com/Toffee1347/chaos-game/tree/${process.env.STAGING_BUILD ? 'staging' : 'master'}/`;
+	const baseVersion = `v${packageData.version}`;
+	const version = `${baseVersion}${process.env.STAGING_BUILD ? ' (staging)' : ''}`;
+	const repoLink = `https://github.com/Toffee1347/chaos-game/tree/${process.env.STAGING_BUILD ? 'staging' : baseVersion}`;
 
 	return {
 		version,
