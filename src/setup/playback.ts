@@ -1,7 +1,7 @@
 import {onUpdateAssets, findFirstAssetIndex, addAssets, removeAsset, setAssetHidden} from './../canvas/canvas';
 import {AssetType, SetupStage} from './../constants';
 import {$, executeKeybind, setInputValue, setNodeListValue} from './../core';
-import {stages, setSetupStage, sanitiseInputsInStage} from './setup';
+import {setSetupStage, sanitiseInputsInStage} from './setup';
 import {getShapeBaseData, getShapeVertices} from './shape-settings';
 
 import type {ChaosGamePoint, CircleAsset, Keybinds, SingleStageData} from './../types.d';
@@ -60,14 +60,14 @@ const playbackPlayIcon = document.querySelectorAll('#playbackPlayIcon');
 const playbackPauseIcon = document.querySelectorAll('#playbackPauseIcon');
 const fullscreenPlaybackSettings = $('fullscreenPlaybackSettings');
 
-const regularSideLength = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.regularSideLength.element;
-const polygonSideCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonSideCount.element;
+const regularSideLength = $<HTMLInputElement>('regularShapeSideLength');
+const polygonSideCount = $<HTMLInputElement>('polygonSideCount');
 
-const playbackSpeed = <HTMLInputElement> stages[SetupStage.Playback].elements.playbackSpeed.element;
-const showLines = <HTMLInputElement> stages[SetupStage.Playback].elements.showLines.element;
-const lineColour = <HTMLInputElement> stages[SetupStage.Playback].elements.lineColour.element;
-const showStartPoint = <HTMLInputElement> stages[SetupStage.Playback].elements.showStartPoint.element;
-const startPointColour = <HTMLInputElement> stages[SetupStage.Playback].elements.startPointColour.element;
+const playbackSpeed = $<HTMLInputElement>('playbackSpeed');
+const showLines = $<HTMLInputElement>('showLines');
+const lineColour = $<HTMLInputElement>('lineColour');
+const showStartPoint = $<HTMLInputElement>('showStartPoint');
+const startPointColour = $<HTMLInputElement>('startPointColour');
 
 const canvasPointsId = 'p';
 const canvasLinesId = 'l';
@@ -330,7 +330,7 @@ function setKeyboardEnabled(isEnabled: boolean) {
 }
 
 const keybinds: Keybinds = {
-	' ': onPlay,
+	'Space': onPlay,
 	'ArrowLeft': () => seekPoints(-1),
 	'ArrowRight': () => seekPoints(1),
 };

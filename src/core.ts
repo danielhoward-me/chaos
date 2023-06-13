@@ -188,7 +188,7 @@ export function onload() {
 			rangeInput.value = numberInput.value;
 		});
 		rangeInput.addEventListener('input', () => {
-			setInputValue(numberInput, rangeInput.value);
+			setInputValue(numberInput, rangeInput.value, true);
 		});
 	});
 

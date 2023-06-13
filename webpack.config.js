@@ -1,3 +1,5 @@
+/* eslint-disable no-undef */
+
 import packageData from './package.json' assert {type: 'json'};
 
 import path from 'path';
@@ -13,7 +15,7 @@ const version = `v${packageData.version}`;
 /** @type {import('webpack').Configuration} */
 export default {
 	entry: './src/index.ts',
-	devtool: 'source-map',
+	devtool: process.env.NODE_ENV === 'production' ? false : 'eval-source-map',
 	module: {
 		rules: [
 			{
@@ -67,5 +69,5 @@ export default {
 		clean: true,
 		publicPath: '/',
 	},
-	mode: 'development',
+	mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
 };

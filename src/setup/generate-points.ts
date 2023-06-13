@@ -2,7 +2,7 @@ import getRandomPointInShape from './../canvas/random-point';
 import {PointsWorkerMessage, SetupStage} from './../constants';
 import {$} from './../core';
 import {setChaosPoints} from './playback';
-import {setSetupStage, stages} from './setup';
+import {setSetupStage} from './setup';
 import {getShapeVertices} from './shape-settings';
 
 import type TagInput from './../tag-input';
@@ -18,9 +18,9 @@ const generatePointsButton = $<HTMLButtonElement>('generatePoints');
 const loadingBar = $('generatePointsLoadingBar');
 const loadingBarBody = loadingBar.querySelector('div');
 
-const pointsCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.pointsCount.element;
-const lineProportion = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.lineProportion.element;
-const vertexRules = <TagInput> stages[SetupStage.ShapeSettings].elements.vertexRules.element;
+const pointsCount = $<HTMLInputElement>('pointsCount');
+const lineProportion = $<HTMLInputElement>('lineProportion');
+const vertexRules = $<TagInput>('vertexRules');
 
 const impossibleVertexRulesWarning = $('impossibleVertexRulesWarning');
 const impossibleVertexRulesOldVar = $('impossibleVertexRulesOldVar');
@@ -107,7 +107,7 @@ function showLoadingProgress(progess: number) {
 
 function showNoPossiblePointsWarning(show: boolean, oldVar?: number) {
 	impossibleVertexRulesWarning.classList.toggle('hidden', !show);
-	impossibleVertexRulesOldVar.innerText = oldVar.toString() ?? '';
+	impossibleVertexRulesOldVar.innerText = oldVar?.toString() ?? '';
 }
 
 export function onload() {

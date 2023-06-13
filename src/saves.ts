@@ -1,7 +1,7 @@
 import {SetupStage} from './constants';
 import {$, getInputValue, setInputValue} from './core';
 import {generatePoints} from './setup/generate-points';
-import {stages, getSetupStage, setSetupStage} from './setup/setup';
+import {getStages, getSetupStage, setSetupStage} from './setup/setup';
 import {useSetEquator} from './vertex-rule';
 
 import type {SaveConfig} from './types.d';
@@ -25,7 +25,6 @@ function getCurrentConfig(): SaveConfig {
 	const config: SaveConfig = {
 		version: CURRENT_SAVE_VERSION,
 		stages: {
-			[SetupStage.Reset]: {},
 			[SetupStage.ShapeType]: {},
 			[SetupStage.ShapeSettings]: {},
 			[SetupStage.GeneratePoints]: {},
@@ -33,6 +32,7 @@ function getCurrentConfig(): SaveConfig {
 		},
 	};
 
+	const stages = getStages();
 	Object.keys(stages).forEach((stageString) => {
 		const stage: SetupStage = parseInt(stageString);
 		const stageData = stages[stage];
@@ -96,6 +96,7 @@ function loadConfigVersion1(config: SaveConfig['stages']) {
 }
 
 function loadConfigVersion2(config: SaveConfig['stages']) {
+	const stages = getStages();
 	Object.keys(config).forEach(async (stageString) => {
 		const stage: SetupStage = parseInt(stageString);
 		const stageData = stages[stage];

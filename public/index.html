@@ -92,12 +92,11 @@
 		<% function rangeInput(options) { %>
 			<div class="setting-group" data-input-range-pair>
 				<div class="input-group">
-					<span class="input-group-text">
-						<% if (options.extraNameTextId) { %><span id="<%- options.extraNameTextId %>"></span><% } %>
+					<span class="input-group-text" <% if (options.nameTextId) { %>id="<%- options.nameTextId %>"<% } %>>
 						<%- options.name %>
 					</span>
 					<input
-						class="form-control" type="number" id="<% options.id %>"
+						class="form-control" type="number" id="<%- options.id %>"
 						value="<%- options.value %>" 
 						<% if (options.min !== undefined) { %>min="<%- options.min %>"<% } %>
 						<% if (options.max !== undefined) { %>max="<%- options.max %>"<% } %>
@@ -143,7 +142,7 @@
 				<div class="hidden" id="regularShapeSettings">
 					<% rangeInput({
 						name: 'Side Length',
-						extraNameTextId: 'shapeTypeText',
+						nameTextId: 'shapeTypeText',
 						id: 'regularShapeSideLength',
 						customInputAttributes: 'data-update-graph',
 						value: 50,
@@ -251,6 +250,7 @@
 					rangeMin: 1,
 					rangeMax: 10000,
 					rangeStep: 1,
+					extraText: 'points/s',
 				}) %>
 
 				<% _.forEach([
@@ -275,7 +275,7 @@
 		<br/>
 
 		<div style="text-align: center;">
-			<input type="file" class="hidden" id="configUploadInput" accept=".json" onchange="uploadConfigFile(this.files[0])"/>
+			<input type="file" class="hidden" id="configUploadInput" accept=".json"/>
 			<div style="margin-bottom: 10px;" id="saveButtons">
 				<div class="btn-group">
 					<button id="downloadConfigButton" type="button" class="btn btn-primary"><i class="bi bi-download"></i> Save</button>
@@ -323,7 +323,7 @@
 		<hr/>
 
 		<% function helpImage(src, alt) { %>
-			<img src="/static/img/help/<%- src %>" loading="lazy" alt="<% alt %>" class="help-menu-image"/>
+			<img src="/static/img/help/<%- src %>" loading="lazy" alt="<%- alt %>" class="help-menu-image"/>
 		<% } %>
 
 		<div data-help-section="help-the-chaos-game">

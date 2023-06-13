@@ -1,8 +1,8 @@
 import {addAssets, removeAsset, setGraphMovementDisabled, convertCanvasPointToGraphPoint} from './../canvas/canvas';
-import {AssetType, SetupStage, polygonShapeNames} from './../constants';
+import {AssetType, polygonShapeNames} from './../constants';
 import {$, canvas, makeClassToggler} from './../core';
 import VertexRule from './../vertex-rule';
-import {sanitiseInputsInStage, setSetupStage, stages} from './setup';
+import {sanitiseInputsInStage, setSetupStage} from './setup';
 import {getSelectedShape} from './shape-type';
 
 import type TagInput from './../tag-input';
@@ -88,11 +88,11 @@ const vertexRulesFeedback = $('vertexRulesFeedback');
 const vertexRulesDetails = $('vertexRulesDetails');
 const vertexRulesDetailsSummary = vertexRulesDetails.querySelector('summary');
 
-const polygonRotate = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonRotate.element;
-const regularSideLength = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.regularSideLength.element;
-const polygonSideCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonSideCount.element;
-const vertexRules = <TagInput> stages[SetupStage.ShapeSettings].elements.vertexRules.element;
-const shapeVerticesInput = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.shapeVertices.element;
+const polygonRotate = $<HTMLInputElement>('polygonRotate');
+const regularSideLength = $<HTMLInputElement>('regularShapeSideLength');
+const polygonSideCount = $<HTMLInputElement>('polygonSideCount');
+const vertexRules = $<TagInput>('vertexRules');
+const shapeVerticesInput = $<HTMLInputElement>('shapeVertices');
 
 let listeningForVertices = false;
 
@@ -134,7 +134,7 @@ export function setShapeSettingsViewable(isRegular: boolean | null) {
 	irregularShapeSettings.classList.toggle('hidden', hideAll || isRegular);
 }
 
-export const setPolygonSettingsVisible = makeClassToggler(polygonSettings, 'hidden');
+export const setPolygonSettingsVisible = makeClassToggler(polygonSettings, 'hidden', true);
 
 function onRecordVerticesClick() {
 	setRecordVerticesButtonActive(!listeningForVertices);
@@ -207,10 +207,10 @@ function generatePolygonVerticesHandler() {
 	addShapeVertices(...generatePolygonVertices(sideLength, sideCount));
 
 	const shapeType = polygonShapeNames[sideCount];
-	shapeTypeText.innerText = shapeType ? `${shapeType?.charAt(0).toUpperCase()}${shapeType?.slice(1)} ` : '';
+	shapeTypeText.innerText = `${shapeType ? `${shapeType?.charAt(0).toUpperCase()}${shapeType?.slice(1)} ` : ''}Side Length`;
 }
 
-export function shapeSettingsInputHandler(updateGraph: boolean) {
+export function shapeSettingsInputHandler() {
 	const selectedShape = getSelectedShape();
 	if (selectedShape === null) return;
 
@@ -219,10 +219,7 @@ export function shapeSettingsInputHandler(updateGraph: boolean) {
 	}
 
 	sanitiseInputsInStage(2);
-
-	if (updateGraph) {
-		generatePolygonVerticesHandler();
-	}
+	generatePolygonVerticesHandler();
 }
 
 function getArrayPermutations(arr: string[]): string[] {
@@ -328,7 +325,7 @@ export function onload() {
 	vertexRules.addEventListener('deletetag', onVertexRuleDelete);
 	vertexRules.addEventListener('tagschanged', onVertexRuleChange);
 
-	Object.values(stages[SetupStage.ShapeSettings].elements || []).forEach(({element}) => {
-		element.addEventListener('input', () => shapeSettingsInputHandler(element.dataset.updateGraph !== undefined));
+	([regularSideLength, polygonSideCount, polygonRotate]).forEach((element) => {
+		element.addEventListener('input', shapeSettingsInputHandler);
 	});
 }

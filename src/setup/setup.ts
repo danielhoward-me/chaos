@@ -8,13 +8,14 @@ import {stageData as shapeTypeStageData, onload as shapeTypeOnload} from './shap
 
 import type {SingleStageElementInput, StageData} from './../types.d';
 
-export const stages: StageData = {
-	[SetupStage.Reset]: {},
-	[SetupStage.ShapeType]: shapeTypeStageData,
-	[SetupStage.ShapeSettings]: shapeSettingsStageData,
-	[SetupStage.GeneratePoints]: generatePointsStageData,
-	[SetupStage.Playback]: playbackStageData,
-};
+export function getStages(): StageData {
+	return {
+		[SetupStage.ShapeType]: shapeTypeStageData,
+		[SetupStage.ShapeSettings]: shapeSettingsStageData,
+		[SetupStage.GeneratePoints]: generatePointsStageData,
+		[SetupStage.Playback]: playbackStageData,
+	};
+}
 
 let setupStage: SetupStage = SetupStage.ShapeType;
 
@@ -24,6 +25,8 @@ export function getSetupStage(): SetupStage {
 
 export function setSetupStage(newStage: SetupStage) {
 	if (newStage === setupStage) return;
+
+	const stages = getStages();
 
 	stages[setupStage]?.onStageExit?.();
 
@@ -71,7 +74,7 @@ function setStageEnabled(stageContainer: HTMLDivElement, enabled: boolean) {
 }
 
 export function resetStageInputs(stage: SetupStage) {
-	const stageData = stages[stage];
+	const stageData = getStages()[stage];
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach((inputData) => {
@@ -83,7 +86,7 @@ export function resetStageInputs(stage: SetupStage) {
 }
 
 export function sanitiseInputsInStage(stage: SetupStage) {
-	const stageData = stages[stage];
+	const stageData = getStages()[stage];
 	if (!stageData) return;
 
 	Object.values(stageData.elements || []).forEach((inputData) => {
@@ -113,13 +116,11 @@ export function sanitiseInputsInStage(stage: SetupStage) {
 }
 
 export function onload() {
-	console.log(234);
 	shapeTypeOnload();
 	shapeSettingsOnload();
 	generatePointsOnload();
-	console.log(234);
 	playbackOnload();
 
-	setSetupStage(0);
+	setSetupStage(SetupStage.Reset);
 	$('resetButton').addEventListener('click', () => setSetupStage(SetupStage.Reset));
 }

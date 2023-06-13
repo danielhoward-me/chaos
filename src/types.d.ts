@@ -44,7 +44,7 @@ export type ParsedVertexRule = ParsedVertexRuleEquation | ParsedVertexRuleVariab
 export interface SaveConfig {
 	version: number;
 	stages: {
-		[stage in SetupStage]: {
+		[stage in SetupStage]?: {
 			[inputName: string]: string | number | boolean | string[];
 		};
 	};
@@ -116,7 +116,7 @@ export interface SingleStageData {
 	onStageExit?: () => void;
 }
 export type StageData = {
-	[stage in SetupStage]: SingleStageData;
+	[stage in SetupStage]?: SingleStageData;
 };
 
 export interface Keybinds {

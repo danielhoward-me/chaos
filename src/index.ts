@@ -9,9 +9,8 @@ import {onload as savesOnload} from './saves';
 import {onload as setupOnload} from './setup/setup';
 
 window.addEventListener('DOMContentLoaded', () => {
-	console.log(234);
 	coreOnload();
-	setupOnload();
 	canvasOnload();
 	savesOnload();
+	setupOnload();
 });

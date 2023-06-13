@@ -1,6 +1,6 @@
 import {SetupStage, polygonShapeNames} from './../constants';
 import {$, setInputValue} from './../core';
-import {stages, resetStageInputs, setSetupStage} from './setup';
+import {resetStageInputs, setSetupStage} from './setup';
 import {
 	setShapeSettingsViewable,
 	setPolygonSettingsVisible,
@@ -24,9 +24,9 @@ export const stageData: SingleStageData = {
 	},
 };
 
-const shapeTypeSelect = <HTMLInputElement> stages[SetupStage.ShapeType].elements.shapeType.element;
+const shapeTypeSelect = $<HTMLSelectElement>('shapeType');
 
-const polygonSideCount = <HTMLInputElement> stages[SetupStage.ShapeSettings].elements.polygonSideCount.element;
+const polygonSideCount = $<HTMLInputElement>('polygonSideCount');
 
 const shapesArray = Array.from(document.querySelectorAll<HTMLDivElement>('.type-selection .card'));
 const shapes = shapesArray.reduce<{[shape: string]: HTMLDivElement}>((obj, shape) => {
@@ -64,7 +64,7 @@ function onShapeTypeSelectedChange() {
 			polygonSideCount.value = sideCount;
 		}
 
-		shapeSettingsInputHandler(true);
+		shapeSettingsInputHandler();
 	}
 }
 
@@ -84,7 +84,7 @@ function setShapeSelected(shape: HTMLDivElement | undefined) {
 export function onload() {
 	shapesArray.forEach((shape) => {
 		shape.addEventListener('click', () => {
-			setInputValue(shapeTypeSelect, shape.dataset.shapeType);
+			setInputValue(shapeTypeSelect, shape.dataset.shapeType, true);
 		});
 	});
 	shapeTypeSelect.addEventListener('change', onShapeTypeSelectedChange);
