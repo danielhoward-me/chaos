@@ -1,7 +1,6 @@
 /* eslint-disable no-undef */
 
-import packageData from './package.json' assert {type: 'json'};
-
+import fs from 'fs';
 import path from 'path';
 import {fileURLToPath, URL} from 'url';
 
@@ -10,6 +9,8 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
+const packageJson = fs.readFileSync('./package.json');
+const packageData = JSON.parse(packageJson);
 const version = `v${packageData.version}`;
 
 /** @type {import('webpack').Configuration} */
@@ -70,4 +71,7 @@ export default {
 		publicPath: '/',
 	},
 	mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+	performance: {
+		maxAssetSize: 2 * 1024 * 1024,
+	},
 };
