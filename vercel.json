@@ -2,10 +2,11 @@
 	"installCommand": "yarn install --production",
 	"buildCommand": "yarn build",
 	"outputDirectory": "dist",
-	"rewrites": [
+	"redirects": [
 		{
 			"source": "(.*)",
-			"destination": "/"
+			"destination": "/",
+			"permanent": false 
 		}
 	]
 }
