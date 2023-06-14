@@ -1,0 +1,82 @@
+name: Deploy
+
+on:
+  push:
+    branches:
+      - main
+      - staging
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Project
+        uses: ./.github/actions/build-project
+
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Project
+        uses: ./.github/actions/lint-project
+
+  deploy-staging:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/staging'
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+      STAGING_BUILD: true
+    needs: [build, lint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Project
+        uses: ./.github/actions/build-project
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=preview --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --token=${{ secrets.VERCEL_TOKEN }}
+
+  create-tag:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    needs: [build, lint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version
+        id: get_version
+        run: echo version="v$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      - name: Create Tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ steps.get_version.outputs.version }}
+
+  deploy-production:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    needs: [build, lint]
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Build Project
+        uses: ./.github/actions/build-project
+      - name: Install Vercel CLI
+        run: npm install --global vercel@latest
+      - name: Pull Vercel Environment Information
+        run: vercel pull --yes --environment=production --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Build Project Artifacts
+        run: vercel build --prod --token=${{ secrets.VERCEL_TOKEN }}
+      - name: Deploy Project Artifacts to Vercel
+        run: vercel deploy --prebuilt --prod --token=${{ secrets.VERCEL_TOKEN }}
