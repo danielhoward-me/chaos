@@ -1,5 +1,11 @@
 {
 	"installCommand": "yarn install --production",
 	"buildCommand": "yarn build",
-	"outputDirectory": "dist"
+	"outputDirectory": "dist",
+	"rewrites": [
+		{
+			"source": "**",
+			"destination": "/"
+		}
+	]
 }

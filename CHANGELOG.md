@@ -1,6 +1,6 @@
 # Changelog
 
-## [v2.0.0]
+## v2.0.0 (Unreleased)
 
 - Update all code to be written in TypeScript and compiled by webpack
 - Change workflow to deploy tp vercel instead of github pages
