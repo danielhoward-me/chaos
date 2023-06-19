@@ -127,3 +127,8 @@ export interface NewTagEventDetails {
 	tag: string;
 	changeTag: (newRule: string) => void;
 }
+
+export interface ShapeSettingsInputEvent {
+	element: HTMLElement;
+	updateGraph: boolean;
+}

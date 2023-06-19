@@ -28,14 +28,15 @@
     "canvas": "^2.11.2",
     "express": "^4.18.2",
     "gifencoder": "^2.0.1",
-    "puppeteer": "^20.5.0"
+    "puppeteer": "^20.5.0",
+    "webpack-dev-server": "^4.15.1"
   },
   "scripts": {
     "build": "env NODE_ENV=production webpack build",
-    "dev": "webpack watch",
+    "dev": "webpack serve",
     "lint": "eslint --ext ts --max-warnings 0 src dev"
   },
   "engines": {
-	"node": "18.x"
+    "node": "18.x"
   }
 }

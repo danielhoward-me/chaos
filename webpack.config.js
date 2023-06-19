@@ -9,6 +9,8 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
+const distPath = path.join(fileURLToPath(new URL('.', import.meta.url)), 'dist');
+
 /** @type {import('webpack').Configuration} */
 export default {
 	entry: './src/index.ts',
@@ -23,10 +25,6 @@ export default {
 			{
 				test: /\.css$/,
 				use: [MiniCssExtractPlugin.loader, 'css-loader'],
-			},
-			{
-				test: /\.svg$/,
-				type: 'asset',
 			},
 		],
 	},
@@ -56,17 +54,20 @@ export default {
 		}),
 	],
 	resolve: {
-		extensions: ['.ts'],
+		extensions: ['.ts', '.js'],
 	},
 	output: {
 		filename: 'static/js/[contenthash].js',
-		path: path.join(fileURLToPath(new URL('.', import.meta.url)), 'dist'),
+		path: distPath,
 		clean: true,
 		publicPath: '/',
 	},
 	mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
 	performance: {
 		maxAssetSize: 2 * 1024 * 1024,
+	},
+	devServer: {
+		host: 'local.danielhoward.me',
 	},
 };
 

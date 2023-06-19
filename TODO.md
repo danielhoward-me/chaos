@@ -41,10 +41,16 @@
   - Fixed by moving away from old system and declaring which inputs should trigger updates
 - [x] Playback keybinds don't work
   - Fixed by changing the space code from ` ` to `Space`
+- [x] Time can go above the max time if the delta is very large
+  - Fixed by limiting how big the current time can be
+- [x] The setup state isn't updated when points count or line proportion is changed
+  - Fixed by changing the shape settings input handlers
+- [x] Changing playback speed can cause points to be displayed when they shouldn't
+  - Caused by previous change, fixed by not showing any points when total time is 0
 
 ### Features
 
-- [ ] Migrate project to typescript and compile with webpack
+- [x] Migrate project to typescript and compile with webpack
 
 
 ## For release [v1.3.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v130)
