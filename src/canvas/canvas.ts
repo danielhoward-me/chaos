@@ -119,8 +119,6 @@ function handleTouchStart(event: TouchEvent) {
 function handleTouchDrag(event: TouchEvent) {
 	if (graphMovementDisabled || !lastTouch) return;
 
-	event.preventDefault();
-
 	switch (event.touches.length) {
 	case 1: {
 		const touch = event.touches[0];

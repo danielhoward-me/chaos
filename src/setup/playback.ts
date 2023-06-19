@@ -207,7 +207,13 @@ function seekPoints(amount: number) {
 function getCountToDisplay(): number {
 	const playbackSpeedValue = parseInt(playbackSpeed.value);
 	const count = Math.round(playbackSpeedValue * currentPlaybackTime);
-	return count > points.length ? points.length : count;
+
+	const isAtEndOfPlayback = currentPlaybackTime == totalPlaybackTime && totalPlaybackTime !== 0;
+	if (isAtEndOfPlayback || count > points.length) {
+		return points.length;
+	} else {
+		return count;
+	}
 }
 
 function syncAssetsWithPlaybackTime() {
@@ -232,6 +238,9 @@ export function updateAssets(delta: number) {
 	if (!playing) return;
 
 	currentPlaybackTime += (delta/1000);
+	// When the page is lagging, the delta can be very large causing the playback time
+	// to be above the total time
+	if (currentPlaybackTime > totalPlaybackTime) currentPlaybackTime = totalPlaybackTime;
 	updatePlaybackTime();
 
 	const expectedCount = getCountToDisplay();

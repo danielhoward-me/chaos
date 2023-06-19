@@ -6,7 +6,7 @@ import {sanitiseInputsInStage, setSetupStage} from './setup';
 import {getSelectedShape} from './shape-type';
 
 import type TagInput from './../tag-input';
-import type {Coordinate, NewTagEventDetails, SingleStageData} from './../types.d';
+import type {Coordinate, NewTagEventDetails, ShapeSettingsInputEvent, SingleStageData} from './../types.d';
 
 export const stageData: SingleStageData = {
 	elements: {
@@ -93,6 +93,8 @@ const regularSideLength = $<HTMLInputElement>('regularShapeSideLength');
 const polygonSideCount = $<HTMLInputElement>('polygonSideCount');
 const vertexRules = $<TagInput>('vertexRules');
 const shapeVerticesInput = $<HTMLInputElement>('shapeVertices');
+const pointsCount = $<HTMLInputElement>('pointsCount');
+const lineProportion = $<HTMLInputElement>('lineProportion');
 
 let listeningForVertices = false;
 
@@ -210,7 +212,7 @@ function generatePolygonVerticesHandler() {
 	shapeTypeText.innerText = `${shapeType ? `${shapeType?.charAt(0).toUpperCase()}${shapeType?.slice(1)} ` : ''}Side Length`;
 }
 
-export function shapeSettingsInputHandler() {
+export function shapeSettingsInputHandler(updateGraph = true) {
 	const selectedShape = getSelectedShape();
 	if (selectedShape === null) return;
 
@@ -219,7 +221,8 @@ export function shapeSettingsInputHandler() {
 	}
 
 	sanitiseInputsInStage(2);
-	generatePolygonVerticesHandler();
+
+	if (updateGraph) generatePolygonVerticesHandler();
 }
 
 function getArrayPermutations(arr: string[]): string[] {
@@ -287,6 +290,7 @@ function onNewVertexRule(e: CustomEvent<NewTagEventDetails>) {
 	try {
 		const rule = new VertexRule(tag);
 		e.detail.changeTag(rule.formatRule());
+		shapeSettingsInputHandler(false);
 	} catch (err) {
 		e.preventDefault();
 		console.error(err);
@@ -306,6 +310,7 @@ function onVertexRuleDelete() {
 	}
 
 	setSetupStage(3);
+	shapeSettingsInputHandler(false);
 }
 
 // Triggered when the value is set directly
@@ -325,7 +330,15 @@ export function onload() {
 	vertexRules.addEventListener('deletetag', onVertexRuleDelete);
 	vertexRules.addEventListener('tagschanged', onVertexRuleChange);
 
-	([regularSideLength, polygonSideCount, polygonRotate]).forEach((element) => {
-		element.addEventListener('input', shapeSettingsInputHandler);
+	// Vertex Rule inputs are handled within their respective input handlers
+	const inputEvents: ShapeSettingsInputEvent[] = [
+		{element: regularSideLength, updateGraph: true},
+		{element: polygonSideCount, updateGraph: true},
+		{element: polygonRotate, updateGraph: true},
+		{element: pointsCount, updateGraph: false},
+		{element: lineProportion, updateGraph: false},
+	];
+	inputEvents.forEach(({element, updateGraph}) => {
+		element.addEventListener('input', () => shapeSettingsInputHandler(updateGraph));
 	});
 }
