@@ -307,6 +307,10 @@
 		<h3 style="text-align: center;">Help</h3>
 
 		<ul>
+			<% function helpLink([name, id]) { %>
+				<li><a href="#help-<%- id %>" class="link-primary"><%- name %></a></li>
+			<% } %>
+
 			<% _.forEach([
 				['The Chaos Game', 'the-chaos-game'],
 				['Tutorial', 'tutorial'],
@@ -315,9 +319,7 @@
 				['Shape Settings', 'shape-settings'],
 				['Generate Points', 'generate-points'],
 				['Playback Settings', 'playback-settings'],
-			], function ([name, id]) { %>
-				<li><a href="#help-<%- id %>" class="link-primary"><%- name %></a></li>
-			<% }) %>
+			], helpLink) %>
 		</ul>
 
 		<hr/>
@@ -355,10 +357,10 @@
 					(descriptions of the shape settings can be seen <a class="link-primary" href="#help-shape-settings">here</a>)
 				</li>
 				<% helpImage('shape-settings-preset.jpg', 'Shape Settings') %>
-				<li>Click <code>Generate Points</code> in stage <i class="bi bi-3-circle-fill"></i></li>
+				<li>Click <kbd>Generate Points</kbd> in stage <i class="bi bi-3-circle-fill"></i></li>
 				<% helpImage('generate-points.jpg', 'Generate Points') %>
 				<li>
-					Click Play <i class="bi bi-play-fill"></i> in stage <i class="bi bi-4-circle-fill"></i>
+					Click <kbd><i class="bi bi-play-fill"></i></kbd> in stage <i class="bi bi-4-circle-fill"></i>
 					(descriptions of the playback settings can be seen <a class="link-primary" href="#help-playback-settings">here</a>)
 				</li>
 				<% helpImage('playback-settings.jpg', 'Playback Settings') %>
@@ -382,7 +384,7 @@
 				<tbody>
 					<% function keybindTableRow([key, description]) { %>
 						<tr>
-							<th scope="row"><code><%- key %></code></th>
+							<th scope="row"><kbd><%- key %></kbd></th>
 							<td><%- description %></td>
 						</tr>
 					<% } %>
@@ -405,8 +407,8 @@
 			</table>
 			If you want to save a configuartion, you can do this by interacting with these buttons at the bottom on the settings pannel
 			<% helpImage('saves.jpg', 'Save Buttons') %>
-			When clicking <code><i class="bi bi-download"></i> Save</code>, the <a href="https://en.wikipedia.org/wiki/JSON" target="_blank" class="link-primary">JSON</a>
-			data of your settings will be downloaded to your device. Then when clicking <code><i class="bi bi-upload"></i> Load</code>, you will need to select the downloaded
+			When clicking <kbd><i class="bi bi-download"></i> Save</kbd>, the <a href="https://en.wikipedia.org/wiki/JSON" target="_blank" class="link-primary">JSON</a>
+			data of your settings will be downloaded to your device. Then when clicking <kbd><i class="bi bi-upload"></i> Load</kbd>, you will need to select the downloaded
 			file. When loading a file, the site will attempt to generate the points, because of this, you can only save a configuration once you are at a point where
 			points can be generated
 		</div>
@@ -517,8 +519,8 @@
 								<tbody>
 									<% function specialCharacterRow([character, accessibleBy]) { %>
 										<tr>
-											<th scope="row"><code><%- character %></code></th>
-											<td><code><%- accessibleBy %></code></td>
+											<th scope="row"><kbd><%- character %></kbd></th>
+											<td><kbd><%- accessibleBy %></kbd></td>
 										</tr>
 									<% } %>
 									<% _.forEach([
@@ -571,10 +573,10 @@
 					<h6>Irregular</h6>
 					<% helpImage('shape-settings-irregular.jpg', 'Shape Settings') %>
 					<p>
-						To create an irregular shape, click the <code>Start Recording Vertices</code> button then click
+						To create an irregular shape, click the <kbd><i class="bi bi-record-fill"></i> Start Recording Vertices</kbd> button then click
 						on the grid to create the vertices of the shape, once you have finished, click the
-						<code>Stop Recording Vertices</code> button. If you need to reset the vertices, click the
-						<code><i class="bi bi-trash3-fill"></i></code> button. You will only be able to go
+						<kbd><i class="bi bi-record-fill"></i> Stop Recording Vertices</kbd> button. If you need to reset the vertices, click the
+						<kbd><i class="bi bi-trash3-fill"></i></kbd> button. You will only be able to go
 						onto the next stage when you have at least 3 vertices
 					</p>
 				</li>
@@ -587,7 +589,7 @@
 			<h5 style="text-align: center;"><i class="bi bi-3-circle-fill"></i> Generate Points</h5>
 			<% helpImage('generate-points.jpg', 'Generate Points') %>
 			<p>
-				To generate the points configued in the previous stages, click the <code><i class="bi bi-play-fill"></i>  Generate Points</code> button,
+				To generate the points configued in the previous stages, click the <kbd><i class="bi bi-play-fill"></i>  Generate Points</kbd> button,
 				a loading bar may momentarily appear, but this shouldn't take more than a few seconds
 			</p>
 			<p>
@@ -636,8 +638,8 @@
 				</tbody>
 			</table>
 			<p>
-				Once you settings are decided, you can begin playing by clicking the <code><i class="bi bi-play-fill"></i></code>,
-				you can also seek back and forward one point by clicking <code><i class="bi bi-skip-backward-fill"></i></code> and <code><i class="bi bi-skip-forward-fill"></i></code>
+				Once you settings are decided, you can begin playing by clicking <kbd><i class="bi bi-play-fill"></i></kbd>,
+				you can also seek back and forward one point by clicking <kbd><i class="bi bi-skip-backward-fill"></i></kbd> and <kbd><i class="bi bi-skip-forward-fill"></i></kbd>
 				respectively. You can also seek to any point by clicking on the progress bar. If you close the settings pannel, you will notice
 				another player pannel appear on the bottom left of your screen. Back arrow, space and forward arrow will seek back, play/pause and seek forward respectively
 			</p>
