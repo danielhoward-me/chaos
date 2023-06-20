@@ -9,11 +9,12 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
-const distPath = path.join(fileURLToPath(new URL('.', import.meta.url)), 'dist');
+const localPath = (pathString) => path.join(fileURLToPath(new URL('.', import.meta.url)), pathString);
+const distPath = localPath('dist');
 
 /** @type {import('webpack').Configuration} */
 export default {
-	entry: './src/index.ts',
+	entry: localPath('src/index.ts'),
 	devtool: process.env.NODE_ENV === 'production' ? false : 'eval-source-map',
 	module: {
 		rules: [
@@ -38,7 +39,7 @@ export default {
 		new CopyPlugin({
 			patterns: [
 				{
-					from: 'public',
+					from: localPath('public'),
 					globOptions: {
 						ignore: ['**/*.html', '**/*.css'],
 					},
@@ -49,7 +50,7 @@ export default {
 			filename: 'static/css/style.[contenthash].css',
 		}),
 		new HtmlWebpackPlugin({
-			template: './public/index.html',
+			template: localPath('public/index.html'),
 			templateParameters: getTemplateParams(),
 		}),
 	],
@@ -72,7 +73,7 @@ export default {
 };
 
 function getTemplateParams() {
-	const packageJson = fs.readFileSync('./package.json');
+	const packageJson = fs.readFileSync(localPath('package.json'));
 	const packageData = JSON.parse(packageJson);
 
 	const baseVersion = `v${packageData.version}`;
