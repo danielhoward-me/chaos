@@ -355,7 +355,7 @@ export function onload() {
 	playbackPlay.forEach((play) => play.addEventListener('click', onPlay));
 	playbackPrevious.forEach((previous) => previous.addEventListener('click', () => seekPoints(-1)));
 	playbackNext.forEach((next) => next.addEventListener('click', () => seekPoints(1)));
-	playbackSeek.forEach((seek) => seek.addEventListener('input', () => onSeek(parseInt(seek.value))));
+	playbackSeek.forEach((seek) => seek.addEventListener('input', () => onSeek(parseFloat(seek.value))));
 	showLines.addEventListener('input', onShowLinesChange);
 	showStartPoint.addEventListener('input', onShowStartPointChange);
 	window.addEventListener('keydown', handleKeyBind);

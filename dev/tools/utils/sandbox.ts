@@ -1,4 +1,4 @@
-import config from './../../../webpack.config.js';
+import {makeConfig} from './../../../webpack.config.js';
 import {resolvePath} from './path.js';
 
 import express from 'express';
@@ -14,17 +14,34 @@ interface Site {
 	page: Page;
 }
 
-export function compileWebpack() {
-	console.log('Compiling webpack');
-	webpack(config);
+export function compileWebpack(): Promise<void> {
+	return new Promise((resolve, reject) => {
+		console.log('Compiling webpack');
+		const config = makeConfig();
+		webpack(config).run((err, stats) => {
+			if (err) return reject(err);
+
+			const statsString = stats?.toString({
+				colors: true,
+				modules: false,
+				children: false,
+				chunks: false,
+				chunkModules: false,
+			});
+
+			if (stats?.hasErrors()) return reject(statsString);
+
+			console.log(statsString);
+			resolve();
+		});
+	});
 }
 
 export function createServer(publicPath = './../../dist', port = 3000): Server {
 	const app = express();
 	app.use(express.static(resolvePath(publicPath)));
 	app.get('*', (_, res) => {
-		res.status(404);
-		res.sendFile(resolvePath(`${publicPath}/404.html`));
+		res.redirect('/');
 	});
 	return app.listen(port, () => {
 		console.log(`Static server listening at http://localhost:${port}`);
@@ -32,7 +49,12 @@ export function createServer(publicPath = './../../dist', port = 3000): Server {
 }
 
 export async function openSite(headless = true): Promise<Site> {
-	compileWebpack();
+	try {
+		await compileWebpack();
+	} catch (err) {
+		console.error(err);
+		process.exit(1);
+	}
 
 	const server = createServer();
 
