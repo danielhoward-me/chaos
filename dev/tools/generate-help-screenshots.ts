@@ -1,5 +1,6 @@
 import {resolvePath} from './utils/path.js';
 import {openSite, closeSite} from './utils/sandbox.js';
+import wait from './utils/wait.js';
 
 import fs from 'fs';
 
@@ -75,6 +76,8 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const triangle = await page.$('div[data-shape-type="triangle"]');
 			await triangle?.click();
+
+			await wait(200);
 		},
 	},
 	{
@@ -83,6 +86,8 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const polygon = await page.$('div[data-shape-type="polygon"]');
 			await polygon?.click();
+
+			await wait(200);
 		},
 	},
 	{
@@ -91,6 +96,8 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const custom = await page.$('div[data-shape-type="custom"]');
 			await custom?.click();
+
+			await wait(200);
 		},
 	},
 	{
@@ -99,6 +106,8 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const triangle = await page.$('div[data-shape-type="triangle"]');
 			await triangle?.click();
+
+			await wait(200);
 		},
 	},
 	{
@@ -128,6 +137,8 @@ const SCREENSHOTS: Screenshot[] = [
 
 			const generatePoints = await page.$('#generatePoints');
 			await generatePoints?.click();
+
+			await wait(200);
 		},
 	},
 	{
