@@ -1,4 +1,4 @@
-import {makeConfig} from './../../../webpack.config.js';
+import config from './../../../webpack.config.js';
 import {resolvePath} from './path.js';
 
 import express from 'express';
@@ -17,16 +17,11 @@ interface Site {
 export function compileWebpack(): Promise<void> {
 	return new Promise((resolve, reject) => {
 		console.log('Compiling webpack');
-		const config = makeConfig();
 		webpack(config).run((err, stats) => {
 			if (err) return reject(err);
 
 			const statsString = stats?.toString({
 				colors: true,
-				modules: false,
-				children: false,
-				chunks: false,
-				chunkModules: false,
 			});
 
 			if (stats?.hasErrors()) return reject(statsString);
