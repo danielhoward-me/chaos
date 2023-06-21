@@ -9,13 +9,17 @@ import CssMinimizerPlugin from 'css-minimizer-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
 import MiniCssExtractPlugin from 'mini-css-extract-plugin';
 
+const isProduction = process.env.NODE_ENV === 'production';
+const isStaging = !!process.env.STAGING_BUILD;
+const isDevelopment = !isProduction && !isStaging;
+
 const localPath = (pathString) => path.join(fileURLToPath(new URL('.', import.meta.url)), pathString);
 const distPath = localPath('dist');
 
 /** @type {import('webpack').Configuration} */
 export default {
 	entry: localPath('src/index.ts'),
-	devtool: process.env.NODE_ENV === 'production' ? false : 'eval-source-map',
+	devtool: (isProduction || isStaging) ? false : 'eval-source-map',
 	module: {
 		rules: [
 			{
@@ -63,7 +67,7 @@ export default {
 		clean: true,
 		publicPath: '/',
 	},
-	mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
+	mode: (isProduction || isStaging) ? 'production' : 'development',
 	performance: {
 		maxAssetSize: 2 * 1024 * 1024,
 	},
@@ -76,12 +80,14 @@ function getTemplateParams() {
 	const packageJson = fs.readFileSync(localPath('package.json'));
 	const packageData = JSON.parse(packageJson);
 
-	const baseVersion = `v${packageData.version}`;
-	const version = `${baseVersion}${process.env.STAGING_BUILD ? ' (staging)' : ''}`;
-	const repoLink = `https://github.com/Toffee1347/chaos-game/tree/${process.env.STAGING_BUILD ? 'staging' : baseVersion}`;
+	if (isDevelopment) return {isDevelopment};
+
+	const version = isStaging ? 'staging' : `v${packageData.version}`;
+	const repoLink = `https://github.com/Toffee1347/chaos-game/tree/${version}`;
 
 	return {
 		version,
 		repoLink,
+		isDevelopment: false,
 	};
 }

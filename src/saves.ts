@@ -116,6 +116,8 @@ function loadConfigVersion2(config: SaveConfig['stages']) {
 
 function onFileUpload() {
 	const file = configUploadInput.files[0];
+	if (!file) return;
+
 	const reader = new FileReader();
 	reader.onload = () => {
 		try {
