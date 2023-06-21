@@ -1,10 +1,11 @@
 # Changelog
 
-## v2.0.0 (Unreleased)
+## [v2.0.0](https://github.com/Toffee1347/chaos-game/tree/v2.0.0)
 
 - Update all code to be written in TypeScript and compiled by webpack
 - Change workflow to deploy tp vercel instead of github pages
 - Add staging build option
+- Change scroll bar + shape type styling
 
 ## [v1.3.0](https://github.com/Toffee1347/chaos-game/tree/v1.3.0)
 

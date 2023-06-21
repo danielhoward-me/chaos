@@ -27,7 +27,7 @@
 - [ ] Allow user to change the colour of the points, depending on the vertex they were generated from
 
 
-## For release [v2.0.0]
+## For release [v2.0.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v200)
 
 ### Bugs
 
