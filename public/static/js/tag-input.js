@@ -1,35 +1,32 @@
-import type {NewTagEventDetails} from './types.d';
-
-export default class TagInput extends HTMLElement {
-	private tags: string[] = [];
-	public input: HTMLInputElement;
-	public type = 'tags';
-
+class TagInput extends HTMLElement {
 	constructor() {
 		super();
+
+		this.tags = [];
 
 		this.innerHTML = '';
 		this.createInput();
 		this.initialiseEvents();
 	}
 
-	private createInput() {
+	createInput() {
 		this.input = document.createElement('input');
 		this.input.type = 'text';
 		this.input.placeholder = this.getAttribute('placeholder') || '';
 		this.input.autocapitalize = 'off';
 		this.input.autocomplete = 'off';
+		this.input.autocorrect = 'off';
 		this.input.spellcheck = false;
-
+		
 		this.appendChild(this.input);
 		this.registerInputEvents();
 	}
 
-	private registerInputEvents() {
+	registerInputEvents() {
 		this.input.addEventListener('keydown', this.handleInput.bind(this));
 	}
 
-	private handleInput(e: KeyboardEvent) {
+	handleInput(e) {
 		const key = e.key;
 
 		if (key === 'Enter') {
@@ -37,13 +34,13 @@ export default class TagInput extends HTMLElement {
 		}
 	}
 
-	private initialiseEvents() {
+	initialiseEvents() {
 		this.addEventListener('click', () => {
 			this.input.focus();
 		});
 	}
 
-	private renderTags() {
+	renderTags() {
 		const isFocused = this.input === document.activeElement;
 		const isDisabled = this.input.disabled;
 		const currentValue = this.input.value;
@@ -59,7 +56,7 @@ export default class TagInput extends HTMLElement {
 		if (currentValue) this.input.value = currentValue;
 	}
 
-	private createTag(tag: string, index: number) {
+	createTag(tag, index) {
 		const tagElement = document.createElement('span');
 		tagElement.classList.add('tag');
 		tagElement.innerText = tag;
@@ -71,16 +68,16 @@ export default class TagInput extends HTMLElement {
 		tagElement.appendChild(closeIcon);
 
 		closeIcon.addEventListener('click', () => {
-			this.deleteTag(index);
+			this.removeTag(index);
 		});
 
 		this.appendChild(tagElement);
 	}
 
-	public addTag(tag: string) {
+	addTag(tag) {
 		if (tag === '') return;
 
-		const eventCancelled = !this.dispatchEvent(new CustomEvent<NewTagEventDetails>('newtag', {
+		const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
 			detail: {
 				tag,
 				changeTag: (newTag) => {
@@ -96,18 +93,30 @@ export default class TagInput extends HTMLElement {
 		this.renderTags();
 	}
 
-	private deleteTag(index: number) {
+	removeTag(index) {
 		this.tags.splice(index, 1);
-		this.dispatchEvent(new CustomEvent('deletetag'));
+		this.dispatchEvent(new CustomEvent('removetag'));
 		this.renderTags();
 	}
 
-	public get value() {
+	get value() {
 		return this.tags;
 	}
-	public set value(value) {
+	set value(value) {
 		this.tags = value;
 		this.renderTags();
+	}
+
+	getValue() {
+		return this.value;
+	}
+	setValue(value) {
+		this.value = value;
+		this.dispatchEvent(new CustomEvent('tagschanged'));
+
+		if (value?.length === 0) {
+			this.input.value = '';
+		}
 	}
 }
 

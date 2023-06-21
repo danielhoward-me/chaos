@@ -1,9 +1,7 @@
-import config from './../../../webpack.config.js';
 import {resolvePath} from './path.js';
 
 import express from 'express';
 import puppeteer from 'puppeteer';
-import webpack from 'webpack';
 
 import type {Server} from 'http';
 import type {Browser, Page} from 'puppeteer';
@@ -14,29 +12,12 @@ interface Site {
 	page: Page;
 }
 
-export function compileWebpack(): Promise<void> {
-	return new Promise((resolve, reject) => {
-		console.log('Compiling webpack');
-		webpack(config).run((err, stats) => {
-			if (err) return reject(err);
-
-			const statsString = stats?.toString({
-				colors: true,
-			});
-
-			if (stats?.hasErrors()) return reject(statsString);
-
-			console.log(statsString);
-			resolve();
-		});
-	});
-}
-
-export function createServer(publicPath = './../../dist', port = 3000): Server {
+export function createServer(publicPath = './../../public', port = 3000): Server {
 	const app = express();
 	app.use(express.static(resolvePath(publicPath)));
 	app.get('*', (_, res) => {
-		res.redirect('/');
+		res.status(404);
+		res.sendFile(resolvePath('./../../public/404.html'));
 	});
 	return app.listen(port, () => {
 		console.log(`Static server listening at http://localhost:${port}`);
@@ -44,13 +25,6 @@ export function createServer(publicPath = './../../dist', port = 3000): Server {
 }
 
 export async function openSite(headless = true): Promise<Site> {
-	try {
-		await compileWebpack();
-	} catch (err) {
-		console.error(err);
-		process.exit(1);
-	}
-
 	const server = createServer();
 
 	const browser = await puppeteer.launch({
@@ -61,7 +35,7 @@ export async function openSite(headless = true): Promise<Site> {
 	const page = pages[0];
 	await page.goto('http://localhost:3000');
 
-	console.log('Site opened in browser');
+	console.log('Site opened in browser')
 
 	return {server, browser, page};
 }

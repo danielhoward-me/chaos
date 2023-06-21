@@ -1,26 +1,18 @@
-import {
-	AssetType,
-	DEFAULT_ZOOM_LEVEL,
-	GRID_LINE_FREQUENCY,
-	MAJOR_GRID_LINE_ALPHA,
-	MAX_ZOOM_LEVEL,
-	MINOR_GRID_LINE_ALPHA,
-	MIN_ZOOM_LEVEL,
-} from './../constants';
-import {$, canvas, screenIsInMobileMode} from './../core';
-import {updateAssets} from './../setup/playback';
-
-import type {Asset, Coordinate} from './../types.d';
-
 const ctx = canvas.getContext('2d');
 const fpsCounter = $('fpsCounter');
 
-export let scale = DEFAULT_ZOOM_LEVEL;
-const gridLineFrequency = GRID_LINE_FREQUENCY;
-export const topLeftPoint: Coordinate = [];
+let scale = 1;
+let gridLineFrequency = 50;
+const topLeftPoint = [
+	scale * (-(canvas.width + (canvas.width <= 768 ? 0 : 430)))/2,
+	scale * canvas.height/(canvas.width <= 768 ? 4 : 2)
+];
 
-let assets: Asset[] = [];
+let assets = [];
 let graphMovementDisabled = false;
+
+const normalGridLineColour = 'rgba(0, 0, 0, 0.2)';
+const majorGridLineColour = 'rgba(0, 0, 0, 0.5)';
 
 let lastFrameTime = Date.now();
 function drawFrame() {
@@ -31,31 +23,28 @@ function drawFrame() {
 	ctx.clearRect(0, 0, canvas.width, canvas.height);
 	ctx.lineWidth = 1;
 	ctx.strokeStyle = 'black';
+	ctx.fillstyle = 'black';
 
-	// Draw vertical and horizontal lines separately
 	drawGridLine(topLeftPoint[0], topLeftPoint[1], canvas.width, canvas.height, false);
 	drawGridLine(topLeftPoint[1], topLeftPoint[0], canvas.height, canvas.width, true);
 
-	// Call in playback settings to update points if the user is in play state
+	// Called in playback settings to update points if the user is in play state
 	updateAssets(delta);
 	drawAssets(assets);
 
 	window.requestAnimationFrame(drawFrame);
 }
+window.addEventListener('load', () => {
+	window.requestAnimationFrame(drawFrame);
+});
 
-function drawGridLine(
-	startPointLoopCoord: number,
-	startPointDrawingCoord: number,
-	drawLinesUntil: number,
-	lineLength: number,
-	isHorizontal: boolean
-) {
+function drawGridLine(startPointLoopCoord, startPointDrawingCoord, drawLinesUntil, lineLength, isHorizontal) {
 	const lineCoordIndex = isHorizontal ? 1 : 0;
 	const valueModifier = isHorizontal ? -1 : 1;
 	const incrementer = gridLineFrequency * valueModifier;
 
 	const modifiedScale = scale * valueModifier;
-	const scaledModifiedLength = lineLength * modifiedScale;
+	const scaledModifiedLength = lineLength * modifiedScale; 
 	const loopEnd = startPointLoopCoord + (drawLinesUntil * modifiedScale);
 
 	const from = [startPointDrawingCoord, startPointDrawingCoord];
@@ -68,25 +57,27 @@ function drawGridLine(
 		from[lineCoordIndex] = value;
 		to[lineCoordIndex] = value;
 
-		const fromCanvasCoord = convertGraphPointToCanvasPoint(from);
-		const toCanvasCoord = convertGraphPointToCanvasPoint(to);
+		ctx.moveTo(...convertGraphPointToCanvasPoint(from));
+		ctx.lineTo(...convertGraphPointToCanvasPoint(to));
 
-		ctx.moveTo(fromCanvasCoord[0], fromCanvasCoord[1]);
-		ctx.lineTo(toCanvasCoord[0], toCanvasCoord[1]);
+		if (value === 0) {
+			ctx.strokeStyle = majorGridLineColour;
+		} else {
+			ctx.strokeStyle = normalGridLineColour;
+		}
 
-		ctx.strokeStyle = `rgba(0, 0, 0, ${value === 0 ? MAJOR_GRID_LINE_ALPHA : MINOR_GRID_LINE_ALPHA})`;
 		ctx.stroke();
 	}
 }
 
-function convertGraphPointToCanvasPoint(graphPoint: Coordinate): Coordinate {
+function convertGraphPointToCanvasPoint(graphPoint) {
 	return [
 		Math.round((graphPoint[0] - topLeftPoint[0])/scale),
 		Math.round(-(graphPoint[1] - topLeftPoint[1])/scale),
 	];
 }
 
-export function convertCanvasPointToGraphPoint(canvasPoint: Coordinate): Coordinate {
+function convertCanvasPointToGraphPoint(canvasPoint) {
 	return [
 		canvasPoint[0] * scale + topLeftPoint[0],
 		-canvasPoint[1] * scale + topLeftPoint[1],
@@ -94,33 +85,28 @@ export function convertCanvasPointToGraphPoint(canvasPoint: Coordinate): Coordin
 }
 
 let mouseDown = false;
-function handleMouseMove(event: MouseEvent) {
+function handleMouseDrag(event) {
 	if (graphMovementDisabled || !mouseDown) return;
+
 	topLeftPoint[0] -= event.movementX * scale;
 	topLeftPoint[1] += event.movementY * scale;
 }
-function handleMouseDown() {
-	mouseDown = true;
-}
-function handleMouseUp() {
-	mouseDown = false;
-}
+window.addEventListener('mousemove', handleMouseDrag);
+canvas.addEventListener('mousedown', () => mouseDown = true);
+window.addEventListener('mouseup', () => mouseDown = false);
 
-function handleWheelZoom(event: WheelEvent) {
-	event.preventDefault();
-	handleZoom([event.clientX, event.clientY], event.deltaY);
-}
-
-let lastTouch: Touch;
-let lastZoomLength: number;
-function handleTouchStart(event: TouchEvent) {
+let lastTouch;
+let lastZoomLength;
+function handleTouchStart(event) {
 	lastTouch = event.touches[0];
 }
-function handleTouchDrag(event: TouchEvent) {
+function handleTouchDrag(event) {
 	if (graphMovementDisabled || !lastTouch) return;
 
+	event.preventDefault();
+
 	switch (event.touches.length) {
-	case 1: {
+	case 1:
 		const touch = event.touches[0];
 
 		if (lastTouch) {
@@ -130,8 +116,7 @@ function handleTouchDrag(event: TouchEvent) {
 
 		lastTouch = touch;
 		break;
-	}
-	case 2: {
+	case 2:
 		const touch1 = event.touches[0];
 		const touch2 = event.touches[1];
 		// No need to sqrt as it is used in ratio
@@ -143,14 +128,22 @@ function handleTouchDrag(event: TouchEvent) {
 
 		lastZoomLength = zoomLength;
 	}
-	}
 }
 function handleTouchEnd() {
 	lastTouch = null;
 	lastZoomLength = null;
 }
+canvas.addEventListener('touchstart', handleTouchStart, {passive: true});
+window.addEventListener('touchmove', handleTouchDrag);
+window.addEventListener('touchend', handleTouchEnd);
 
-export function handleZoom(center: Coordinate, deltaY: number) {
+function handleWheelZoom(event) {
+	event.preventDefault();
+	handleZoom([event.clientX, event.clientY], event.deltaY);
+}
+canvas.addEventListener('wheel', handleWheelZoom, {passive: false});
+
+function handleZoom(center, deltaY) {
 	const beforeMousePosition = convertCanvasPointToGraphPoint(center);
 
 	const initialMultiplier = 1 + Math.abs(deltaY / 200);
@@ -158,10 +151,10 @@ export function handleZoom(center: Coordinate, deltaY: number) {
 
 	scale *= multiplier;
 
-	if (scale < MIN_ZOOM_LEVEL) {
-		scale = MIN_ZOOM_LEVEL;
-	} else if (scale > MAX_ZOOM_LEVEL) {
-		scale = MAX_ZOOM_LEVEL;
+	if (scale < 0.01) {
+		scale = 0.01;
+	} else if (scale > 10) {
+		scale = 10;
 	}
 
 	// Shift the top left point so that the mouse is still over the same point
@@ -172,17 +165,17 @@ export function handleZoom(center: Coordinate, deltaY: number) {
 }
 
 const onUpdateAssetsCallbacks = [];
-export function onUpdateAssets(callback: () => void) {
+function onUpdateAssets(callback) {
 	onUpdateAssetsCallbacks.push(callback);
 }
 function callOnUpdateAssetsCallbacks() {
 	onUpdateAssetsCallbacks.forEach((callback) => callback());
 }
-export function addAssets(...newAssets: Asset[]) {
+function addAssets(...newAssets) {
 	assets.push(...newAssets);
 	callOnUpdateAssetsCallbacks();
 }
-function drawAssets(assets: Asset[]) {
+function drawAssets(assets) {
 	assets.forEach((asset) => {
 		if (asset.hidden) return;
 
@@ -193,25 +186,23 @@ function drawAssets(assets: Asset[]) {
 		ctx.beginPath();
 
 		switch (asset.type) {
-		case AssetType.Polygon: {
-			const points = [];
+		case 'polygon':
+			let points = [];
 			asset.points.forEach((point) => {
 				points.push(convertGraphPointToCanvasPoint(point));
 			});
 
-			ctx.moveTo(points[0][0], points[0][1]);
+			ctx.moveTo(...points[0]);
 			points.slice(1).forEach((point) => {
-				ctx.lineTo(point[0], point[1]);
+				ctx.lineTo(...point);
 			});
 			break;
-		}
-		case AssetType.Circle: {
+		case 'circle':
 			const center = convertGraphPointToCanvasPoint(asset.center);
 			const radius = (asset.radius || 5) / scale;
 
 			ctx.arc(center[0], center[1], radius, 0, 2 * Math.PI);
 			break;
-		}
 		}
 
 		ctx.closePath();
@@ -220,40 +211,23 @@ function drawAssets(assets: Asset[]) {
 		if (asset.stroke) ctx.stroke();
 	});
 }
-export function removeAsset(id: string) {
+function removeAsset(id) {
 	assets = assets.filter((asset) => asset.id !== id);
 	callOnUpdateAssetsCallbacks();
 }
-export function findFirstAssetIndex(id: string) {
+function findFirstAssetIndex(id) {
 	return assets.findIndex((asset) => asset.id === id);
 }
-export function setAssetHidden(index: number, hidden: boolean) {
+function setAssetHidden(index, hidden) {
 	assets[index].hidden = hidden;
 }
 
-export function setGraphMovementDisabled(disabled: boolean, cursor = 'default') {
+function setGraphMovementDisabled(disabled, cursor = 'default') {
 	graphMovementDisabled = disabled;
 	canvas.style.cursor = disabled ? cursor : '';
 }
 
-function calculateFps(delta: number): string {
+function calculateFps(delta) {
 	const fps = 1000/delta;
 	return fps.toFixed(fps > 10 ? 0 : 1);
-}
-
-export function onload() {
-	window.requestAnimationFrame(drawFrame);
-
-	window.addEventListener('mousemove', handleMouseMove);
-	canvas.addEventListener('mousedown', handleMouseDown);
-	window.addEventListener('mouseup', handleMouseUp);
-
-	canvas.addEventListener('wheel', handleWheelZoom);
-
-	canvas.addEventListener('touchstart', handleTouchStart, {passive: true});
-	window.addEventListener('touchmove', handleTouchDrag);
-	window.addEventListener('touchend', handleTouchEnd);
-
-	topLeftPoint[0] = scale * (-(canvas.width + (screenIsInMobileMode() ? 0 : 430)))/2;
-	topLeftPoint[1] = scale * canvas.height/(screenIsInMobileMode() ? 4 : 2);
 }

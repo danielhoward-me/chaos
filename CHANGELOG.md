@@ -1,11 +1,5 @@
 # Changelog
 
-## v2.0.0 (Unreleased)
-
-- Update all code to be written in TypeScript and compiled by webpack
-- Change workflow to deploy tp vercel instead of github pages
-- Add staging build option
-
 ## [v1.3.0](https://github.com/Toffee1347/chaos-game/tree/v1.3.0)
 
 - Put missing line break in vertex rules help where one was missing
