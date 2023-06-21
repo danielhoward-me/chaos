@@ -291,11 +291,15 @@
 		<br/>
 		<div style="text-align: center;">
 			<small class="form-text">
-				<a target="_blank" href="<%- repoLink %>"><%- version %></a>
-				&#x25cf;
-				<a target="_blank" href="<%- repoLink %>/CHANGELOG.md">
-					Notes
-				</a>
+				<% if (isDevelopment) { %>
+					<span>development</span>
+				<% } else { %>
+					<a target="_blank" href="<%- repoLink %>"><%- version %></a>
+					&#x25cf;
+					<a target="_blank" href="<%- repoLink %>/CHANGELOG.md">
+						Notes
+					</a>
+				<% } %>
 			</small>
 		</div>
 	</div>
