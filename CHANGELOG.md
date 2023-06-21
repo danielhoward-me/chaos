@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.0.1](https://github.com/danielhoward-me/chaos/tree/v2.0.1)
+
+- Update links to reflect the new repository location
+
 ## [v2.0.0](https://github.com/danielhoward-me/chaos/tree/v2.0.0)
 
 - Update all code to be written in TypeScript and compiled by webpack
