@@ -8,8 +8,5 @@
 	},
 	"include": [
 		"tools/**/*.ts"
-	],
-	"exclude": [
-		"node_modules"
 	]
-}  
+}
