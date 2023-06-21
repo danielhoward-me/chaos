@@ -35,8 +35,6 @@ jobs:
         run: echo version="v$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
       - name: Get Tags
         run: git fetch --tags
-      - name: Show Versions
-        run: echo $(git tag -l)
       - name: Check if Tag Exists
         run: |
           TAG=${{ steps.get_version.outputs.version }}
@@ -47,7 +45,6 @@ jobs:
             echo "Tag ${TAG} does not exist"
             exit 0
           fi
-
 
   deploy-staging:
     runs-on: ubuntu-latest
