@@ -1,7 +1,3 @@
-import {VertexRuleEquationType} from './constants';
-
-import type {ParsedVertexRule} from './types.d';
-
 const allowedOperators = ['+', '-', '*', '/', '%'].map(cleanCharactersForRegex);
 const allowedVariables = ['old', 'new', 'difference'].map(cleanCharactersForRegex);
 const variableAliases = {
@@ -11,7 +7,7 @@ const variableAliases = {
 };
 Object.keys(variableAliases).forEach((alias) => allowedVariables.push(cleanCharactersForRegex(alias)));
 
-const operationsOrderRegexes = [['*', '/', '%'], ['+', '-']]
+const operationsOrderRegexes = [['*', '/', '%'], ['+', '-']]	
 	.map((operators) => operators.map(cleanCharactersForRegex))
 	.map((operators) => new RegExp(operators.join('|'), 'g'))
 	.map(makeOperatorRegex);
@@ -56,43 +52,47 @@ const vertexRuleRegex = new RegExp(createSpacedRegexText(
 	'$',
 ));
 
-function cleanCharactersForRegex(string: string): string {
+function cleanCharactersForRegex(string) {
 	return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
-function bracketRegexText(string: string): string {
+function bracketRegexText(string) {
 	return `(${string})`;
 }
-function createSpacedRegexText(...parts: string[]): string {
+function createSpacedRegexText(...parts) {
 	parts.unshift('');
 	parts.push('');
 	return parts.join('\\s*');
 }
 
-function regexMatchWholeString(regex: RegExp): RegExp {
+function regexMatchWholeString(regex) {
 	return new RegExp(`^(${regex.source})$`);
 }
-function makeOperatorRegex(operatorRegex: RegExp): RegExp {
+function makeOperatorRegex(operatorRegex) {
 	// The operator regex used during parsing needs to allow
 	// a number to be prefixed with + or -
 	return new RegExp(`[^${cleanCharactersForRegex('*/%')}](${operatorRegex.source})[-+]?`, operatorRegex.flags);
 }
 
-export default class VertexRule {
-	rule: string;
-	variables: string[];
-	equator: string;
-	equation: ParsedVertexRule;
-	valueSet: number[];
-	executeCache: {[key: string]: boolean} = {};
-
-	constructor(rule: string) {
+class VertexRule {
+	constructor(rule) {
 		this.rule = rule;
 
 		const isValid = this.isValid();
-		if (!isValid) throw new Error(this.getErrorMessage() || '');
+		if (!isValid) throw new Error(this.getErrorMessage());
 
 		this.rule = this.rule.replace(/\s/g, '');
 		this.parse();
+
+		const errorPrefix = `'${this.formatRule()}' is an invalid vertex rule as `;
+		if (this.variables.length === 0) {
+			throw new Error(`${errorPrefix}it does not contain any variables`);
+		} else if (singleValueEquatorsRegex.test(this.equator) && (valueSetRegex.test(this.rule) || this.rule.includes('±'))) {
+			throw new Error(`${errorPrefix}single values should be used with <, >, ≤ and ≥`);
+		} else if (valueEqualEquatorsRegex.test(this.equator) && valueSetRegex.test(this.rule)) {
+			throw new Error(`${errorPrefix}single values should be used with = and ≠`);
+		} else if (valueSetEquatorsRegex.test(this.equator) && !valueSetRegex.test(this.rule) && !this.rule.includes('±')) {
+			throw new Error(`${errorPrefix}sets should be used with ∈ and ∉`);
+		}
 
 		this.executeCache = {};
 	}
@@ -101,15 +101,12 @@ export default class VertexRule {
 		this.variables = [];
 		this.equator = VertexRule.parseEquator(this.rule);
 
-		const [equation, valueSet] = this.rule.split(allowedEquatorsRegex);
+		let [equation, valueSet] = this.rule.split(allowedEquatorsRegex);
 		this.equation = this.parseEquation(equation);
-		this.valueSet = VertexRule.parseValueSet(valueSet);
-
-		const errorMessage = this.getErrorMessage();
-		if (errorMessage) throw new Error(errorMessage);
+		this.valueSet = VertexRule.parsevalueSet(valueSet);
 	}
 
-	parseEquation(equation: string): ParsedVertexRule {
+	parseEquation(equation) {
 		// Test if either is a single component fragment
 		// if it is, we can put it straight into the equation
 		if (regexMatchWholeString(singleComponentFragmentRegex).test(equation)) {
@@ -117,12 +114,12 @@ export default class VertexRule {
 				const variable = variableAliases[equation] || equation;
 				if (!this.variables.includes(variable)) this.variables.push(variable);
 				return {
-					type: VertexRuleEquationType.Variable,
+					type: 'variable',
 					variable,
 				};
 			} else if (regexMatchWholeString(leftNumberRegex).test(equation)) {
 				return {
-					type: VertexRuleEquationType.Number,
+					type: 'number',
 					number: parseInt(equation),
 				};
 			} else {
@@ -130,19 +127,22 @@ export default class VertexRule {
 			}
 		}
 
-		for (const operatorsRegex of operationsOrderRegexes) {
+		for (const operatorsRegex of  operationsOrderRegexes) {
 			const operatorMatches = [...equation.matchAll(operatorsRegex)];
 			if (operatorMatches.length === 0) continue;
 
 			const operatorMatch = operatorMatches[operatorMatches.length - 1];
 			const foundOperator = operatorMatch[1];
 			const operatorIndex = operatorMatch.index + operatorMatch[0].indexOf(foundOperator);
-
+			
 			const left = equation.slice(0, operatorIndex);
 			const right = equation.slice(operatorIndex + foundOperator.length);
 
+			// If the previous index is a multiplication, division or modulo
+			// then we need to ignore this operator as 
+
 			return {
-				type: VertexRuleEquationType.Equation,
+				type: 'equation',
 				left: this.parseEquation(left),
 				operator: foundOperator,
 				right: this.parseEquation(right),
@@ -150,8 +150,9 @@ export default class VertexRule {
 		}
 	}
 
-	static parseEquator(rule: string): string {
+	static parseEquator(rule) {
 		const equatorMatch = allowedEquatorsRegex.exec(rule);
+		if (!equatorMatch) return false;
 		const equator = equatorMatch[0];
 
 		// If ± is used, then we need to change the equator to ∈ or ∉
@@ -162,18 +163,18 @@ export default class VertexRule {
 		return equator;
 	}
 
-	static parseValueSet(valueSetString: string): number[] {
+	static parsevalueSet(valueSetString) {
 		if (valueSetRegex.test(valueSetString)) {
 			const valueSet = [];
 			valueSetString.match(new RegExp(rightNumberRegex.source, 'g')).forEach((number) => {
-				valueSet.push(...VertexRule.parseSingleValue(number));
+				valueSet.push(...VertexRule.parsevalueSetValues(number));
 			});
 			return [...new Set(valueSet)];
 		} else {
-			return VertexRule.parseSingleValue(valueSetString);
+			return VertexRule.parsevalueSetValues(valueSetString);
 		}
 	}
-	static parseSingleValue(value: string): number[] {
+	static parsevalueSetValues(value) {
 		if (value.startsWith('±')) {
 			const number = parseInt(value.slice(1));
 			return [number, -number];
@@ -189,28 +190,17 @@ export default class VertexRule {
 		return true;
 	}
 
-	getErrorMessage(): string | void {
-		if (!this.isValid()) {
-			return `'${this.rule}' is an invalid vertex rule`;
-		}
+	getErrorMessage() {
+		if (this.isValid()) return '';
 
-		const errorPrefix = `'${this.formatRule()}' is an invalid vertex rule as `;
-		if (this.variables.length === 0) {
-			throw new Error(`${errorPrefix}it does not contain any variables`);
-		} else if (singleValueEquatorsRegex.test(this.equator) && (valueSetRegex.test(this.rule) || this.rule.includes('±'))) {
-			throw new Error(`${errorPrefix}single values should be used with <, >, ≤ and ≥`);
-		} else if (valueEqualEquatorsRegex.test(this.equator) && valueSetRegex.test(this.rule)) {
-			throw new Error(`${errorPrefix}single values should be used with = and ≠`);
-		} else if (valueSetEquatorsRegex.test(this.equator) && !valueSetRegex.test(this.rule) && !this.rule.includes('±')) {
-			throw new Error(`${errorPrefix}sets should be used with ∈ and ∉`);
-		}
+		return `'${this.rule}' is an invalid vertex rule`;
 	}
 
 	// Returns true if the rule is successful
 	// execute order 66
-	execute(oldIndex: number, newIndex: number, maxIndex: number) {
-		const cacheKey = `${oldIndex},${newIndex},${maxIndex}`;
-		const cachedValue = this.executeCache[cacheKey];
+	execute(oldIndex, newIndex, maxIndex) {
+		const key = `${oldIndex},${newIndex},${maxIndex}`;
+		const cachedValue = this.executeCache[key];
 		if (cachedValue !== undefined) return cachedValue;
 
 		// If this is the first vertex being chosen, only the new variable has any meaning
@@ -225,18 +215,18 @@ export default class VertexRule {
 		const value = VertexRule.executeInner(this.equation, parameters);
 		const output = this.testValue(value);
 
-		this.executeCache[cacheKey] = output;
+		this.executeCache[key] = output;
 
 		return output;
 	}
 
-	static executeInner(equation: ParsedVertexRule, parameters: {[key: string]: number}): number {
+	static executeInner(equation, parameters) {
 		switch (equation.type) {
-		case VertexRuleEquationType.Variable:
+		case 'variable':
 			return parameters[equation.variable];
-		case VertexRuleEquationType.Number:
+		case 'number':
 			return equation.number;
-		case VertexRuleEquationType.Equation: {
+		case 'equation':
 			const left = VertexRule.executeInner(equation.left, parameters);
 			const right = VertexRule.executeInner(equation.right, parameters);
 
@@ -253,10 +243,9 @@ export default class VertexRule {
 				return left % right;
 			}
 		}
-		}
 	}
 
-	testValue(value: number) {
+	testValue(value) {
 		if (singleValueEquatorsRegex.test(this.equator)) {
 			const validValue = this.valueSet[0];
 
@@ -282,9 +271,9 @@ export default class VertexRule {
 		}
 	}
 
-	static calulateDifference(oldIndex: number, newIndex: number, indexCount: number): number {
+	static calulateDifference(oldIndex, newIndex, indexCount) {
 		const difference = newIndex - oldIndex;
-
+	
 		let boundDifference = difference;
 		if (difference > indexCount / 2) {
 			boundDifference = difference - indexCount;
@@ -300,36 +289,24 @@ export default class VertexRule {
 		return boundDifference;
 	}
 
-	formatRule(): string {
+	formatRule() {
 		this.valueSet.sort((a, b) => a - b);
 		const formattedEquation = VertexRule.formatVertexRuleEquation(this.equation);
 		const valueSet = this.valueSet.length === 1 ? this.valueSet[0] : `{${this.valueSet.join(', ')}}`;
 		return `${formattedEquation} ${this.equator} ${valueSet}`;
 	}
 
-	static formatVertexRuleEquation(equation: ParsedVertexRule): string {
+	static formatVertexRuleEquation(equation) {
 		switch (equation.type) {
-		case VertexRuleEquationType.Variable:
+		case 'variable':
 			return equation.variable;
-		case VertexRuleEquationType.Number:
-			return equation.number.toString();
-		case VertexRuleEquationType.Equation: {
+		case 'number':
+			return equation.number;
+		case 'equation':
 			const left = VertexRule.formatVertexRuleEquation(equation.left);
 			const right = VertexRule.formatVertexRuleEquation(equation.right);
 
 			return `${left} ${equation.operator} ${right}`;
 		}
-		}
 	}
-}
-
-// Used in saves system to convert old style saves to use set equator
-export function useSetEquator(rule: string): string {
-	// If the rule uses an equals equator and a set, convert the equals to a set symbol
-	// The equals was valid syntax in previous versions
-	if (valueEqualEquatorsRegex.test(rule) && valueSetRegex.test(rule)) {
-		rule = rule.includes('=') ? rule.replace('=', '∈') : rule.replace('≠', '∉');
-	}
-
-	return rule;
 }

@@ -1,6 +1,5 @@
 import {resolvePath} from './utils/path.js';
 import {openSite, closeSite} from './utils/sandbox.js';
-import wait from './utils/wait.js';
 
 import fs from 'fs';
 
@@ -45,7 +44,7 @@ const SCREENSHOTS: Screenshot[] = [
 				el.style.width = 'unset';
 			});
 
-			const helpCloseButton = await page.$('button#closeSettingsButton');
+			const helpCloseButton = await page.$('button#settingsCloseButton');
 			await helpCloseButton?.evaluate((el) => {
 				el.classList.add('hidden');
 			});
@@ -64,7 +63,7 @@ const SCREENSHOTS: Screenshot[] = [
 			await triangle?.click();
 			await triangle?.focus();
 
-			const helpCloseButton = await page.$('button#closeSettingsButton');
+			const helpCloseButton = await page.$('button#settingsCloseButton');
 			await helpCloseButton?.evaluate((el) => {
 				el.classList.add('hidden');
 			});
@@ -76,8 +75,6 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const triangle = await page.$('div[data-shape-type="triangle"]');
 			await triangle?.click();
-
-			await wait(200);
 		},
 	},
 	{
@@ -86,8 +83,6 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const polygon = await page.$('div[data-shape-type="polygon"]');
 			await polygon?.click();
-
-			await wait(200);
 		},
 	},
 	{
@@ -96,8 +91,6 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const custom = await page.$('div[data-shape-type="custom"]');
 			await custom?.click();
-
-			await wait(200);
 		},
 	},
 	{
@@ -106,8 +99,6 @@ const SCREENSHOTS: Screenshot[] = [
 		async before(page: Page) {
 			const triangle = await page.$('div[data-shape-type="triangle"]');
 			await triangle?.click();
-
-			await wait(200);
 		},
 	},
 	{
@@ -137,8 +128,6 @@ const SCREENSHOTS: Screenshot[] = [
 
 			const generatePoints = await page.$('#generatePoints');
 			await generatePoints?.click();
-
-			await wait(200);
 		},
 	},
 	{
@@ -157,6 +146,18 @@ const GIFS: ScreenshotGif[] = [
 		},
 		length: 11000,
 		fps: 15,
+		async newFrame(page: Page, time: number, delta: number) {
+			if (time <= 500) return;
+
+			const seekBarInput = await page.$('input#playbackSeek');
+			await seekBarInput?.evaluate((el, delta) => {
+				// The triangle showing points should be 10 second
+				// hence why delta/100 is added to the seek each frame
+				const newSeekValue = parseFloat(el.value) + (delta/100);
+				el.value = newSeekValue.toString();
+				el.dispatchEvent(new Event('input'));
+			}, delta);
+		},
 		async before(page: Page) {
 			const triangle = await page.$('div[data-shape-type="triangle"]');
 			await triangle?.click();
@@ -166,18 +167,6 @@ const GIFS: ScreenshotGif[] = [
 
 			const zoomInButton = await page.$('#zoomInButton');
 			for (let i = 0; i < 5; i++) await zoomInButton?.click();
-		},
-		async newFrame(page: Page, time: number, delta: number) {
-			if (time <= 500) return;
-
-			const seekBarInput = await page.$('input#playbackSeek');
-			await seekBarInput?.evaluate((el, delta) => {
-				// The triangle showing points should be 10 seconds
-				// hence why (delta/1000) * 10 is added to the seek each frame
-				const newSeekValue = parseFloat(el.value) + (delta/100);
-				el.value = newSeekValue.toString();
-				el.dispatchEvent(new Event('input'));
-			}, delta);
 		},
 	},
 ];
@@ -219,11 +208,10 @@ async function main() {
 	});
 
 	for (const gif of GIFS) {
-		process.stdout.write(`Capturing gif ${gif.filename}`);
+		console.log(`Capturing gif ${gif.filename}`);
 		await gif.before(page);
 
 		const delta = Math.round(1000/gif.fps);
-		const totalFrameCount = Math.round(gif.fps * (gif.length/1000));
 
 		const encoder = new GIFEncoder(gif.clip.width, gif.clip.height);
 		encoder.createReadStream().pipe(fs.createWriteStream(`${resolvePath(OUTPUT_DIR)}/${gif.filename}.gif`));
@@ -234,14 +222,9 @@ async function main() {
 		const canvas = createCanvas(gif.clip.width, gif.clip.height);
 		const ctx = canvas.getContext('2d');
 
-		let totalTime = 0;
-		let frameCount = 0;
-		while (frameCount <= totalFrameCount) {
-			if (frameCount % Math.round(totalFrameCount/100) === 0) {
-				process.stdout.write(`\rCapturing gif ${gif.filename} (${Math.round((frameCount/totalFrameCount)*100)}%)`);
-			}
-
-			await gif.newFrame(page, totalTime, delta);
+		let total = 0;
+		while (total <= gif.length) {
+			await gif.newFrame(page, total, delta);
 
 			const jpgBuffer = await page.screenshot({
 				clip: gif.clip,
@@ -253,12 +236,9 @@ async function main() {
 			ctx.drawImage(image, 0, 0);
 
 			encoder.addFrame(<CanvasRenderingContext2D> <unknown> ctx);
-			totalTime += delta;
-			frameCount++;
+			total += delta;
 		}
 		encoder.finish();
-
-		process.stdout.write(`\rCapturing gif ${gif.filename} (100%)\n`);
 	}
 
 	closeSite(site);
