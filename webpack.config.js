@@ -83,7 +83,7 @@ function getTemplateParams() {
 	if (isDevelopment) return {isDevelopment};
 
 	const version = isStaging ? 'staging' : `v${packageData.version}`;
-	const repoLink = `https://github.com/Toffee1347/chaos-game/tree/${version}`;
+	const repoLink = `https://github.com/danielhoward-me/chaos/tree/${version}`;
 
 	return {
 		version,

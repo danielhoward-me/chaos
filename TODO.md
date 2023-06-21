@@ -27,7 +27,7 @@
 - [ ] Allow user to change the colour of the points, depending on the vertex they were generated from
 
 
-## For release [v2.0.0]
+## For release [v2.0.0](https://github.com/danielhoward-me/chaos/blob/main/CHANGELOG.md#v200)
 
 ### Bugs
 
@@ -53,7 +53,7 @@
 - [x] Migrate project to typescript and compile with webpack
 
 
-## For release [v1.3.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v130)
+## For release [v1.3.0](https://github.com/danielhoward-me/chaos/blob/main/CHANGELOG.md#v130)
 
 ### Features
 
@@ -64,7 +64,7 @@
 - [x] Update help images with new vertex rules input design
 
 
-## For release [v1.2.0](https://github.com/Toffee1347/chaos-game/blob/main/CHANGELOG.md#v120)
+## For release [v1.2.0](https://github.com/danielhoward-me/chaos/blob/main/CHANGELOG.md#v120)
 
 ### Bugs
 

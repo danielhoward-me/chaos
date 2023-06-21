@@ -1,8 +1,8 @@
 {
   "name": "chaos-game",
-  "version": "1.3.0",
+  "version": "2.0.1",
   "main": "index.js",
-  "repository": "https://github.com/Toffee1347/chaos-game",
+  "repository": "https://github.com/danielhoward-me/chaos",
   "author": "Toffee1347 <danielnhoward93@gmail.com>",
   "license": "MIT",
   "dependencies": {
