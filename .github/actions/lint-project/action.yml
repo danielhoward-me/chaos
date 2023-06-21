@@ -1,0 +1,8 @@
+runs:
+  using: composite
+  steps:
+    - name: Initialise Project
+      uses: ./.github/actions/initialise-project
+    - name: Lint Project
+      shell: bash
+      run: yarn lint

@@ -12,12 +12,15 @@
 	"settings": {
 		"import/resolver": {
 			"node": {
-				"paths": ["dev/tools"],
+				"paths": ["dev/tools", "src"],
 				"extensions": [".ts"]
 			}
 		}
 	},
     "parser": "@typescript-eslint/parser",
+	"parserOptions": {
+		"warnOnUnsupportedTypeScriptVersion": false
+	},
 	"root": true,
     "rules": {
 		"require-jsdoc": "off",
@@ -32,6 +35,14 @@
 				"external",
 				"type"
 			],
+			"pathGroups": [
+				{
+					// import/order thinks canvas is a builtin module
+					// when only production dependencies are installed
+					"pattern": "canvas",
+					"group": "external"
+				}
+			],
 			"newlines-between": "always",
 			"alphabetize": {
 				"order": "asc",
@@ -39,7 +50,14 @@
 			}
 		}],
 		"max-len": "off",
-		"linebreak-style": ["warn", "windows"],
-		"new-cap": "off"
+		"linebreak-style": "off",
+		"new-cap": "off",
+		"no-restricted-imports": "off",
+		"@typescript-eslint/no-restricted-imports": [
+			"warn",
+			{
+				"patterns": ["../*", "*types"]
+			}
+		]
 	}
 }

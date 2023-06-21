@@ -1,32 +1,35 @@
-class TagInput extends HTMLElement {
+import type {NewTagEventDetails} from './types.d';
+
+export default class TagInput extends HTMLElement {
+	private tags: string[] = [];
+	public input: HTMLInputElement;
+	public type = 'tags';
+
 	constructor() {
 		super();
-
-		this.tags = [];
 
 		this.innerHTML = '';
 		this.createInput();
 		this.initialiseEvents();
 	}
 
-	createInput() {
+	private createInput() {
 		this.input = document.createElement('input');
 		this.input.type = 'text';
 		this.input.placeholder = this.getAttribute('placeholder') || '';
 		this.input.autocapitalize = 'off';
 		this.input.autocomplete = 'off';
-		this.input.autocorrect = 'off';
 		this.input.spellcheck = false;
-		
+
 		this.appendChild(this.input);
 		this.registerInputEvents();
 	}
 
-	registerInputEvents() {
+	private registerInputEvents() {
 		this.input.addEventListener('keydown', this.handleInput.bind(this));
 	}
 
-	handleInput(e) {
+	private handleInput(e: KeyboardEvent) {
 		const key = e.key;
 
 		if (key === 'Enter') {
@@ -34,13 +37,13 @@ class TagInput extends HTMLElement {
 		}
 	}
 
-	initialiseEvents() {
+	private initialiseEvents() {
 		this.addEventListener('click', () => {
 			this.input.focus();
 		});
 	}
 
-	renderTags() {
+	private renderTags() {
 		const isFocused = this.input === document.activeElement;
 		const isDisabled = this.input.disabled;
 		const currentValue = this.input.value;
@@ -56,7 +59,7 @@ class TagInput extends HTMLElement {
 		if (currentValue) this.input.value = currentValue;
 	}
 
-	createTag(tag, index) {
+	private createTag(tag: string, index: number) {
 		const tagElement = document.createElement('span');
 		tagElement.classList.add('tag');
 		tagElement.innerText = tag;
@@ -68,16 +71,16 @@ class TagInput extends HTMLElement {
 		tagElement.appendChild(closeIcon);
 
 		closeIcon.addEventListener('click', () => {
-			this.removeTag(index);
+			this.deleteTag(index);
 		});
 
 		this.appendChild(tagElement);
 	}
 
-	addTag(tag) {
+	public addTag(tag: string) {
 		if (tag === '') return;
 
-		const eventCancelled = !this.dispatchEvent(new CustomEvent('newtag', {
+		const eventCancelled = !this.dispatchEvent(new CustomEvent<NewTagEventDetails>('newtag', {
 			detail: {
 				tag,
 				changeTag: (newTag) => {
@@ -93,30 +96,18 @@ class TagInput extends HTMLElement {
 		this.renderTags();
 	}
 
-	removeTag(index) {
+	private deleteTag(index: number) {
 		this.tags.splice(index, 1);
-		this.dispatchEvent(new CustomEvent('removetag'));
+		this.dispatchEvent(new CustomEvent('deletetag'));
 		this.renderTags();
 	}
 
-	get value() {
+	public get value() {
 		return this.tags;
 	}
-	set value(value) {
+	public set value(value) {
 		this.tags = value;
 		this.renderTags();
-	}
-
-	getValue() {
-		return this.value;
-	}
-	setValue(value) {
-		this.value = value;
-		this.dispatchEvent(new CustomEvent('tagschanged'));
-
-		if (value?.length === 0) {
-			this.input.value = '';
-		}
 	}
 }
 

@@ -1,0 +1,5 @@
+{
+	"installCommand": "yarn install --production",
+	"buildCommand": "yarn build",
+	"outputDirectory": "dist"
+}
