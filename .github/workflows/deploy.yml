@@ -23,6 +23,27 @@ jobs:
       - name: Build Project
         uses: ./.github/actions/lint-project
 
+  check-version:
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Get Version
+        id: get_version
+        run: echo version="v$(node -p "require('./package.json').version")" >> $GITHUB_OUTPUT
+      - name: Check if Tag Exists
+        run: |
+          TAG=${{ steps.get_version.outputs.version }}
+          if [ $(git tag -l "${TAG}") ]; then
+            echo "Tag ${TAG} already exists"
+            exit 1
+          else
+            echo "Tag ${TAG} does not exist"
+            exit 0
+          fi
+
+
   deploy-staging:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/staging'
@@ -50,7 +71,8 @@ jobs:
   create-tag:
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
-    needs: [build, lint]
+    needs: [build, lint, check-version]
+    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -68,7 +90,7 @@ jobs:
     env:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-    needs: [build, lint]
+    needs: [build, lint, check-version]
     steps:
       - name: Checkout
         uses: actions/checkout@v3
