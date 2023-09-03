@@ -1,12 +1,12 @@
-FROM nginx:1.25.2-alpine
+FROM nginx:1.25.2
 
 WORKDIR /build
 
+COPY ./ ./
+
 RUN apk add bash
 RUN apk add git
-RUN git clone https://github.com/danielhoward-me/chaos .
-RUN git checkout dnh/nginx
-RUN git status
+RUN cat ./dev/build-site | sed 's/\r$//' > ./dev/build-site
 RUN bash ./dev/build-site
 
 # COPY ./docker-build /var/www/chaos.danielhoward.me
