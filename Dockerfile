@@ -13,4 +13,4 @@ RUN rm -rf /build
 
 EXPOSE 80
 
-CMD ["nginx", "-g"]
+CMD ["nginx"]

@@ -33,7 +33,8 @@
   },
   "scripts": {
     "build": "env NODE_ENV=production webpack build",
-	"build-docker": "docker build -t chaos-game .",
+	"docker:build": "docker build -t chaos-game .",
+	"docker:run": "docker run -p 80:80 -d --name chaos-game chaos-game",
     "dev": "webpack serve",
     "lint": "eslint --ext ts --max-warnings 0 src dev",
     "tool": "bash ./dev/run-tool"
