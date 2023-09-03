@@ -6,6 +6,7 @@ COPY ./ ./
 
 RUN apk add bash
 SHELL ["/bin/bash", "-c"]
+RUN apk add git
 RUN . ./dev/build-site
 
 # COPY ./docker-build /var/www/chaos.danielhoward.me

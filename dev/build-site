@@ -69,8 +69,7 @@ rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 
 echo "Fetching site versions"
-mapfile -t site_versions < <(git tag)
-site_versions+=( staging )
+site_versions=( $(git tag) staging )
 
 for version in "${site_versions[@]}"
 do
