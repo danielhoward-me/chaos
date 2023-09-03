@@ -11,6 +11,6 @@ RUN cat ./dev/build-site | sed 's/\r$//' > ./dev/build-site
 RUN bash ./dev/build-site
 RUN rm -rf /build
 
-EXPOSE 3500
+EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["nginx", "-g"]
