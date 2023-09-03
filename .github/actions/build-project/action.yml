@@ -3,6 +3,6 @@ runs:
   steps:
     - name: Initialise Project
       uses: ./.github/actions/initialise-project
-    - name: Lint Project
+    - name: Build Project
       shell: bash
       run: yarn build
