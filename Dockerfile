@@ -9,6 +9,7 @@ RUN apt-get update
 RUN apt-get install -y git
 RUN cat ./dev/build-site | sed 's/\r$//' > ./dev/build-site
 RUN bash ./dev/build-site
+RUN rm -rf /build
 
 EXPOSE 3500
 

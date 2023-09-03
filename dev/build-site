@@ -24,7 +24,7 @@ function build_site {
 		fi
 
 		echo "Installing dependencies"
-		yarn install
+		yarn install --prod
 
 		echo "Building webpack"
 		yarn build
@@ -79,7 +79,7 @@ do
 	echo "Building site version $version"
 	build_site "$version"
 
-	version_dir_name=${version//./_}
+	version_dir_name=${version//./-}
 	version_dir="$BUILD_DIR/$version_dir_name"
 	mkdir -p "$version_dir"
 	echo "Copying build to $version_dir"
