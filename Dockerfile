@@ -6,7 +6,6 @@ COPY ./ ./
 
 RUN apk add bash
 RUN apk add git
-RUN git config --global core.autocrlf input
 RUN bash ./dev/build-site
 
 # COPY ./docker-build /var/www/chaos.danielhoward.me
