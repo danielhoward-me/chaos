@@ -38,6 +38,6 @@
     "tool": "bash ./dev/run-tool"
   },
   "engines": {
-    "node": "18.x"
+    "node": "18.16.0"
   }
 }

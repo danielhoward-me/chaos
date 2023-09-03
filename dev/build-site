@@ -1,0 +1,67 @@
+#!/bin/bash
+
+cd "$( dirname "${BASH_SOURCE[0]}" )"
+
+function build_site {
+	if [[ $1 == "v1."* ]]; then
+
+		return "
+
+		"
+	else
+		NODE_VERSION="18.16.0"
+
+		if [[ $(which node) == "" || $(node -v) != "v$NODE_VERSION" ]]; then
+			if [ $(which nvm) == "" ]; then
+				echo "nvm not installed, installing..."
+				install_nvm
+			fi
+
+			echo "Installing node $NODE_VERSION"
+			nvm install $NODE_VERSION
+			nvm use $NODE_VERSION
+			
+			echo "Installing yarn"
+			npm install -g yarn
+		fi
+
+		echo "Installing dependencies"
+		yarn install
+
+		echo "Building webpack"
+		yarn build
+	fi
+}
+
+function install_nvm {
+	apt install -y curl
+	curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
+	bash "$HOME/.nvm/nvm.sh"
+}
+
+BUILD_DIR="../docker-build"
+mkdir -p $BUILD_DIR
+
+echo "Fetching site versions"
+site_versions=( `git tag` staging )
+current_version=`git describe --tags --abbrev=0`
+echo "Current version is $current_version"
+
+for version in "${site_versions[@]}"
+do
+	echo "Checking out version $version"
+	git checkout $version
+
+	echo "Building site version $version"
+	build_site $version
+
+	$version_dir_name=(echo $version | sed 's/\./_/g')
+	$version_dir="$BUILD_DIR/$version_dir_name"
+	mkdir -p $version_dir
+	echo "Copying build to $BUILD_DIR/$version"
+	cp -r dist/* $version_dir
+
+	rm -rf dist
+
+	echo "Finished building version $version"
+done
