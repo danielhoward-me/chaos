@@ -5,9 +5,9 @@ WORKDIR /build
 COPY ./ ./
 
 RUN apk add bash
-SHELL ["/bin/bash", "-c"]
 RUN apk add git
-RUN . ./dev/build-site
+RUN git config --global core.autocrlf input
+RUN bash ./dev/build-site
 
 # COPY ./docker-build /var/www/chaos.danielhoward.me
 # COPY ./nginx.conf /etc/nginx/conf.d/default.conf
