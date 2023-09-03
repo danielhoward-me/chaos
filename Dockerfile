@@ -3,11 +3,12 @@ FROM nginx:1.25.2-alpine
 WORKDIR /build
 
 COPY ./ ./
-RUN bash ./dev/build-site
 
-COPY ./docker-build /var/www/chaos.danielhoward.me
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
+RUN . ./dev/build-site
 
-EXPOSE 3500
+# COPY ./docker-build /var/www/chaos.danielhoward.me
+# COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
-CMD ["nginx", "-g", "daemon off;"]
+# EXPOSE 3500
+
+# CMD ["nginx", "-g", "daemon off;"]
