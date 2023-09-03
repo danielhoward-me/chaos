@@ -1,6 +1,6 @@
-#!/bin/sh
+#!/bin/bash
 
-cd "$( dirname "${BASH_SOURCE[0]}" )"
+cd "$( dirname "${BASH_SOURCE[0]}" )" || exit
 cd ..
 
 function build_site {
@@ -10,8 +10,8 @@ function build_site {
 	else
 		NODE_VERSION="18.16.0"
 
-		if [[ $(which node) == "" || $(node -v) != "v$NODE_VERSION" ]]; then
-			if [ $(which nvm) == "" ]; then
+		if [[ "$(which node)" == "" || $(node -v) != "v$NODE_VERSION" ]]; then
+			if [ "$(which nvm)" == "" ]; then
 				echo "nvm not installed, installing..."
 				install_nvm
 			fi
@@ -43,7 +43,7 @@ CURRENT_DETHEAD_VALUE=$(git config advice.detachedHead)
 git config advice.detachedHead false
 
 function clean_up {
-	git checkout $CURRENT_BRANCH
+	git checkout "$CURRENT_BRANCH"
 	git config advice.detachedHead "$CURRENT_DETHEAD_VALUE"
 }
 
@@ -69,23 +69,22 @@ rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 
 echo "Fetching site versions"
-site_versions=( `git tag` staging )
-current_version=`git describe --tags --abbrev=0`
-echo "Current version is $current_version"
+mapfile -t site_versions < <(git tag)
+site_versions+=( staging )
 
 for version in "${site_versions[@]}"
 do
 	echo "Checking out version $version"
-	git checkout $version
+	git checkout "$version"
 
 	echo "Building site version $version"
-	build_site $version
+	build_site "$version"
 
 	version_dir_name=${version//./_}
 	version_dir="$BUILD_DIR/$version_dir_name"
-	mkdir -p $version_dir
+	mkdir -p "$version_dir"
 	echo "Copying build to $version_dir"
-	cp -r dist/* $version_dir
+	cp -r dist/* "$version_dir"
 
 	rm -rf dist
 

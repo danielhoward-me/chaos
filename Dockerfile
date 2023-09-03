@@ -4,6 +4,8 @@ WORKDIR /build
 
 COPY ./ ./
 
+RUN apk add bash
+SHELL ["/bin/bash", "-c"]
 RUN . ./dev/build-site
 
 # COPY ./docker-build /var/www/chaos.danielhoward.me
