@@ -4,8 +4,8 @@ WORKDIR /build
 
 COPY ./ ./
 
-RUN apk add bash
-RUN apk add git
+RUN apt-get update
+RUN apt-get install -y git
 RUN cat ./dev/build-site | sed 's/\r$//' > ./dev/build-site
 RUN bash ./dev/build-site
 
