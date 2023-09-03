@@ -63,7 +63,7 @@ function on_error() {
 trap on_error ERR
 trap on_exit SIGINT
 
-BUILD_DIR="docker-build"
+BUILD_DIR="/var/www/chaos.danielhoward.me"
 rm -rf $BUILD_DIR
 mkdir -p $BUILD_DIR
 
