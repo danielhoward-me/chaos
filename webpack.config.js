@@ -18,7 +18,10 @@ const distPath = localPath('dist');
 
 /** @type {import('webpack').Configuration} */
 export default {
-	entry: localPath('src/index.ts'),
+	entry: {
+		main: localPath('src/index.ts'),
+		auth: localPath('src/auth/index.ts'),
+	},
 	devtool: (isProduction || isStaging) ? false : 'eval-source-map',
 	module: {
 		rules: [
@@ -56,6 +59,12 @@ export default {
 		new HtmlWebpackPlugin({
 			template: localPath('public/index.html'),
 			templateParameters: getTemplateParams(),
+			chunks: ['main'],
+		}),
+		new HtmlWebpackPlugin({
+			template: localPath('public/auth/index.html'),
+			filename: 'auth/index.html',
+			chunks: ['auth'],
 		}),
 	],
 	resolve: {
@@ -73,6 +82,7 @@ export default {
 	},
 	devServer: {
 		host: 'local.danielhoward.me',
+		port: 3001,
 	},
 };
 
