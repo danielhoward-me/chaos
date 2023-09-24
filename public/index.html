@@ -25,7 +25,7 @@
 	<meta property="twitter:image" content="https://chaos.danielhoward.me/static/img/sierpinski-triangle.jpg">
 
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
-	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.10.5.min.css">
+	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.11.0.min.css">
 </head>
 <body>
 	<% function playbackSettingsBar() { %>
@@ -54,6 +54,46 @@
 			<i class="bi bi-x-lg"></i>
 		</button>
 		<h3 style="text-align: center;">Settings</h3>
+
+		<div class="btn-group" style="width: 100%; margin-bottom: 0.5rem; margin-top: 0.5rem;">
+			<button id="presetSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-sliders"></i> Presets</button>
+			<button id="localSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-floppy"></i> Local Saves</button>
+			<button id="cloudSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-cloud"></i> Cloud Saves</button>
+		</div>
+
+		<div id="presetSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<div class="saves-container"></div>
+		</div>
+		<div id="localSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<div class="saves-container"></div>
+		</div>
+		<div id="cloudSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<div style="display: flex; flex-direction: column; gap: 5px;">
+				<button id="loginButton" type="button" class="btn btn-primary"><i class="bi bi-cloud-fill"></i> Login</button>
+				<div id="loginLoading" style="color: #6c757d;" class="hidden">
+					<div class="spinner-border spinner-border-sm" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<span id="loginLoadingText"></span>
+				</div>
+				<div id="loginError" class="error-text hidden"></div>
+				<div id="loggedInView" class="hidden">
+					<div style="display: flex; align-items: center; position: relative;">
+						<div>
+							<img id="profilePicture" style="border-radius: 50%; margin-right: 10px;" width="50" height="50" alt="User Profile Picture"/>
+							<span id="username"></span>
+						</div>
+						<div style="position: absolute; right: 0;">
+							<div class="btn-group">
+								<button id="refreshCloudSavesButton" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i></button>
+								<button id="logoutButton" class="btn btn-danger">Log out</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="saves-container"></div>
+		</div>
 
 		<div data-setup-stage="1">
 			<% const shapeTypes = [
@@ -272,36 +312,14 @@
 			</div>
 		</div>
 
-		<br/>
-
-		<div style="text-align: center;">
+		<div style="text-align: center; margin-top: 0.5rem;">
 			<div style="margin-bottom: 10px;" id="saveButtons">
 				<input type="file" class="hidden" id="configUploadInput" accept=".json"/>
-				<div class="btn-group">
-					<button id="downloadConfigButton" type="button" class="btn btn-primary"><i class="bi bi-download"></i> Save</button>
-					<button id="uploadConfigButton" type="button" class="btn btn-primary"><i class="bi bi-upload"></i> Load</button>
+				<div class="btn-group" style="width: 100%;">
+					<button id="downloadConfigButton" type="button" class="btn btn-outline-primary"><i class="bi bi-download"></i> Save</button>
+					<button id="uploadConfigButton" type="button" class="btn btn-outline-primary"><i class="bi bi-upload"></i> Load</button>
 				</div>
 				<div class="invalid-feedback" id="configError"></div>
-			</div>
-			<div class="settings-stage" style="background: lightgraygray; margin-bottom: 10px; display: flex; flex-direction: column; gap: 5px;">
-				<button id="loginButton" type="button" class="btn btn-primary"><i class="bi bi-cloud-fill"></i> Login</button>
-				<div id="loginLoading" style="color: #6c757d;" class="hidden">
-					<div class="spinner-border spinner-border-sm" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-					<span id="loginLoadingText"></span>
-				</div>
-				<div id="loggedInView" class="hidden">
-					<div style="display: flex; align-items: center; position: relative;">
-						<div>
-							<img id="profilePicture" style="border-radius: 50%; margin-right: 10px;" width="50" height="50" alt="User Profile Picture"/>
-							<span id="username"></span>
-						</div>
-						<div style="position: absolute; right: 0;">
-							<button id="logoutButton" class="btn btn-danger">Log out</button>
-						</div>
-					</div>
-				</div>
 			</div>
 			<div class="btn-group">
 				<button type="button" class="btn btn-primary" id="openHelpButton"><i class="bi bi-info-circle"></i> Help</button>

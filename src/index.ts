@@ -5,16 +5,13 @@ import './tag-input';
 
 // The order here is important, otherwise it create circular dependencies
 import {onload as canvasOnload} from './canvas/canvas';
-// eslint-disable-next-line import/order
-import {onload as authOnload} from './auth';
 import {onload as coreOnload} from './core';
-import {onload as savesOnload} from './saves';
+import {onload as savesOnload} from './saves/saves';
 import {onload as setupOnload} from './setup/setup';
 
 window.addEventListener('DOMContentLoaded', () => {
 	coreOnload();
 	canvasOnload();
 	savesOnload();
-	authOnload();
 	setupOnload();
 });

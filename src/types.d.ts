@@ -133,20 +133,21 @@ export interface ShapeSettingsInputEvent {
 	updateGraph: boolean;
 }
 
-export interface BackendAccount {
+export interface Account {
 	userId: string;
 	username: string;
 	email: string;
 	profilePicture: string;
 }
-export interface BackendSave {
+export interface Save {
+	id: string;
 	name: string;
 	data: string;
 	screenshot?: string;
 }
-export interface BackendAccountResponse {
-	account: BackendAccount;
-	saves: BackendSave[];
+export interface BackendResponse {
+	account: Account;
+	saves: Save[];
 }
 
 export interface LocalStorageAuth {

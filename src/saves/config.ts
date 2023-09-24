@@ -1,10 +1,10 @@
-import {SetupStage} from './constants';
-import {$, getInputValue, setInputValue} from './core';
-import {generatePoints} from './setup/generate-points';
-import {getStages, getSetupStage, setSetupStage} from './setup/setup';
-import {useSetEquator} from './vertex-rule';
+import {SetupStage} from './../constants';
+import {$, getInputValue, setInputValue} from './../core';
+import {generatePoints} from './../setup/generate-points';
+import {getStages, getSetupStage, setSetupStage} from './../setup/setup';
+import {useSetEquator} from './../vertex-rule';
 
-import type {SaveConfig} from './types.d';
+import type {SaveConfig} from './../types.d';
 
 /*
 Save file version changelog:
@@ -73,7 +73,7 @@ function downloadCurrentConfig() {
 	link.click();
 }
 
-function loadConfig(config: SaveConfig) {
+export function loadConfig(config: SaveConfig) {
 	showConfigError('');
 	setSetupStage(0);
 

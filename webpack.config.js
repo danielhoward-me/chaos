@@ -83,6 +83,7 @@ export default {
 	devServer: {
 		host: 'local.danielhoward.me',
 		port: 3001,
+		watchFiles: ['src/**/*', 'public/**/*'],
 	},
 };
 

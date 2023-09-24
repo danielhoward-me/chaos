@@ -58,6 +58,7 @@
 			{
 				"patterns": ["../*", "*types"]
 			}
-		]
+		],
+		"func-call-spacing": "off"
 	}
 }
