@@ -1,7 +1,7 @@
 import {backendOrigin, backendQuery} from './paths';
 import {getAuthStorage} from './sso';
 
-import type {BackendResponse} from './../types.d';
+import type {BackendResponse, Save} from './../types.d';
 
 function getBackendUrl(path: string): string {
 	let url = `${backendOrigin}${path}${backendQuery}`;
@@ -25,6 +25,10 @@ async function makeRequest<T>(path: string, includeAuth = false): Promise<T> {
 	if (!res.ok) throw new Error('chaos-backend returned a non-ok response');
 
 	return await res.json() as T;
+}
+
+export async function fetchPresets(): Promise<Save[]> {
+	return await makeRequest('/presets');
 }
 
 export async function fetchUserSaves(): Promise<BackendResponse> {

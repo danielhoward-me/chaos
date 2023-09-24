@@ -58,6 +58,8 @@ function onLoginClick() {
 
 async function refreshServerResponse() {
 	showLoadingInfo(true);
+	showLoggedInView(false);
+	populateSavesSection(SaveType.Cloud, null);
 	loginLoadingText.textContent = 'Fetching your saves from the server';
 
 	let res: BackendResponse;

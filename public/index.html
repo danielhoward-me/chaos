@@ -62,9 +62,23 @@
 		</div>
 
 		<div id="presetSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<div id="presetsLoading" style="color: #6c757d;">
+				<div class="spinner-border spinner-border-sm" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+				<span>Fetching presets from the server</span>
+			</div>
+			<div id="presetsError" class="error-text hidden"></div>
 			<div class="saves-container"></div>
 		</div>
 		<div id="localSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<input type="file" class="hidden" id="localSaveFileInput" accept=".json"/>
+			<div style="text-align: right; margin-bottom: 5px;">
+				<button id="uploadLocalSaveButton" type="button" class="btn btn-primary">
+					<i class="bi bi-upload"></i> Upload local save
+				</button>
+			</div>
+			<div id="localSaveError" class="error-text hidden"></div>
 			<div class="saves-container"></div>
 		</div>
 		<div id="cloudSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">

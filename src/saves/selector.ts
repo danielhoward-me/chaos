@@ -46,8 +46,8 @@ function setContainerActive(type: SaveType | null) {
 }
 
 export function populateSavesSection(type: SaveType, saves: null): void
-export function populateSavesSection(type: SaveType, saves: Save[], deleteSave: (save: Save) => void): void
-export function populateSavesSection(type: SaveType, saves: Save[] | null, deleteSave?: (save: Save) => void) {
+export function populateSavesSection(type: SaveType, saves: Save[], deleteSave: ((save: Save) => void) | null): void
+export function populateSavesSection(type: SaveType, saves: Save[] | null, deleteSave?: ((save: Save) => void) | null) {
 	const container = savesContainers[type].querySelector('.saves-container');
 	container.innerHTML = '';
 
@@ -65,7 +65,7 @@ export function populateSavesSection(type: SaveType, saves: Save[] | null, delet
 	}
 }
 
-function createSaveCard(save: Save, deleteSaveFunc: (save: Save) => void, type: SaveType, saves: Save[]): HTMLDivElement {
+function createSaveCard(save: Save, deleteSaveFunc: ((save: Save) => void) | null, type: SaveType, saves: Save[]): HTMLDivElement {
 	const card = document.createElement('div');
 	card.classList.add('card');
 	card.classList.add('save-card');
@@ -106,17 +106,19 @@ function createSaveCard(save: Save, deleteSaveFunc: (save: Save) => void, type: 
 	useButton.addEventListener('click', () => useSave(save, errorText));
 	buttonContainer.appendChild(useButton);
 
-	const deleteButton = document.createElement('button');
-	deleteButton.classList.add('btn');
-	deleteButton.classList.add('btn-danger');
-	deleteButton.classList.add('delete-button');
-	deleteButton.addEventListener('click', () => deleteSave(deleteSaveFunc, save, deleteButton, errorText, type, saves));
-	buttonContainer.appendChild(deleteButton);
+	if (deleteSaveFunc !== null) {
+		const deleteButton = document.createElement('button');
+		deleteButton.classList.add('btn');
+		deleteButton.classList.add('btn-danger');
+		deleteButton.classList.add('delete-button');
+		deleteButton.addEventListener('click', () => deleteSave(deleteSaveFunc, save, deleteButton, errorText, type, saves));
+		buttonContainer.appendChild(deleteButton);
 
-	const deleteIcon = document.createElement('i');
-	deleteIcon.classList.add('bi');
-	deleteIcon.classList.add('bi-trash');
-	deleteButton.appendChild(deleteIcon);
+		const deleteIcon = document.createElement('i');
+		deleteIcon.classList.add('bi');
+		deleteIcon.classList.add('bi-trash');
+		deleteButton.appendChild(deleteIcon);
+	}
 
 	return card;
 }
