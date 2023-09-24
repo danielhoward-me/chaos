@@ -132,3 +132,24 @@ export interface ShapeSettingsInputEvent {
 	element: HTMLElement;
 	updateGraph: boolean;
 }
+
+export interface BackendAccount {
+	userId: string;
+	username: string;
+	email: string;
+	profilePicture: string;
+}
+export interface BackendSave {
+	name: string;
+	data: string;
+	screenshot?: string;
+}
+export interface BackendAccountResponse {
+	account: BackendAccount;
+	saves: BackendSave[];
+}
+
+export interface LocalStorageAuth {
+	accessToken: string;
+	expires: number;
+}

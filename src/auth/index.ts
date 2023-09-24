@@ -29,6 +29,8 @@ function saveAccessToken() {
 
 	loadingSpinner.classList.add('hidden');
 	success.classList.remove('hidden');
+
+	if (!window.opener) window.location.href = '/';
 }
 
 saveAccessToken();

@@ -291,6 +291,17 @@
 					</div>
 					<span id="loginLoadingText"></span>
 				</div>
+				<div id="loggedInView" class="hidden">
+					<div style="display: flex; align-items: center; position: relative;">
+						<div>
+							<img id="profilePicture" style="border-radius: 50%; margin-right: 10px;" width="50" height="50" alt="User Profile Picture"/>
+							<span id="username"></span>
+						</div>
+						<div style="position: absolute; right: 0;">
+							<button id="logoutButton" class="btn btn-danger">Log out</button>
+						</div>
+					</div>
+				</div>
 			</div>
 			<div class="btn-group">
 				<button type="button" class="btn btn-primary" id="openHelpButton"><i class="bi bi-info-circle"></i> Help</button>
