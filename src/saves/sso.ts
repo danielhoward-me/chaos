@@ -10,20 +10,24 @@ const logoutButton = $('logoutButton');
 const loginLoading = $('loginLoading');
 const loginLoadingText = $('loginLoadingText');
 const loginError = $('loginError');
-const refreshCloudSavesButton = $('refreshCloudSavesButton');
-
+const viewCloudSavesRequireLogin = $('viewCloudSavesRequireLogin');
+const cloudSavesRequireLogin = $('cloudSavesRequireLogin');
 const loggedInView = $('loggedInView');
 
 const showLoginButton = makeClassToggler(loginButton, 'hidden', true);
 const showLoadingInfo = makeClassToggler(loginLoading, 'hidden', true, (enabled) => loginButton.disabled = enabled);
 const showLoggedInView = makeClassToggler(loggedInView, 'hidden', true);
 const showLoginError = makeClassToggler(loginError, 'hidden', true);
+const showViewCloudSavesRequireLogin = makeClassToggler(viewCloudSavesRequireLogin, 'hidden', true);
+const showCloudSavesRequireLogin = makeClassToggler(cloudSavesRequireLogin, 'hidden', true, showViewCloudSavesRequireLogin);
 const setLoginError = (value: string | undefined) => {
 	loginError.textContent = value;
 	showLoginError(!!value);
 };
 
 let loginWindow: Window;
+
+const statusChangeCallbacks: ((loggedIn: boolean) => void)[] = [];
 
 function onLoginClick() {
 	if (loginWindow?.closed === false) return loginWindow.focus();
@@ -57,8 +61,10 @@ function onLoginClick() {
 }
 
 async function refreshServerResponse() {
+	runCallbacks(false);
 	showLoadingInfo(true);
 	showLoggedInView(false);
+	showCloudSavesRequireLogin(true);
 	populateSavesSection(SaveType.Cloud, null);
 	loginLoadingText.textContent = 'Fetching your saves from the server';
 
@@ -74,8 +80,10 @@ async function refreshServerResponse() {
 	populateAccountDetails(res.account);
 	populateSavesSection(SaveType.Cloud, res.saves, (save) => deleteSave(save.id));
 
+	runCallbacks(true);
 	showLoadingInfo(false);
 	showLoginButton(false);
+	showCloudSavesRequireLogin(false);
 	showLoggedInView(true);
 }
 
@@ -95,13 +103,26 @@ function logout() {
 	showLoadingInfo(false);
 	showLoginButton(true);
 	showLoggedInView(false);
+	showCloudSavesRequireLogin(true);
 	populateSavesSection(SaveType.Cloud, null);
+
+	runCallbacks(false);
+}
+
+function runCallbacks(loggedIn: boolean) {
+	statusChangeCallbacks.forEach((f) => f(loggedIn));
+}
+
+export function onLoginStatusChange(callback: (loggedIn: boolean) => void) {
+	statusChangeCallbacks.push(callback);
 }
 
 export function onload() {
 	loginButton.addEventListener('click', onLoginClick);
 	logoutButton.addEventListener('click', logout);
-	refreshCloudSavesButton.addEventListener('click', refreshServerResponse);
 
-	if (localStorage.getItem('auth') !== null) refreshServerResponse();
+	if (localStorage.getItem('auth') !== null) {
+		showLoginButton(false);
+		refreshServerResponse();
+	}
 }

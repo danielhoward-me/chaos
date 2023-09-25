@@ -1,7 +1,7 @@
 import {SetupStage} from './../constants';
-import {$, getInputValue, setInputValue} from './../core';
+import {getInputValue, setInputValue} from './../core';
 import {generatePoints} from './../setup/generate-points';
-import {getStages, getSetupStage, setSetupStage} from './../setup/setup';
+import {getStages, setSetupStage} from './../setup/setup';
 import {useSetEquator} from './../vertex-rule';
 
 import type {SaveConfig} from './../types.d';
@@ -18,10 +18,7 @@ Save file version changelog:
 
 const CURRENT_SAVE_VERSION = 2;
 
-const configError = $('configError');
-const configUploadInput = $<HTMLInputElement>('configUploadInput');
-
-function getCurrentConfig(): SaveConfig {
+export function getCurrentConfig(): SaveConfig {
 	const config: SaveConfig = {
 		version: CURRENT_SAVE_VERSION,
 		stages: {
@@ -51,30 +48,7 @@ function getCurrentConfig(): SaveConfig {
 	return config;
 }
 
-function downloadCurrentConfig() {
-	showConfigError('');
-	const config = getCurrentConfig();
-
-	// If the stage isn't high enough to generate points, display error
-	if (getSetupStage() < SetupStage.GeneratePoints) {
-		const shapeType = config.stages[SetupStage.ShapeSettings].shapeType;
-		const error = `Please ${shapeType === 'custom' ? 'draw atleast three points' : 'select a shape type'} before downloading the config file`;
-		showConfigError(error);
-		return;
-	}
-
-	const configString = JSON.stringify(config);
-	const configData = new Blob([configString], {type: 'application/json'});
-	const configUrl = URL.createObjectURL(configData);
-
-	const link = document.createElement('a');
-	link.href = configUrl;
-	link.download = 'config.json';
-	link.click();
-}
-
 export function loadConfig(config: SaveConfig) {
-	showConfigError('');
 	setSetupStage(0);
 
 	switch (config.version) {
@@ -112,37 +86,4 @@ function loadConfigVersion2(config: SaveConfig['stages']) {
 			setInputValue(inputData.element, config[stage][inputName] || inputData.sanitisation.default, true);
 		});
 	});
-}
-
-function onFileUpload() {
-	const file = configUploadInput.files[0];
-	if (!file) return;
-
-	const reader = new FileReader();
-	reader.onload = () => {
-		try {
-			const result = reader.result;
-			if (result instanceof ArrayBuffer) {
-				throw new Error('File is encoded incorrectly');
-			}
-
-			const config = JSON.parse(result);
-			loadConfig(config);
-		} catch (error) {
-			console.error(error.message);
-			showConfigError(`Failed to load config file: ${error}`);
-		}
-	};
-	reader.readAsText(file);
-}
-
-function showConfigError(message: string) {
-	configError.innerText = message;
-	configError.style.display = message === '' ? 'none' : 'block';
-}
-
-export function onload() {
-	$('downloadConfigButton').addEventListener('click', downloadCurrentConfig);
-	$('uploadConfigButton').addEventListener('click', () => configUploadInput.click());
-	configUploadInput.addEventListener('change', onFileUpload);
 }

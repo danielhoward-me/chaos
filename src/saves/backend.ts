@@ -13,15 +13,23 @@ function getBackendUrl(path: string): string {
 	return url;
 }
 
-async function makeRequest<T>(path: string, includeAuth = false): Promise<T> {
-	const headers: HeadersInit = {};
+async function makeRequest<T>(path: string, includeAuth = false, postBody: null | unknown = null): Promise<T> {
+	const fetchOptions: RequestInit = {
+		method: postBody === null ? 'GET' : 'POST',
+		headers: {},
+	};
 
 	if (includeAuth) {
 		const auth = getAuthStorage();
-		headers['Authorization'] = `Bearer ${auth.accessToken}`;
+		fetchOptions.headers['Authorization'] = `Bearer ${auth.accessToken}`;
 	}
 
-	const res = await fetch(getBackendUrl(path), {headers});
+	if (postBody !== null) {
+		fetchOptions.body = JSON.stringify(postBody);
+		fetchOptions.headers['Content-Type'] = 'application/json';
+	}
+
+	const res = await fetch(getBackendUrl(path), fetchOptions);
 	if (!res.ok) throw new Error('chaos-backend returned a non-ok response');
 
 	return await res.json() as T;
@@ -37,4 +45,8 @@ export async function fetchUserSaves(): Promise<BackendResponse> {
 
 export async function deleteSave(id: string) {
 	return await makeRequest(`/delete?id=${id}`, true);
+}
+
+export async function makeCloudSave(name: string, data: string) {
+	await makeRequest('/create', true, {name, data});
 }

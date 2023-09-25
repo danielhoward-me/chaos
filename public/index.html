@@ -55,6 +55,30 @@
 		</button>
 		<h3 style="text-align: center;">Settings</h3>
 
+		<div class="settings-stage" style="margin-top: 15px;">
+			<div style="display: flex; flex-direction: column; gap: 5px;">
+				<button id="loginButton" type="button" class="btn btn-primary"><i class="bi bi-cloud-fill"></i> Log in</button>
+				<div id="loginLoading" style="color: #6c757d;" class="hidden">
+					<div class="spinner-border spinner-border-sm" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<span id="loginLoadingText"></span>
+				</div>
+				<div id="loginError" class="error-text hidden"></div>
+				<div id="loggedInView" class="hidden">
+					<div style="display: flex; align-items: center; position: relative;">
+						<div>
+							<img id="profilePicture" style="border-radius: 50%; margin-right: 10px;" width="50" height="50" alt="User Profile Picture"/>
+							<span id="username"></span>
+						</div>
+						<div style="position: absolute; right: 0;">
+							<button id="logoutButton" class="btn btn-danger">Log out</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
 		<div class="btn-group" style="width: 100%; margin-bottom: 0.5rem; margin-top: 0.5rem;">
 			<button id="presetSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-sliders"></i> Presets</button>
 			<button id="localSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-floppy"></i> Local Saves</button>
@@ -82,29 +106,8 @@
 			<div class="saves-container"></div>
 		</div>
 		<div id="cloudSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
-			<div style="display: flex; flex-direction: column; gap: 5px;">
-				<button id="loginButton" type="button" class="btn btn-primary"><i class="bi bi-cloud-fill"></i> Login</button>
-				<div id="loginLoading" style="color: #6c757d;" class="hidden">
-					<div class="spinner-border spinner-border-sm" role="status">
-						<span class="visually-hidden">Loading...</span>
-					</div>
-					<span id="loginLoadingText"></span>
-				</div>
-				<div id="loginError" class="error-text hidden"></div>
-				<div id="loggedInView" class="hidden">
-					<div style="display: flex; align-items: center; position: relative;">
-						<div>
-							<img id="profilePicture" style="border-radius: 50%; margin-right: 10px;" width="50" height="50" alt="User Profile Picture"/>
-							<span id="username"></span>
-						</div>
-						<div style="position: absolute; right: 0;">
-							<div class="btn-group">
-								<button id="refreshCloudSavesButton" class="btn btn-primary"><i class="bi bi-arrow-clockwise"></i></button>
-								<button id="logoutButton" class="btn btn-danger">Log out</button>
-							</div>
-						</div>
-					</div>
-				</div>
+			<div id="viewCloudSavesRequireLogin" class="text-muted">
+				To view cloud saves, you need log in by clicking the button at the top of the settings box
 			</div>
 			<div class="saves-container"></div>
 		</div>
@@ -328,20 +331,38 @@
 
 		<div style="text-align: center; margin-top: 0.5rem;">
 			<div style="margin-bottom: 10px;" id="saveButtons">
-				<input type="file" class="hidden" id="configUploadInput" accept=".json"/>
 				<div class="btn-group" style="width: 100%;">
-					<button id="downloadConfigButton" type="button" class="btn btn-outline-primary"><i class="bi bi-download"></i> Save</button>
-					<button id="uploadConfigButton" type="button" class="btn btn-outline-primary"><i class="bi bi-upload"></i> Load</button>
+					<button id="downloadConfigButton" type="button" class="btn btn-outline-primary"><i class="bi bi-download"></i></button>
+					<button id="saveLocalButton" type="button" class="btn btn-outline-primary"><i class="bi bi-floppy"></i> Save Locally</button>
+					<button id="saveCloudButton" type="button" class="btn btn-outline-primary"><i class="bi bi-cloud"></i> Save to the Cloud</button>
 				</div>
-				<div class="invalid-feedback" id="configError"></div>
+				<div style="margin-top: 5px;">
+					<div id="createSaveContainer" class="settings-stage hidden">
+						<div id="cloudSavesRequireLogin" class="text-muted">
+							To make cloud saves, you need log in by clicking the button at the top of the settings box
+						</div>
+						<form id="createSaveForm" class="input-group  hidden">
+							<span class="input-group-text">
+								Name
+							</span>
+							<input class="form-control" type="text" id="saveNameInput" placeholder="Fractal"/>
+							<button id="createSaveButton" class="btn btn-primary" type="submit">
+								<div id="createSaveLoading" class="spinner-border spinner-border-sm hidden" role="status">
+									<span class="visually-hidden">Loading...</span>
+								</div>
+								Save
+							</button>
+						</form>
+					</div>
+					<span class="error-text hidden" id="createSaveError"></span>
+				</div>
 			</div>
 			<div class="btn-group">
 				<button type="button" class="btn btn-primary" id="openHelpButton"><i class="bi bi-info-circle"></i> Help</button>
 				<button type="button" class="btn btn-danger" id="resetButton"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
-		<br/>
-		<div style="text-align: center;">
+		<div style="text-align: center; margin-top: 10px;">
 			<small class="form-text">
 				<% if (isDevelopment) { %>
 					<span>development</span>

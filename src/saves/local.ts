@@ -1,4 +1,5 @@
 import {$, makeClassToggler} from './../core';
+import {getCurrentConfig} from './config';
 import {SaveType, populateSavesSection} from './selector';
 
 import type {Save} from './../types.d';
@@ -40,21 +41,7 @@ function onFileUpload() {
 				throw new Error('File is encoded incorrectly');
 			}
 
-			const saves = getLocalSaves();
-			const largestId = parseInt(saves.sort(
-				({id: idA}, {id: idB}) => parseInt(idA) - parseInt(idB)
-			)?.[0]?.id) || 0;
-
-			const save: Save = {
-				id: (largestId + 1).toString(),
-				name: filenameToSaveName(file.name),
-				data,
-				screenshot: '1',
-			};
-			saves.push(save);
-
-			setLocalSaves(saves);
-			populateSavesSection(SaveType.Local, saves, deleteLocalSave);
+			createLocalSave(filenameToSaveName(file.name), data);
 		} catch (err) {
 			console.error(err);
 			localSaveError.textContent = 'There was an error when uploading your save. Please try again later.';
@@ -62,6 +49,39 @@ function onFileUpload() {
 		}
 	};
 	reader.readAsText(file);
+}
+
+export function createLocalSave(name: string, data: string) {
+	const saves = getLocalSaves();
+	const largestId = parseInt(saves.sort(
+		({id: idA}, {id: idB}) => parseInt(idB) - parseInt(idA)
+	)?.[0]?.id) || 0;
+
+	console.log(largestId);
+
+	const save: Save = {
+		id: (largestId + 1).toString(),
+		name,
+		data,
+		screenshot: '1',
+	};
+	saves.push(save);
+
+	setLocalSaves(saves);
+	populateSavesSection(SaveType.Local, saves, deleteLocalSave);
+}
+
+export function downloadConfig() {
+	const config = getCurrentConfig();
+
+	const configString = JSON.stringify(config);
+	const configData = new Blob([configString], {type: 'application/json'});
+	const configUrl = URL.createObjectURL(configData);
+
+	const link = document.createElement('a');
+	link.href = configUrl;
+	link.download = 'config.json';
+	link.click();
 }
 
 function filenameToSaveName(filename: string): string {

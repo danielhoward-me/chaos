@@ -253,8 +253,10 @@ a.text-muted {
 	flex-wrap: wrap;
 }
 .saves-container:has(> span) {
-	margin-top: 5px;
 	justify-content: center;
+}
+.saves-container > span {
+	margin: 5px;
 }
 .save-card {
 	margin: 5px;

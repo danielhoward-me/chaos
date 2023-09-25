@@ -54,7 +54,7 @@ export default {
 			],
 		}),
 		new MiniCssExtractPlugin({
-			filename: 'static/css/style.[contenthash].css',
+			filename: 'static/css/[contenthash].css',
 		}),
 		new HtmlWebpackPlugin({
 			template: localPath('public/index.html'),

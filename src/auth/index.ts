@@ -1,3 +1,5 @@
+import './../styles/auth.css';
+
 const loadingSpinner = document.getElementById('loadingSpinner');
 const errorAlert = document.getElementById('errorAlert');
 const success = document.getElementById('success');
