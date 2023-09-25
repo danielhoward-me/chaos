@@ -308,7 +308,7 @@ function drawStartPoint() {
 	}
 }
 
-function onSeek(seekValue: number) {
+export function onSeek(seekValue: number) {
 	playbackSeek.forEach((seek) => setInputValue(seek, seekValue));
 	currentPlaybackTime = (seekValue / 100) * totalPlaybackTime;
 	updatePlaybackTime();

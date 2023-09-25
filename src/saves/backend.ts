@@ -47,6 +47,6 @@ export async function deleteSave(id: string) {
 	return await makeRequest(`/delete?id=${id}`, true);
 }
 
-export async function makeCloudSave(name: string, data: string) {
-	await makeRequest('/create', true, {name, data});
+export async function makeCloudSave(name: string, data: string): Promise<{save: Save, screenshotTime: number}> {
+	return await makeRequest('/create', true, {name, data});
 }

@@ -4,7 +4,7 @@ import {getSetupStage} from './../setup/setup';
 import {makeCloudSave} from './backend';
 import {getCurrentConfig} from './config';
 import {createLocalSave, downloadConfig} from './local';
-import {SaveType} from './selector';
+import {SaveType, addSaveToSection} from './selector';
 import {onLoginStatusChange} from './sso';
 
 type DownloadSaveTypes = SaveType.Local | SaveType.Cloud;
@@ -98,14 +98,18 @@ async function onSaveFormSubmitted(ev: SubmitEvent) {
 
 	const data = JSON.stringify(getCurrentConfig());
 
+	let screenshotTime = 0;
 	try {
 		switch (currentType) {
 		case SaveType.Local:
 			createLocalSave(name, data);
 			break;
-		case SaveType.Cloud:
-			await makeCloudSave(name, data);
+		case SaveType.Cloud: {
+			const save = await makeCloudSave(name, data);
+			addSaveToSection(SaveType.Cloud, save.save);
+			screenshotTime = save.screenshotTime;
 			break;
+		}
 		}
 	} catch (err) {
 		console.error(err);
@@ -114,8 +118,10 @@ async function onSaveFormSubmitted(ev: SubmitEvent) {
 		return;
 	}
 
-	showCreateSaveLoading(false);
-	saveNameInput.value = '';
+	setTimeout(() => {
+		showCreateSaveLoading(false);
+		saveNameInput.value = '';
+	}, Math.min(screenshotTime, 2500));
 }
 
 export function onload() {

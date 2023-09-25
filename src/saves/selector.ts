@@ -11,6 +11,14 @@ export enum SaveType {
 }
 
 let currentType: SaveType | null = null;
+const saveCache: Record<SaveType, {
+	deleteFunc: ((save: Save) => void) | null;
+	saves: Save[];
+} | null> = {
+	[SaveType.Preset]: null,
+	[SaveType.Local]: null,
+	[SaveType.Cloud]: null,
+};
 
 const savesButtons: Record<SaveType, HTMLElement> = {
 	[SaveType.Preset]: $('presetSavesButton'),
@@ -48,6 +56,11 @@ function setContainerActive(type: SaveType | null) {
 export function populateSavesSection(type: SaveType, saves: null): void
 export function populateSavesSection(type: SaveType, saves: Save[], deleteSave: ((save: Save) => void) | null): void
 export function populateSavesSection(type: SaveType, saves: Save[] | null, deleteSave?: ((save: Save) => void) | null) {
+	saveCache[type] = {
+		saves,
+		deleteFunc: deleteSave,
+	};
+
 	const container = savesContainers[type].querySelector('.saves-container');
 	container.innerHTML = '';
 
@@ -162,6 +175,14 @@ async function deleteSave(deleteSaveFunc: (save: Save) => void | Promise<void>, 
 	}
 
 	populateSavesSection(type, saves.filter(({id}) => save.id !== id), deleteSaveFunc);
+}
+
+export function addSaveToSection(type: SaveType, save: Save) {
+	const saveSectionData = saveCache[type];
+	if (saveSectionData === null) throw new Error(`${type} section has not been populated`);
+
+	saveSectionData.saves.push(save);
+	populateSavesSection(type, saveSectionData.saves, saveSectionData.deleteFunc);
 }
 
 export function onload() {
