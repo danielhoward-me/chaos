@@ -7,7 +7,7 @@ import './tag-input';
 import {onload as canvasOnload} from './canvas/canvas';
 import {onload as coreOnload} from './core';
 import {onload as savesOnload} from './saves/saves';
-import {initScreenshotWorker} from './screenshot';
+import {isScreenshotWorker, initScreenshotWorker} from './screenshot';
 import {onload as setupOnload} from './setup/setup';
 
 window.addEventListener('DOMContentLoaded', () => {
@@ -16,9 +16,5 @@ window.addEventListener('DOMContentLoaded', () => {
 	savesOnload();
 	setupOnload();
 
-	// For screenshot worker
-	const searchParams = new URLSearchParams(window.location.search);
-	if (searchParams.has('screenshot-worker')) {
-		initScreenshotWorker();
-	}
+	if (isScreenshotWorker()) initScreenshotWorker();
 });

@@ -51,7 +51,7 @@ function onFileUpload() {
 	reader.readAsText(file);
 }
 
-export function createLocalSave(name: string, data: string) {
+export function createLocalSave(name: string, data: string): Save {
 	const saves = getLocalSaves();
 	const largestId = parseInt(saves.sort(
 		({id: idA}, {id: idB}) => parseInt(idB) - parseInt(idA)
@@ -68,7 +68,7 @@ export function createLocalSave(name: string, data: string) {
 	saves.push(save);
 
 	setLocalSaves(saves);
-	populateSavesSection(SaveType.Local, saves, deleteLocalSave);
+	return save;
 }
 
 export function downloadConfig() {

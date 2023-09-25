@@ -1,6 +1,7 @@
 import {onUpdateAssets, findFirstAssetIndex, addAssets, removeAsset, setAssetHidden} from './../canvas/canvas';
 import {AssetType, SetupStage} from './../constants';
 import {$, executeKeybind, setInputValue, setNodeListValue} from './../core';
+import {isScreenshotWorker} from './../screenshot';
 import {setSetupStage, sanitiseInputsInStage} from './setup';
 import {getShapeBaseData, getShapeVertices} from './shape-settings';
 
@@ -92,6 +93,8 @@ export function setChaosPoints(processedPoints: ChaosGamePoint[]) {
 	setKeyboardEnabled(true);
 	syncLineColour();
 	syncStartPointColour();
+
+	if (isScreenshotWorker()) onSeek(100);
 }
 
 function loadPointsIntoAssets() {

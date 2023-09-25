@@ -58,7 +58,7 @@ function zoomOut() {
 
 const settingsBox = $('settingsBox');
 
-const toggleSettingsBox = makeClassToggler(settingsBox, 'closed', true, (isOpen) => {
+export const toggleSettingsBox = makeClassToggler(settingsBox, 'closed', true, (isOpen) => {
 	const multiplier = isOpen ? -1 : 1;
 	// Shift the graph my half the size of the settings box
 	if (screenIsInMobileMode()) {

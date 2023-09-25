@@ -76,14 +76,15 @@ function loadConfigVersion2(config: SaveConfig['stages']) {
 		const stageData = stages[stage];
 		if (!stageData) return;
 
-		// Generate points before changing playback settings
-		if (stage === SetupStage.Playback) await generatePoints();
-
 		Object.keys(stageData.elements || {}).forEach((inputName) => {
 			const inputData = stageData.elements[inputName];
 			if (!inputData) return;
 
 			setInputValue(inputData.element, config[stage][inputName] || inputData.sanitisation.default, true);
 		});
+
+		// Generate points before changing playback settings
+		// This needs to be done after the input values have been set
+		if (stage === SetupStage.Playback) await generatePoints();
 	});
 }
