@@ -101,17 +101,16 @@ async function onSaveFormSubmitted(ev: SubmitEvent) {
 	const data = JSON.stringify(getCurrentConfig());
 
 	let save: Save;
-	let screenshotTime = 0;
 	try {
 		switch (currentType) {
-		case SaveType.Local:
-			save = createLocalSave(name, data);
-			screenshotTime = (await requestScreenshot(data)).screenshotTime;
+		case SaveType.Local: {
+			const {hash} = await requestScreenshot(data);
+			save = createLocalSave(name, data, hash);
 			break;
+		}
 		case SaveType.Cloud: {
 			const newSave = await makeCloudSave(name, data);
 			save = newSave.save;
-			screenshotTime = newSave.screenshotTime;
 			break;
 		}
 		}
@@ -122,11 +121,9 @@ async function onSaveFormSubmitted(ev: SubmitEvent) {
 		return;
 	}
 
-	setTimeout(() => {
-		showCreateSaveLoading(false);
-		saveNameInput.value = '';
-		addSaveToSection(currentType, save);
-	}, Math.min(screenshotTime, 25000));
+	showCreateSaveLoading(false);
+	saveNameInput.value = '';
+	addSaveToSection(currentType, save);
 }
 
 export function onload() {

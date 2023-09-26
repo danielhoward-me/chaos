@@ -37,10 +37,10 @@ export async function deleteSave(id: string) {
 	return await makeRequest(`/delete?id=${id}`, true);
 }
 
-export async function makeCloudSave(name: string, data: string): Promise<{save: Save, screenshotTime: number}> {
+export async function makeCloudSave(name: string, data: string): Promise<{save: Save}> {
 	return await makeRequest('/create', true, {name, data});
 }
 
-export async function requestScreenshot(data: string): Promise<{screenshotTime: number}> {
+export async function requestScreenshot(data: string): Promise<{hash: string}> {
 	return await makeRequest('/screenshot', false, {data});
 }

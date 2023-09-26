@@ -1,14 +1,17 @@
 import {$, makeClassToggler} from './../core';
+import {requestScreenshot} from './backend';
 import {getCurrentConfig} from './config';
-import {SaveType, populateSavesSection} from './selector';
+import {SaveType, addSaveToSection, populateSavesSection} from './selector';
 
 import type {Save} from './../types.d';
 
 const localSaveFileInput = $<HTMLInputElement>('localSaveFileInput');
-const uploadLocalSaveButton = $('uploadLocalSaveButton');
+const uploadLocalSaveButton = $<HTMLButtonElement>('uploadLocalSaveButton');
 const localSaveError = $('localSaveError');
+const uploadLocalSaveLoading = $('uploadLocalSaveLoading');
 
 const showLocalSaveError = makeClassToggler(localSaveError, 'hidden', true);
+const showUploadLocalSaveLoading = makeClassToggler(uploadLocalSaveLoading, 'hidden', true, (enabled) => uploadLocalSaveButton.disabled = enabled);
 
 function getLocalSaves(): Save[] {
 	const data = localStorage.getItem('saves');
@@ -33,25 +36,31 @@ function onFileUpload() {
 	const file = localSaveFileInput.files[0];
 	if (!file) return;
 
+	showUploadLocalSaveLoading(true);
+
 	const reader = new FileReader();
-	reader.onload = () => {
+	reader.onload = async () => {
 		try {
 			const data = reader.result;
 			if (data instanceof ArrayBuffer) {
 				throw new Error('File is encoded incorrectly');
 			}
 
-			createLocalSave(filenameToSaveName(file.name), data);
+			const {hash} = await requestScreenshot(data);
+			const save = createLocalSave(filenameToSaveName(file.name), data, hash);
+			addSaveToSection(SaveType.Local, save);
 		} catch (err) {
 			console.error(err);
 			localSaveError.textContent = 'There was an error when uploading your save. Please try again later.';
 			showLocalSaveError(true);
 		}
+
+		showUploadLocalSaveLoading(false);
 	};
 	reader.readAsText(file);
 }
 
-export function createLocalSave(name: string, data: string): Save {
+export function createLocalSave(name: string, data: string, hash: string): Save {
 	const saves = getLocalSaves();
 	const largestId = parseInt(saves.sort(
 		({id: idA}, {id: idB}) => parseInt(idB) - parseInt(idA)
@@ -63,7 +72,7 @@ export function createLocalSave(name: string, data: string): Save {
 		id: (largestId + 1).toString(),
 		name,
 		data,
-		screenshot: '1',
+		screenshot: hash,
 	};
 	saves.push(save);
 

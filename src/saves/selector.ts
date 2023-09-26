@@ -86,7 +86,12 @@ function createSaveCard(save: Save, deleteSaveFunc: ((save: Save) => void) | nul
 	const img = document.createElement('img');
 	img.classList.add('card-img-top');
 	img.alt = `${save.name} screenshot`;
-	img.src = save.screenshot ? `${backendOrigin}/screenshot/${save.screenshot}.jpg` : `/static/img/save-placeholder.jpg`;
+	img.src = `${backendOrigin}/screenshot/${save.screenshot}.jpg`;
+	img.addEventListener('error', () => {
+		img.classList.add('hidden');
+		card.prepend(getMissingImageElement());
+		beginMissingScreenshotSequence(img, save.screenshot, save.data);
+	});
 	card.appendChild(img);
 
 	const body = document.createElement('div');
@@ -175,6 +180,21 @@ async function deleteSave(deleteSaveFunc: (save: Save) => void | Promise<void>, 
 	}
 
 	populateSavesSection(type, saves.filter(({id}) => save.id !== id), deleteSaveFunc);
+}
+
+function getMissingImageElement(): HTMLDivElement {
+	const container = document.createElement('div');
+	container.classList.add('card-img-top');
+	container.classList.add('missing-screenshot');
+
+	const spinner = document.createElement('div');
+	spinner.classList.add('spinner-border');
+	spinner.style.width = '3rem';
+	spinner.style.height = '3rem';
+}
+
+function beginMissingScreenshotSequence(img: HTMLImageElement, hash: string, data: string) {
+
 }
 
 export function addSaveToSection(type: SaveType, save: Save) {

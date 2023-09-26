@@ -143,7 +143,7 @@ export interface Save {
 	id: string;
 	name: string;
 	data: string;
-	screenshot?: string;
+	screenshot: string;
 }
 export interface BackendResponse {
 	account: Account;
