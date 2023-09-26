@@ -7,6 +7,5 @@ const ssoPath = `${ssoOrigin}/auth?target=chaos${isDevelopment ? '&devport=3001'
 
 const backendDevPort = searchParams.get('backenddevport');
 const backendOrigin = backendDevPort === null ? 'https://chaos-backend.danielhoward.me' : `http://local.danielhoward.me:${backendDevPort}`;
-const backendQuery = ssoDevPort === null ? '' : `?ssodevport=${ssoDevPort}`;
 
-export {ssoPath, backendOrigin, backendQuery};
+export {ssoPath, backendOrigin};

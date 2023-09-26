@@ -1,17 +1,7 @@
-import {backendOrigin, backendQuery} from './paths';
+import {backendOrigin} from './paths';
 import {getAuthStorage} from './sso';
 
 import type {BackendResponse, Save} from './../types.d';
-
-function getBackendUrl(path: string): string {
-	let url = `${backendOrigin}${path}${backendQuery}`;
-
-	while (url.match(/\?/g).length > 1) {
-		url = url.replace(/\?([^?]*)$/, '&$1');
-	}
-
-	return url;
-}
 
 async function makeRequest<T>(path: string, includeAuth = false, postBody: null | unknown = null): Promise<T> {
 	const fetchOptions: RequestInit = {
@@ -29,7 +19,7 @@ async function makeRequest<T>(path: string, includeAuth = false, postBody: null 
 		fetchOptions.headers['Content-Type'] = 'application/json';
 	}
 
-	const res = await fetch(getBackendUrl(path), fetchOptions);
+	const res = await fetch(`${backendOrigin}${path}`, fetchOptions);
 	if (!res.ok) throw new Error('chaos-backend returned a non-ok response');
 
 	return await res.json() as T;
@@ -49,4 +39,8 @@ export async function deleteSave(id: string) {
 
 export async function makeCloudSave(name: string, data: string): Promise<{save: Save, screenshotTime: number}> {
 	return await makeRequest('/create', true, {name, data});
+}
+
+export async function requestScreenshot(data: string): Promise<{screenshotTime: number}> {
+	return await makeRequest('/screenshot', false, {data});
 }

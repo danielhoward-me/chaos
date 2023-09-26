@@ -1,7 +1,7 @@
 import {SetupStage} from './../constants';
 import {$, makeClassToggler} from './../core';
 import {getSetupStage} from './../setup/setup';
-import {makeCloudSave} from './backend';
+import {makeCloudSave, requestScreenshot} from './backend';
 import {getCurrentConfig} from './config';
 import {createLocalSave, downloadConfig} from './local';
 import {SaveType, addSaveToSection} from './selector';
@@ -106,6 +106,7 @@ async function onSaveFormSubmitted(ev: SubmitEvent) {
 		switch (currentType) {
 		case SaveType.Local:
 			save = createLocalSave(name, data);
+			screenshotTime = (await requestScreenshot(data)).screenshotTime;
 			break;
 		case SaveType.Cloud: {
 			const newSave = await makeCloudSave(name, data);
