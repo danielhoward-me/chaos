@@ -8,6 +8,8 @@ export const GRID_LINE_FREQUENCY = 50;
 export const MINOR_GRID_LINE_ALPHA = 0.2;
 export const MAJOR_GRID_LINE_ALPHA = 0.5;
 
+export const SCREENSHOT_GENEREATION_CHECK_INTERVAL = 1000;
+
 export enum AssetType {
 	Circle,
 	Polygon,
@@ -53,3 +55,12 @@ export const polygonShapeNames = {
 	19: 'enneadecagon',
 	20: 'icosagon',
 };
+
+// Needs to match backend in github.com/danielhoward-me/chaos-backend/screenshot/status
+export enum ScreenshotStatus {
+	Generated,
+	Failed,
+	Generating,
+	InQueue,
+	NotInQueue,
+}

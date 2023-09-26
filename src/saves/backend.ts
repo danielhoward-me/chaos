@@ -1,6 +1,7 @@
 import {backendOrigin} from './paths';
 import {getAuthStorage} from './sso';
 
+import type {ScreenshotStatus} from './../constants';
 import type {BackendResponse, Save} from './../types.d';
 
 async function makeRequest<T>(path: string, includeAuth = false, postBody: null | unknown = null): Promise<T> {
@@ -43,4 +44,8 @@ export async function makeCloudSave(name: string, data: string): Promise<{save: 
 
 export async function requestScreenshot(data: string): Promise<{hash: string}> {
 	return await makeRequest('/screenshot', false, {data});
+}
+
+export async function getScreenshotStatus(hash: string): Promise<{status: ScreenshotStatus}> {
+	return await makeRequest(`/screenshot/status?hash=${hash}`, false);
 }

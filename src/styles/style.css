@@ -4,7 +4,7 @@ body {
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }
 
 .canvas {
@@ -276,4 +276,29 @@ a.text-muted {
 .save-card .delete-button {
 	position: absolute;
 	right: 0;
+}
+
+.missing-screenshot {
+	display: flex;
+	justify-content: center;
+	padding: 20px;
+	user-select: none;
+}
+.missing-screenshot > div {
+	display: block;
+}
+.missing-screenshot .spinner-border {
+	width: 3rem;
+	height: 3rem;
+}
+.missing-screenshot > #failed {
+	color: #dc3545;
+	font-size: 1rem;
+}
+.missing-screenshot i {
+	font-size: 5rem;
+}
+.missing-screenshot .icon-container {
+	margin-top: -30px;
+	margin-bottom: -40px;
 }

@@ -1,4 +1,4 @@
-import {toggleSettingsBox} from './core';
+import {$} from './core';
 import {loadConfig} from './saves/config';
 
 export function isScreenshotWorker(): boolean {
@@ -7,8 +7,11 @@ export function isScreenshotWorker(): boolean {
 }
 
 export function initScreenshotWorker() {
+	$('settingsBox').classList.add('hidden');
+	$('zoom').classList.add('hidden');
+	$('fpsCounter').parentElement.classList.add('hidden');
+
 	window['prepareScreenshot'] = (data: string) => {
-		toggleSettingsBox(false);
 		loadConfig(JSON.parse(data));
 	};
 }

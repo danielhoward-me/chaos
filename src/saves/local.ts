@@ -58,6 +58,7 @@ function onFileUpload() {
 		showUploadLocalSaveLoading(false);
 	};
 	reader.readAsText(file);
+	localSaveFileInput.value = '';
 }
 
 export function createLocalSave(name: string, data: string, hash: string): Save {
@@ -65,8 +66,6 @@ export function createLocalSave(name: string, data: string, hash: string): Save 
 	const largestId = parseInt(saves.sort(
 		({id: idA}, {id: idB}) => parseInt(idB) - parseInt(idA)
 	)?.[0]?.id) || 0;
-
-	console.log(largestId);
 
 	const save: Save = {
 		id: (largestId + 1).toString(),
