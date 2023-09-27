@@ -277,6 +277,12 @@ a.text-muted {
 	position: absolute;
 	right: 0;
 }
+.save-card .card-body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
+}
 
 .missing-screenshot {
 	display: flex;

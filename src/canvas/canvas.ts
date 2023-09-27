@@ -16,11 +16,17 @@ const ctx = canvas.getContext('2d');
 const fpsCounter = $('fpsCounter');
 
 export let scale = DEFAULT_ZOOM_LEVEL;
+export function setScale(newScale: number) {
+	scale = newScale;
+}
+
 const gridLineFrequency = GRID_LINE_FREQUENCY;
 export const topLeftPoint: Coordinate = [];
 
 let assets: Asset[] = [];
 let graphMovementDisabled = false;
+
+const waitForFrameRenderResolves: (() => void)[] = [];
 
 let lastFrameTime = Date.now();
 function drawFrame() {
@@ -39,6 +45,8 @@ function drawFrame() {
 	// Call in playback settings to update points if the user is in play state
 	updateAssets(delta);
 	drawAssets(assets);
+
+	clearWaitForFrameResolves();
 
 	window.requestAnimationFrame(drawFrame);
 }
@@ -239,6 +247,14 @@ export function setGraphMovementDisabled(disabled: boolean, cursor = 'default') 
 function calculateFps(delta: number): string {
 	const fps = 1000/delta;
 	return fps.toFixed(fps > 10 ? 0 : 1);
+}
+
+export function waitForFrameRender(): Promise<void> {
+	return new Promise((res) => waitForFrameRenderResolves.push(res));
+}
+function clearWaitForFrameResolves() {
+	waitForFrameRenderResolves.forEach((res) => res());
+	waitForFrameRenderResolves.length = 0;
 }
 
 export function onload() {

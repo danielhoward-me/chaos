@@ -39,7 +39,7 @@ function getShapeData(height: number, width: number, vertices: Coordinate[]): Im
 	return ctx.getImageData(0, 0, width, height);
 }
 
-function getBoundPoints(vertices: Coordinate[]): RandomPointBoundData {
+export function getBoundPoints(vertices: Coordinate[]): RandomPointBoundData {
 	const min = [Infinity, Infinity];
 	const max = [-Infinity, -Infinity];
 

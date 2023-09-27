@@ -144,12 +144,12 @@ function createSaveCard(save: Save, deleteSaveFunc: ((save: Save) => void) | nul
 	return card;
 }
 
-function useSave(save: Save, errorText: HTMLDivElement) {
+async function useSave(save: Save, errorText: HTMLDivElement) {
 	errorText.classList.add('hidden');
 
 	try {
 		const config = JSON.parse(save.data) as SaveConfig;
-		loadConfig(config);
+		await loadConfig(config);
 
 		setContainerActive(null);
 	} catch (err) {
@@ -237,9 +237,7 @@ function beginMissingScreenshotSequence(img: HTMLImageElement, placeHolder: HTML
 
 			switch (status) {
 			case ScreenshotStatus.Generated:
-				img.src += `?${Date.now()}`;
-				placeHolder.classList.add('hidden');
-				img.classList.remove('hidden');
+				showMissingScreenshot(img, placeHolder);
 				return;
 			case ScreenshotStatus.Failed:
 				placeHolder.querySelector('#failedScreenshotError').textContent = `We couldn't get a preview of your save. The config is most likely invalid.`;
@@ -262,6 +260,18 @@ function beginMissingScreenshotSequence(img: HTMLImageElement, placeHolder: HTML
 
 		beginMissingScreenshotSequence(img, placeHolder, hash, data);
 	}, SCREENSHOT_GENEREATION_CHECK_INTERVAL);
+}
+
+function showMissingScreenshot(img: HTMLImageElement, placeHolder: HTMLDivElement) {
+	const src = `${img.src}?${Date.now()}`;
+
+	const loaderImage = new Image();
+	loaderImage.onload = function() {
+		img.src = src;
+		placeHolder.classList.add('hidden');
+		img.classList.remove('hidden');
+	};
+	loaderImage.src = src;
 }
 
 export function addSaveToSection(type: SaveType, save: Save) {

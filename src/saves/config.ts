@@ -48,7 +48,7 @@ export function getCurrentConfig(): SaveConfig {
 	return config;
 }
 
-export function loadConfig(config: SaveConfig) {
+export async function loadConfig(config: SaveConfig) {
 	setSetupStage(0);
 
 	switch (config.version) {
@@ -56,6 +56,8 @@ export function loadConfig(config: SaveConfig) {
 	case 2: loadConfigVersion2(config.stages); break;
 	default: throw new Error(`Unknown config version: ${config.version}`);
 	}
+
+	await generatePoints();
 }
 
 function loadConfigVersion1(config: SaveConfig['stages']) {
@@ -82,9 +84,5 @@ function loadConfigVersion2(config: SaveConfig['stages']) {
 
 			setInputValue(inputData.element, config[stage][inputName] || inputData.sanitisation.default, true);
 		});
-
-		// Generate points before changing playback settings
-		// This needs to be done after the input values have been set
-		if (stage === SetupStage.Playback) await generatePoints();
 	});
 }
