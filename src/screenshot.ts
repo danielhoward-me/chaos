@@ -30,7 +30,6 @@ async function prepareScreenshot(data: string) {
 
 	const screenRatio = canvas.width/canvas.height;
 	let ratio = width/height;
-	console.log(ratio);
 
 	if (ratio < SCREENSHOT_MIN_RATIO) {
 		const expectedWidth = height * SCREENSHOT_MIN_RATIO;
