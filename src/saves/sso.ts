@@ -1,6 +1,6 @@
 import {$, makeClassToggler} from './../core';
 import {fetchUserSaves, deleteSave} from './backend';
-import {ssoPath} from './paths';
+import {backendOrigin, ssoOrigin, ssoPath} from './paths';
 import {SaveType, populateSavesSection} from './selector';
 
 import type {Account, BackendResponse, LocalStorageAuth} from './../types.d';
@@ -89,7 +89,27 @@ async function refreshServerResponse() {
 
 function populateAccountDetails(account: Account) {
 	loggedInView.querySelector('#username').textContent = account.username;
+	loggedInView.querySelector<HTMLAnchorElement>('#accountButton').href = `${ssoOrigin}/account`;
 	loggedInView.querySelector<HTMLImageElement>('#profilePicture').src = `${account.profilePicture}&s=50`;
+
+	if (account.admin) {
+		const adminLink = document.createElement('a');
+		adminLink.target = '_blank';
+		adminLink.classList.add('btn');
+		adminLink.classList.add('btn-outline-primary');
+		adminLink.textContent = ' Admin';
+		adminLink.id = 'adminButton';
+
+		const gearIcon = document.createElement('i');
+		gearIcon.classList.add('bi');
+		gearIcon.classList.add('bi-gear');
+		adminLink.prepend(gearIcon);
+
+		const auth = getAuthStorage();
+		adminLink.href = `${backendOrigin}/admin#token=${auth.accessToken}`;
+
+		loggedInView.querySelector('#profileButtons').prepend(adminLink);
+	}
 }
 
 export function getAuthStorage(): LocalStorageAuth {
@@ -105,6 +125,7 @@ function logout() {
 	showLoggedInView(false);
 	showCloudSavesRequireLogin(true);
 	populateSavesSection(SaveType.Cloud, null);
+	loggedInView.querySelector('#adminButton')?.remove();
 
 	runCallbacks(false);
 }

@@ -138,6 +138,7 @@ export interface Account {
 	username: string;
 	email: string;
 	profilePicture: string;
+	admin: string;
 }
 export interface Save {
 	id: string;
