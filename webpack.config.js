@@ -21,6 +21,7 @@ export default {
 	entry: {
 		main: localPath('src/index.ts'),
 		auth: localPath('src/auth/index.ts'),
+		admin: localPath('src/admin/index.ts'),
 	},
 	devtool: (isProduction || isStaging) ? false : 'eval-source-map',
 	module: {
@@ -65,6 +66,11 @@ export default {
 			template: localPath('public/auth/index.html'),
 			filename: 'auth/index.html',
 			chunks: ['auth'],
+		}),
+		new HtmlWebpackPlugin({
+			template: localPath('public/admin/index.html'),
+			filename: 'admin/index.html',
+			chunks: ['admin'],
 		}),
 	],
 	resolve: {

@@ -1,7 +1,7 @@
 import {SetupStage} from './../constants';
 import {$, makeClassToggler} from './../core';
+import {makeCloudSave, requestScreenshot} from './../lib/backend';
 import {getSetupStage} from './../setup/setup';
-import {makeCloudSave, requestScreenshot} from './backend';
 import {getCurrentConfig} from './config';
 import {createLocalSave, downloadConfig} from './local';
 import {SaveType, addSaveToSection} from './selector';

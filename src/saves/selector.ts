@@ -1,8 +1,8 @@
 import {SCREENSHOT_GENEREATION_CHECK_INTERVAL, ScreenshotStatus} from './../constants';
 import {$, makeClassToggler} from './../core';
-import {getScreenshotStatus, requestScreenshot} from './backend';
+import {getScreenshotStatus, requestScreenshot} from './../lib/backend';
+import {backendOrigin} from './../lib/paths';
 import {loadConfig} from './config';
-import {backendOrigin} from './paths';
 
 import type {Save, SaveConfig} from './../types.d';
 

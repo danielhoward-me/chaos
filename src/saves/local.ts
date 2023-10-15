@@ -1,5 +1,5 @@
 import {$, makeClassToggler} from './../core';
-import {requestScreenshot} from './backend';
+import {requestScreenshot} from './../lib/backend';
 import {getCurrentConfig} from './config';
 import {SaveType, addSaveToSection, populateSavesSection} from './selector';
 

@@ -1,9 +1,10 @@
 import {$, makeClassToggler} from './../core';
-import {fetchUserSaves, deleteSave} from './backend';
-import {backendOrigin, ssoOrigin, ssoPath} from './paths';
+import {fetchUserSaves, deleteSave} from './../lib/backend';
+import {ssoOrigin} from './../lib/paths';
+import {hasAuthInStorage, openLoginPopup} from './../lib/sso';
 import {SaveType, populateSavesSection} from './selector';
 
-import type {Account, BackendResponse, LocalStorageAuth} from './../types.d';
+import type {Account, BackendResponse} from './../types.d';
 
 const loginButton = $<HTMLButtonElement>('loginButton');
 const logoutButton = $('logoutButton');
@@ -25,39 +26,19 @@ const setLoginError = (value: string | undefined) => {
 	showLoginError(!!value);
 };
 
-let loginWindow: Window;
-
 const statusChangeCallbacks: ((loggedIn: boolean) => void)[] = [];
 
-function onLoginClick() {
-	if (loginWindow?.closed === false) return loginWindow.focus();
-
+async function onLoginClick() {
 	setLoginError(null);
 	showLoadingInfo(true);
 	loginLoadingText.textContent = 'Waiting for authentication in popup window';
-	loginWindow = window.open(ssoPath, '', 'width=500, height=600');
 
-	const interval = setInterval(() => {
-		// Test if the page has been closed
-		if (loginWindow.closed) {
-			showLoadingInfo(false);
-			clearInterval(interval);
-			return;
-		}
-
-		// Test if the origin has changed, meaning it has been authed
-		let originsMatch = false;
-		try {
-			originsMatch = window.location.origin === loginWindow.location.origin;
-		} catch (err) {
-			// Ignore error thrown by browser since it is expected when on a different origin
-		}
-		if (originsMatch && localStorage.getItem('auth') !== null) {
-			clearInterval(interval);
-			loginWindow.close();
-			refreshServerResponse();
-		}
-	}, 1000);
+	const loggedIn = await openLoginPopup();
+	if (loggedIn) {
+		refreshServerResponse();
+	} else {
+		showLoadingInfo(false);
+	}
 }
 
 async function refreshServerResponse() {
@@ -94,6 +75,7 @@ function populateAccountDetails(account: Account) {
 
 	if (account.admin) {
 		const adminLink = document.createElement('a');
+		adminLink.href = `/admin${window.location.search}`;
 		adminLink.target = '_blank';
 		adminLink.classList.add('btn');
 		adminLink.classList.add('btn-outline-primary');
@@ -105,17 +87,8 @@ function populateAccountDetails(account: Account) {
 		gearIcon.classList.add('bi-gear');
 		adminLink.prepend(gearIcon);
 
-		const auth = getAuthStorage();
-		adminLink.href = `${backendOrigin}/admin#token=${auth.accessToken}`;
-
 		loggedInView.querySelector('#profileButtons').prepend(adminLink);
 	}
-}
-
-export function getAuthStorage(): LocalStorageAuth {
-	const auth = JSON.parse(localStorage.getItem('auth')) as LocalStorageAuth;
-	if (auth.expires < Date.now()) throw new Error('accessToken expired');
-	return auth;
 }
 
 function logout() {
@@ -142,7 +115,7 @@ export function onload() {
 	loginButton.addEventListener('click', onLoginClick);
 	logoutButton.addEventListener('click', logout);
 
-	if (localStorage.getItem('auth') !== null) {
+	if (hasAuthInStorage()) {
 		showLoginButton(false);
 		refreshServerResponse();
 	}

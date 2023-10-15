@@ -1,5 +1,5 @@
 import {$, makeClassToggler} from './../core';
-import {fetchPresets} from './backend';
+import {fetchPresets} from './../lib/backend';
 import {SaveType, populateSavesSection} from './selector';
 
 import type {Save} from './../types.d';

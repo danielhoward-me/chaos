@@ -1,0 +1,35 @@
+.hidden {
+	display: none !important;
+}
+
+.center {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	min-height: 100vh;
+}
+
+body:has(#page:not(.hidden)) {
+	background: whitesmoke;
+}
+
+.settings-container {
+	margin: 20px;
+}
+
+@media (min-width: 992px) {
+	.settings-container {
+		height: calc(100vh - 40px);
+	}
+}
+
+.settings-container fieldset {
+	background: white;
+	border: lightgray 1px solid;
+	border-radius: 5px;
+	padding: 10px;
+}
+.settings-container legend {
+	float: initial;
+	width: auto;
+}
