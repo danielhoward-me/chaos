@@ -3,6 +3,8 @@ import './../styles/admin.css';
 import {fetchUserSaves} from './../lib/backend';
 import {hasAuthInStorage, openLoginPopup} from './../lib/sso';
 
+import type {Account} from './../types.d';
+
 function $<T extends HTMLElement = HTMLElement>(id: string): T {
 	return <T> document.getElementById(id);
 }
@@ -28,7 +30,15 @@ function showView(show: HTMLElement) {
 }
 
 async function init() {
-	const {account} = await fetchUserSaves();
+	let account: Account;
+	try {
+		const res = await fetchUserSaves();
+		account = res.account;
+	} catch (err) {
+		console.error(err);
+		showView(errorAlert);
+		return;
+	}
 
 	if (!account.admin) {
 		showView(unauthorisedAlert);

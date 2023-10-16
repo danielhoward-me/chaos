@@ -21,6 +21,12 @@ body:has(#page:not(.hidden)) {
 	.settings-container {
 		height: calc(100vh - 40px);
 	}
+	.settings-container .container, .settings-container .row, .settings-container .col-lg-8 fieldset {
+		height: 100%;
+	}
+	.settings-container .col-lg-4 fieldset {
+		height: 50%;
+	}
 }
 
 .settings-container fieldset {
