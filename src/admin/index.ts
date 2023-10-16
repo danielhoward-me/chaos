@@ -1,9 +1,10 @@
 import './../styles/admin.css';
 
-import {fetchUserSaves} from './../lib/backend';
+import {fetchPresets, fetchUserSaves} from './../lib/backend';
+import {backendOrigin} from './../lib/paths';
 import {hasAuthInStorage, openLoginPopup} from './../lib/sso';
 
-import type {Account} from './../types.d';
+import type {Save} from './../types.d';
 
 function $<T extends HTMLElement = HTMLElement>(id: string): T {
 	return <T> document.getElementById(id);
@@ -18,6 +19,7 @@ const login = $('login');
 const loginButton = $('loginButton');
 
 const page = $('page');
+const presetsTableBody = $('presetsTableBody');
 
 function showView(show: HTMLElement) {
 	([
@@ -30,22 +32,63 @@ function showView(show: HTMLElement) {
 }
 
 async function init() {
-	let account: Account;
 	try {
-		const res = await fetchUserSaves();
-		account = res.account;
+		const {account} = await fetchUserSaves();
+
+		if (!account.admin) {
+			showView(unauthorisedAlert);
+			return;
+		}
+
+		await populatePresets();
+
+		showView(page);
 	} catch (err) {
 		console.error(err);
 		showView(errorAlert);
-		return;
 	}
+}
 
-	if (!account.admin) {
-		showView(unauthorisedAlert);
-		return;
-	}
+async function populatePresets() {
+	presetsTableBody.innerHTML = '';
+	const presets = await fetchPresets();
 
-	showView(page);
+	presets.forEach((save) => {
+		const row = makePresetTableRow(save);
+		presetsTableBody.appendChild(row);
+	});
+}
+
+function makePresetTableRow(save: Save): HTMLTableRowElement {
+	const row = document.createElement('tr');
+
+	const header = document.createElement('th');
+	header.scope = 'row';
+	header.textContent = save.name;
+	row.appendChild(header);
+
+	const imageField = document.createElement('td');
+	imageField.style.width = '25%';
+	row.appendChild(imageField);
+
+	const image = document.createElement('img');
+	image.alt = `${save.name} screenshot`;
+	image.src = `${backendOrigin}/screenshot/${save.screenshot}.jpg`;
+	image.classList.add('img-thumbnail');
+	imageField.appendChild(image);
+
+	const dataField = document.createElement('td');
+	row.appendChild(dataField);
+
+	const dataLink = document.createElement('a');
+	dataLink.textContent = 'Click to show data';
+	dataLink.href = '#';
+	dataField.appendChild(dataLink);
+
+	const actions = document.createElement('td');
+	row.appendChild(actions);
+
+	return row;
 }
 
 function onload() {

@@ -39,3 +39,7 @@ body:has(#page:not(.hidden)) {
 	float: initial;
 	width: auto;
 }
+
+.presets-table th, .presets-table td {
+	vertical-align: middle;
+}
