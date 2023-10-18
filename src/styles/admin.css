@@ -22,7 +22,7 @@ body:has(#page:not(.hidden)) {
 		height: calc(100vh - 40px);
 	}
 	.settings-container .container, .settings-container .row, .settings-container .col-lg-8 fieldset {
-		height: 100%;
+		height: calc(100vh - 40px);
 	}
 	.settings-container .col-lg-4 fieldset {
 		height: 50%;
@@ -34,6 +34,7 @@ body:has(#page:not(.hidden)) {
 	border: lightgray 1px solid;
 	border-radius: 5px;
 	padding: 10px;
+	padding-bottom: 20px;
 }
 .settings-container legend {
 	float: initial;
@@ -42,4 +43,30 @@ body:has(#page:not(.hidden)) {
 
 .presets-table th, .presets-table td {
 	vertical-align: middle;
+}
+
+.grey-message {
+	color: gray;
+	font-size: x-large;
+	margin: 0 20% 0 20%;
+	text-align: center;
+}
+
+.message-container:has(.grey-message:not(.hidden)) {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	filter: brightness(0.9);
+}
+
+.preset-actions-field {
+	text-align: center;
+}
+.preset-actions-field button {
+	margin: 5px;
+}
+
+.preset-name-field {
+	overflow: hidden;
+	text-overflow: ellipsis;
 }

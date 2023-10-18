@@ -138,7 +138,8 @@ export interface Account {
 	username: string;
 	email: string;
 	profilePicture: string;
-	admin: string;
+	ssoAdmin: boolean;
+	admin: boolean;
 }
 export interface Save {
 	id: string;

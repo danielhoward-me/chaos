@@ -4,9 +4,9 @@ import {getAuthStorage} from './sso';
 import type {ScreenshotStatus} from './../constants';
 import type {BackendResponse, Save} from './../types.d';
 
-async function makeRequest<T>(path: string, includeAuth = false, postBody: null | unknown = null): Promise<T> {
+async function makeRequest<T>(path: string, includeAuth = false, method: 'GET' | 'POST' | 'DELETE' = 'GET', body: null | unknown = null): Promise<T> {
 	const fetchOptions: RequestInit = {
-		method: postBody === null ? 'GET' : 'POST',
+		method: method,
 		headers: {},
 	};
 
@@ -15,8 +15,8 @@ async function makeRequest<T>(path: string, includeAuth = false, postBody: null 
 		fetchOptions.headers['Authorization'] = `Bearer ${auth.accessToken}`;
 	}
 
-	if (postBody !== null) {
-		fetchOptions.body = JSON.stringify(postBody);
+	if (body !== null) {
+		fetchOptions.body = JSON.stringify(body);
 		fetchOptions.headers['Content-Type'] = 'application/json';
 	}
 
@@ -26,24 +26,24 @@ async function makeRequest<T>(path: string, includeAuth = false, postBody: null 
 	return await res.json() as T;
 }
 
-export async function fetchPresets(): Promise<Save[]> {
-	return await makeRequest('/presets');
-}
-
 export async function fetchUserSaves(): Promise<BackendResponse> {
 	return await makeRequest('/account', true);
 }
 
+export async function fetchPresets(): Promise<Save[]> {
+	return await makeRequest('/saves/presets');
+}
+
 export async function deleteSave(id: string) {
-	return await makeRequest(`/delete?id=${id}`, true);
+	return await makeRequest(`/saves/delete?id=${id}`, true, 'DELETE');
 }
 
 export async function makeCloudSave(name: string, data: string): Promise<{save: Save}> {
-	return await makeRequest('/create', true, {name, data});
+	return await makeRequest('/saves/create', true, 'POST', {name, data});
 }
 
 export async function requestScreenshot(data: string): Promise<{hash: string}> {
-	return await makeRequest('/screenshot', false, {data});
+	return await makeRequest('/screenshot', false, 'POST', {data});
 }
 
 export async function getScreenshotStatus(hash: string): Promise<{status: ScreenshotStatus}> {

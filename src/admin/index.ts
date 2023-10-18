@@ -20,6 +20,9 @@ const loginButton = $('loginButton');
 
 const page = $('page');
 const presetsTableBody = $('presetsTableBody');
+const noPresetsMessage = $('noPresetsMessage');
+
+const adminSsoMessage = $('adminSsoMessage');
 
 function showView(show: HTMLElement) {
 	([
@@ -42,6 +45,9 @@ async function init() {
 
 		await populatePresets();
 
+		if (account.ssoAdmin) await populateAdmins();
+		else adminSsoMessage.classList.remove('hidden');
+
 		showView(page);
 	} catch (err) {
 		console.error(err);
@@ -50,13 +56,23 @@ async function init() {
 }
 
 async function populatePresets() {
+	noPresetsMessage.classList.add('hidden');
 	presetsTableBody.innerHTML = '';
 	const presets = await fetchPresets();
+
+	if (presets.length === 0) {
+		noPresetsMessage.classList.remove('hidden');
+		return;
+	}
 
 	presets.forEach((save) => {
 		const row = makePresetTableRow(save);
 		presetsTableBody.appendChild(row);
 	});
+}
+
+async function populateAdmins() {
+	//
 }
 
 function makePresetTableRow(save: Save): HTMLTableRowElement {
@@ -65,6 +81,7 @@ function makePresetTableRow(save: Save): HTMLTableRowElement {
 	const header = document.createElement('th');
 	header.scope = 'row';
 	header.textContent = save.name;
+	header.classList.add('preset-name-field');
 	row.appendChild(header);
 
 	const imageField = document.createElement('td');
@@ -77,16 +94,31 @@ function makePresetTableRow(save: Save): HTMLTableRowElement {
 	image.classList.add('img-thumbnail');
 	imageField.appendChild(image);
 
-	const dataField = document.createElement('td');
-	row.appendChild(dataField);
-
-	const dataLink = document.createElement('a');
-	dataLink.textContent = 'Click to show data';
-	dataLink.href = '#';
-	dataField.appendChild(dataLink);
-
 	const actions = document.createElement('td');
+	actions.classList.add('preset-actions-field');
 	row.appendChild(actions);
+
+	const downloadDataButton = document.createElement('button');
+	downloadDataButton.classList.add('btn');
+	downloadDataButton.classList.add('btn-primary');
+	downloadDataButton.textContent = ' Download data';
+	actions.appendChild(downloadDataButton);
+
+	const downloadIcon = document.createElement('i');
+	downloadIcon.classList.add('bi');
+	downloadIcon.classList.add('bi-download');
+	downloadDataButton.prepend(downloadIcon);
+
+	const deleteDataButton = document.createElement('button');
+	deleteDataButton.classList.add('btn');
+	deleteDataButton.classList.add('btn-danger');
+	deleteDataButton.textContent = ' Delete preset';
+	actions.appendChild(deleteDataButton);
+
+	const deleteIcon = document.createElement('i');
+	deleteIcon.classList.add('bi');
+	deleteIcon.classList.add('bi-trash');
+	deleteDataButton.prepend(deleteIcon);
 
 	return row;
 }
