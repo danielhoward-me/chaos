@@ -38,6 +38,7 @@ function install_nvm {
 }
 
 CURRENT_BRANCH=$(git branch --show-current)
+LATEST_TAG=$(git describe --tags --abbrev=0)
 CURRENT_DETHEAD_VALUE=$(git config advice.detachedHead)
 git config advice.detachedHead false
 
@@ -89,5 +90,8 @@ do
 
 	echo "Finished building version $version"
 done
+
+mkdir -p "$BUILD_DIR/latest"
+cp -r "$BUILD_DIR/$LATEST_TAG" "$BUILD_DIR/latest"
 
 clean_up
