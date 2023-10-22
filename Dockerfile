@@ -2,8 +2,9 @@ FROM nginx:1.25.2
 
 WORKDIR /build
 
+COPY --from=golang:1.19 /usr/local/go/ /usr/local/go/
+ENV PATH="/usr/local/go/bin:${PATH}"
 COPY ./ ./
-COPY ./nginx.conf /etc/nginx/conf.d/default.conf
 
 RUN apt-get update
 RUN apt-get install -y git

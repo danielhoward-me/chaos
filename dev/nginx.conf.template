@@ -1,0 +1,8 @@
+server {
+	listen 80;
+    listen [::]:80;
+    server_name {{SUB_DOMAIN}}chaos.danielhoward.me;
+
+	root /var/www/chaos.danielhoward.me/{{FILE_PATH}};
+	index index.html;
+}
