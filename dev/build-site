@@ -14,7 +14,10 @@ function build_site {
 		fi
 		cd ..
 	else
-		NODE_VERSION="18.16.0"
+		NODE_VERSION=""
+		if [[ $1 == "v2"* ]]; then
+			NODE_VERSION="18.16.0"
+		fi
 
 		if [[ "$(which node)" == "" || $(node -v) != "v$NODE_VERSION" ]]; then
 			if [ "$(which nvm)" == "" ]; then
@@ -130,6 +133,7 @@ do
 done
 
 echo "Saving nginx config"
+mkdir -p /etc/nginx/conf.d
 echo "$NGINX_CONFIG_FILE" > /etc/nginx/conf.d/default.conf
 
 clean_up
