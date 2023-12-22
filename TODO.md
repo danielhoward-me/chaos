@@ -7,6 +7,7 @@
 
 - [ ] Point size is incorrectly calculated when the shape type is custom
 - [ ] Allow an input to be cleared without reseting it to the default value
+- [x] Fix issue with random number generation not being random
 
 ### Features
 

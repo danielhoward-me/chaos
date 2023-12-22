@@ -1,5 +1,6 @@
 import {$, makeClassToggler} from './../core';
 import {requestScreenshot} from './../lib/backend';
+import {download, filenameToSaveName, readFile} from './../lib/files';
 import {getCurrentConfig} from './config';
 import {SaveType, addSaveToSection, populateSavesSection} from './selector';
 
@@ -32,33 +33,22 @@ function deleteLocalSave(save: Save) {
 	setLocalSaves(saves.filter(({id}) => save.id !== id));
 }
 
-function onFileUpload() {
-	const file = localSaveFileInput.files[0];
-	if (!file) return;
-
+async function onFileUpload() {
 	showUploadLocalSaveLoading(true);
 
-	const reader = new FileReader();
-	reader.onload = async () => {
-		try {
-			const data = reader.result;
-			if (data instanceof ArrayBuffer) {
-				throw new Error('File is encoded incorrectly');
-			}
+	try {
+		const {name, content} = await readFile(localSaveFileInput);
 
-			const {hash} = await requestScreenshot(data);
-			const save = createLocalSave(filenameToSaveName(file.name), data, hash);
-			addSaveToSection(SaveType.Local, save);
-		} catch (err) {
-			console.error(err);
-			localSaveError.textContent = 'There was an error when uploading your save. Please try again later.';
-			showLocalSaveError(true);
-		}
+		const {hash} = await requestScreenshot(content);
+		const save = createLocalSave(filenameToSaveName(name), content, hash);
+		addSaveToSection(SaveType.Local, save);
+	} catch (err) {
+		console.error(err);
+		localSaveError.textContent = 'There was an error when uploading your save. Please try again later.';
+		showLocalSaveError(true);
+	}
 
-		showUploadLocalSaveLoading(false);
-	};
-	reader.readAsText(file);
-	localSaveFileInput.value = '';
+	showUploadLocalSaveLoading(false);
 }
 
 export function createLocalSave(name: string, data: string, hash: string): Save {
@@ -81,20 +71,9 @@ export function createLocalSave(name: string, data: string, hash: string): Save 
 
 export function downloadConfig() {
 	const config = getCurrentConfig();
-
 	const configString = JSON.stringify(config);
-	const configData = new Blob([configString], {type: 'application/json'});
-	const configUrl = URL.createObjectURL(configData);
 
-	const link = document.createElement('a');
-	link.href = configUrl;
-	link.download = 'config.json';
-	link.click();
-}
-
-function filenameToSaveName(filename: string): string {
-	return filename.split('.').slice(0, -1).join('.')
-		.split(' ').map((part) => part[0].toUpperCase() + part.substring(1)).join(' ');
+	download('config.json', configString);
 }
 
 function populateLocalSaves() {

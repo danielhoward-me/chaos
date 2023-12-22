@@ -38,8 +38,8 @@ export async function deleteSave(id: string) {
 	return await makeRequest(`/saves/delete?id=${id}`, true, 'DELETE');
 }
 
-export async function makeCloudSave(name: string, data: string): Promise<{save: Save}> {
-	return await makeRequest('/saves/create', true, 'POST', {name, data});
+export async function makeCloudSave(name: string, data: string, isPreset: boolean): Promise<{save: Save}> {
+	return await makeRequest('/saves/create', true, 'POST', {name, data, isPreset});
 }
 
 export async function requestScreenshot(data: string): Promise<{hash: string}> {
@@ -48,4 +48,8 @@ export async function requestScreenshot(data: string): Promise<{hash: string}> {
 
 export async function getScreenshotStatus(hash: string): Promise<{status: ScreenshotStatus}> {
 	return await makeRequest(`/screenshot/status?hash=${hash}`, false);
+}
+
+export async function changeSaveName(id: string, name: string) {
+	return await makeRequest(`/saves/edit?id=${id}`, true, 'POST', {name});
 }

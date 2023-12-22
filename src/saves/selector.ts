@@ -1,7 +1,6 @@
-import {SCREENSHOT_GENEREATION_CHECK_INTERVAL, ScreenshotStatus} from './../constants';
 import {$, makeClassToggler} from './../core';
-import {getScreenshotStatus, requestScreenshot} from './../lib/backend';
 import {backendOrigin} from './../lib/paths';
+import {beginMissingScreenshotSequence, getGeneratingScreenshotElement} from './../lib/screenshot';
 import {loadConfig} from './config';
 
 import type {Save, SaveConfig} from './../types.d';
@@ -91,7 +90,7 @@ function createSaveCard(save: Save, deleteSaveFunc: ((save: Save) => void) | nul
 	img.src = `${backendOrigin}/screenshot/${save.screenshot}.jpg`;
 	img.addEventListener('error', () => {
 		img.classList.add('hidden');
-		const placeHolder = getGeneratingImageElement();
+		const placeHolder = getGeneratingScreenshotElement();
 		card.prepend(placeHolder);
 		beginMissingScreenshotSequence(img, placeHolder, save.screenshot, save.data);
 	});
@@ -183,95 +182,6 @@ async function deleteSave(deleteSaveFunc: (save: Save) => void | Promise<void>, 
 	}
 
 	populateSavesSection(type, saves.filter(({id}) => save.id !== id), deleteSaveFunc);
-}
-
-function getGeneratingImageElement(): HTMLDivElement {
-	const container = document.createElement('div');
-	container.classList.add('card-img-top');
-	container.classList.add('missing-screenshot');
-
-	const loadingContainer = document.createElement('div');
-	loadingContainer.classList.add('text-muted');
-	loadingContainer.id = 'loading';
-	container.appendChild(loadingContainer);
-
-	const spinner = document.createElement('div');
-	spinner.classList.add('spinner-border');
-	loadingContainer.appendChild(spinner);
-
-	const loadingBr = document.createElement('br');
-	loadingContainer.appendChild(loadingBr);
-
-	const message = document.createElement('span');
-	message.textContent = 'Generating Preview';
-	loadingContainer.appendChild(message);
-
-	const failedContainer = document.createElement('div');
-	failedContainer.classList.add('hidden');
-	failedContainer.id = 'failed';
-	container.appendChild(failedContainer);
-
-	const iconContainer = document.createElement('div');
-	iconContainer.classList.add('icon-container');
-	failedContainer.appendChild(iconContainer);
-
-	const xIcon = document.createElement('i');
-	xIcon.classList.add('bi');
-	xIcon.classList.add('bi-x');
-	iconContainer.appendChild(xIcon);
-
-	const failedBr = document.createElement('br');
-	failedContainer.appendChild(failedBr);
-
-	const failedMessage = document.createElement('span');
-	failedMessage.id = 'failedScreenshotError';
-	failedContainer.appendChild(failedMessage);
-
-	return container;
-}
-
-function beginMissingScreenshotSequence(img: HTMLImageElement, placeHolder: HTMLDivElement, hash: string, data: string) {
-	setTimeout(async () => {
-		try {
-			const {status} = await getScreenshotStatus(hash);
-
-			switch (status) {
-			case ScreenshotStatus.Generated:
-				showMissingScreenshot(img, placeHolder);
-				return;
-			case ScreenshotStatus.Failed:
-				placeHolder.querySelector('#failedScreenshotError').textContent = `We couldn't get a preview of your save. The config is most likely invalid.`;
-				placeHolder.querySelector('#loading').classList.add('hidden');
-				placeHolder.querySelector('#failed').classList.remove('hidden');
-				return;
-			case ScreenshotStatus.Generating:
-			case ScreenshotStatus.InQueue:
-				break;
-			case ScreenshotStatus.NotInQueue:
-				await requestScreenshot(data);
-				break;
-			}
-		} catch (err) {
-			console.error(err);
-			placeHolder.querySelector('#failedScreenshotError').textContent = `There was an error when fetching the preview status. Please try again later.`;
-			placeHolder.querySelector('#loading').classList.add('hidden');
-			placeHolder.querySelector('#failed').classList.remove('hidden');
-		}
-
-		beginMissingScreenshotSequence(img, placeHolder, hash, data);
-	}, SCREENSHOT_GENEREATION_CHECK_INTERVAL);
-}
-
-function showMissingScreenshot(img: HTMLImageElement, placeHolder: HTMLDivElement) {
-	const src = `${img.src}?${Date.now()}`;
-
-	const loaderImage = new Image();
-	loaderImage.onload = function() {
-		img.src = src;
-		placeHolder.classList.add('hidden');
-		img.classList.remove('hidden');
-	};
-	loaderImage.src = src;
 }
 
 export function addSaveToSection(type: SaveType, save: Save) {

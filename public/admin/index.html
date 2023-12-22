@@ -36,10 +36,13 @@
 					<div class="col-12 col-lg-8">
 						<fieldset style="overflow-y: auto; overflow-x: hidden;">
 							<legend>Presets</legend>
-							<div class="btn-group" style="float: right;">
-								<button id="showDataButton" type="button" class="btn btn-primary"><i class="bi bi-eye"></i> Show preset data</button>
-								<button id="newPresetButton" type="button" class="btn btn-primary"><i class="bi bi-upload"></i> Upload new preset</button>
+							<div style="display: flex; align-items: center; float: right;">
+								<span id="newPresetsError" class="error-text" style="margin-right: 5px;"></span>
+								<div class="btn-group">
+									<button id="newPresetButton" type="button" class="btn btn-primary"><i class="bi bi-upload"></i> Upload new preset</button>
+								</div>
 							</div>
+							<input id="newPresetInput" type="file" class="hidden" accept=".json">
 							<table class="table table-striped presets-table" style="table-layout: fixed;">
 								<thead>
 									<tr>

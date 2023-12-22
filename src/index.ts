@@ -1,4 +1,5 @@
 import './styles/style.css';
+import './styles/screenshot.css';
 import './styles/tag-input.css';
 
 import './tag-input';

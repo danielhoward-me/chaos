@@ -109,7 +109,7 @@ async function onSaveFormSubmitted(ev: SubmitEvent) {
 			break;
 		}
 		case SaveType.Cloud: {
-			const newSave = await makeCloudSave(name, data);
+			const newSave = await makeCloudSave(name, data, false);
 			save = newSave.save;
 			break;
 		}
