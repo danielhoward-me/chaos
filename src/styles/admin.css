@@ -17,6 +17,11 @@ body:has(#page:not(.hidden)) {
 	margin: 20px;
 }
 
+fieldset {
+	overflow-y: auto;
+	overflow-x: hidden;
+}
+
 @media (min-width: 992px) {
 	.settings-container {
 		height: calc(100vh - 40px);
@@ -69,4 +74,16 @@ body:has(#page:not(.hidden)) {
 .preset-name-field {
 	overflow: hidden;
 	text-overflow: ellipsis;
+}
+
+.error-text {
+	color: #dc3545;
+	font-size: 0.9em;
+}
+
+.current-status {
+	color: black;
+}
+.current-status-active {
+	font-weight: bold;
 }

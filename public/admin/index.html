@@ -61,6 +61,31 @@
 					<div class="col-12 col-lg-4">
 						<fieldset>
 							<legend>Screenshots</legend>
+							<h3 style="text-align: center;">Screenshot Status</h3>
+
+							<form id="screenshotStatusForm">
+								<div class="input-group">
+									<span class="input-group-text">Hash</span>
+									<input required class="form-control" type="text" id="screenshotStatusInput" placeholder="c286733bfae4fbaeea7d3f9a907949f8"/>
+									<button type="submit" id="screenshotStatusButton" class="btn btn-primary"><i class="bi bi-search"></i> Lookup</button>
+								</div>
+								<span id="screenshotStatusError" class="error-text" style="display: block; text-align: center;"></span>
+							</form>
+
+							<div style="margin-top: 10px; text-align: center; color: lightgray;">
+								<div id="screenshotStatusContainer">
+									<span id="screenshotStatusNotFound">Not Found</span>
+									<i class="bi bi-arrow-right"></i>
+									<span id="screenshotInQueue">In Queue</span>
+									<i class="bi bi-arrow-right"></i>
+									<span id="screenshotStatusGenerating">Generating</span>
+									<i class="bi bi-arrow-right"></i>
+									<span id="screenshotStatusGenerated">Generated</span>
+								</div>
+								<span id="screenshotStatusFailed">Failed</span>
+							</div>
+
+							<h3 style="margin-top: 25px; text-align: center;">New Screenshots</h3>
 						</fieldset>
 						<fieldset class="message-container">
 							<legend>Admins</legend>
