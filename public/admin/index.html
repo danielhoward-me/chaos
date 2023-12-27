@@ -86,11 +86,43 @@
 							</div>
 
 							<h3 style="margin-top: 25px; text-align: center;">New Screenshots</h3>
+
+							<div style="text-align: center; margin-top: 10px;">
+								<input id="generateScreenshotUpload" type="file" class="hidden" accept=".json">
+								<button id="generateScreenshotButton" type="button" class="btn btn-primary"><i class="bi bi-camera"></i> Request new screenshot</button>
+								<div style="display: block; text-align: center; margin-top: 10px;">
+									<span id="generateScreenshotHash" class="text-muted"></span>
+									<span id="generateScreenshotError" class="error-text"></span>
+								</div>
+							</div>
 						</fieldset>
 						<fieldset class="message-container">
 							<legend>Admins</legend>
 							<div id="adminSsoMessage" class="grey-message hidden">
 								You need to be an admin on sso to view admins.
+							</div>
+							<div id="adminListContainer" class="hidden">
+								<form id="newAdminForm">
+									<div class="input-group">
+										<span class="input-group-text">Username</span>
+										<input required class="form-control" type="text" id="newAdminUsername" placeholder="Rumpelstiltskin"/>
+										<button type="submit" id="newAdminButton" class="btn btn-primary"><i class="bi bi-plus-lg"></i></button>
+									</div>
+									<span id="newAdminError" class="error-text" style="display: block; text-align: center;"></span>
+								</form>
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th scope="col">Username</th>
+											<th scope="col">Actions</th>
+										</tr>
+									</thead>
+									<tbody id="adminsTableBody"></tbody>
+								</table>
+								<div id="noAdminsMessage" class="grey-message hidden">
+									There aren't currently any admins.
+								</div>
 							</div>
 						</fieldset>
 					</div>

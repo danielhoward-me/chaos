@@ -15,6 +15,7 @@ const newPresetsError = $('newPresetsError');
 export async function populatePresets() {
 	noPresetsMessage.classList.add('hidden');
 	presetsTableBody.innerHTML = '';
+
 	const presets = await fetchPresets();
 
 	if (presets.length === 0) {
@@ -87,7 +88,7 @@ function makePresetTableRow(save: Save): HTMLTableRowElement {
 	deleteButton.classList.add('btn');
 	deleteButton.classList.add('btn-danger');
 	deleteButton.textContent = ' Delete Preset';
-	deleteButton.addEventListener('click', () => deletePreset(save.id, deleteButton));
+	deleteButton.addEventListener('click', () => deletePreset(save.id, save.name, deleteButton));
 	actions.appendChild(deleteButton);
 
 	const deleteIcon = document.createElement('i');
@@ -127,9 +128,14 @@ async function changePresetName(id: string, nameElement: HTMLTableCellElement, e
 	buttonLoading(false, editNameButton);
 }
 
-async function deletePreset(id: string, deleteButton: HTMLButtonElement) {
+async function deletePreset(id: string, name: string, deleteButton: HTMLButtonElement) {
 	buttonLoading(true, deleteButton);
 	deleteButton.parentElement.querySelector('#deleteError')?.remove();
+
+	if (!confirm(`Are you sure you would like to delete the preset named ${name}?`)) {
+		buttonLoading(false, deleteButton);
+		return;
+	}
 
 	try {
 		await deleteSave(id);

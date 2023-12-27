@@ -156,3 +156,9 @@ export interface LocalStorageAuth {
 	accessToken: string;
 	expires: number;
 }
+
+export interface Admin {
+	userId: string;
+	username: string;
+	profilePicture: string;
+}

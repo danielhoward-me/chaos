@@ -1,5 +1,6 @@
 import {ScreenshotStatus} from './../constants';
-import {getScreenshotStatus} from './../lib/backend';
+import {getScreenshotStatus, requestScreenshot as backendRequestScreenshot} from './../lib/backend';
+import {readFile} from './../lib/files';
 import {$, buttonLoading} from './index';
 
 const screenshotStatusForm = $<HTMLFormElement>('screenshotStatusForm');
@@ -10,6 +11,11 @@ const screenshotStatusError = $('screenshotStatusError');
 const screenshotStatusContainer = $('screenshotStatusContainer');
 const screenshotStatusFailed = $('screenshotStatusFailed');
 const statusIndicators = Array.from(screenshotStatusContainer.children) as HTMLElement[];
+
+const generateScreenshotButton = $<HTMLButtonElement>('generateScreenshotButton');
+const generateScreenshotUpload = $<HTMLInputElement>('generateScreenshotUpload');
+const generateScreenshotError = $('generateScreenshotError');
+const generateScreenshotHash = $('generateScreenshotHash');
 
 async function onScreenshotStatusSubmit(ev: Event) {
 	ev.preventDefault();
@@ -35,6 +41,7 @@ async function onScreenshotStatusSubmit(ev: Event) {
 function setScreenshotStatus(status: ScreenshotStatus) {
 	if (status === ScreenshotStatus.Failed) {
 		screenshotStatusFailed.classList.add('current-status');
+		screenshotStatusFailed.classList.add('current-status-active');
 		return;
 	}
 
@@ -61,6 +68,35 @@ function resetStatus() {
 	});
 }
 
+async function onRequestScreenshotUpload() {
+	buttonLoading(true, generateScreenshotButton);
+	generateScreenshotHash.textContent = '';
+	generateScreenshotError.textContent = '';
+
+	try {
+		const {content} = await readFile(generateScreenshotUpload);
+
+		const hash = await requestScreenshot(content);
+
+		generateScreenshotHash.textContent = `Hash: ${hash}`;
+	} catch (err) {
+		console.error(err);
+		generateScreenshotError.textContent = 'There was an error when trying to take a new screenshot';
+
+		buttonLoading(false, generateScreenshotButton);
+		return;
+	}
+
+	buttonLoading(false, generateScreenshotButton);
+}
+
+async function requestScreenshot(saveData: string): Promise<string> {
+	const {hash} = await backendRequestScreenshot(saveData, true);
+	return hash;
+}
+
 export function onload() {
 	screenshotStatusForm.addEventListener('submit', onScreenshotStatusSubmit);
+	generateScreenshotButton.addEventListener('click', () => generateScreenshotUpload.click());
+	generateScreenshotUpload.addEventListener('change', onRequestScreenshotUpload);
 }

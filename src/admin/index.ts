@@ -3,7 +3,7 @@ import './../styles/screenshot.css';
 
 import {fetchUserSaves} from './../lib/backend';
 import {hasAuthInStorage, openLoginPopup} from './../lib/sso';
-import {onload as adminsOnload, populateAdmins, adminSsoMessage} from './admins';
+import {onload as adminsOnload, populateAdmins, adminSsoMessage, adminListContainer} from './admins';
 import {onload as presetsOnload, populatePresets} from './presets';
 import {onload as screenshotsOnload} from './screenshots';
 
@@ -42,8 +42,10 @@ async function init() {
 
 		await populatePresets();
 
-		if (account.ssoAdmin) await populateAdmins();
-		else adminSsoMessage.classList.remove('hidden');
+		if (account.ssoAdmin) {
+			await populateAdmins();
+			adminListContainer.classList.remove('hidden');
+		} else adminSsoMessage.classList.remove('hidden');
 
 		showView(page);
 	} catch (err) {

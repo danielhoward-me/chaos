@@ -2,17 +2,21 @@ import {backendOrigin} from './paths';
 import {getAuthStorage} from './sso';
 
 import type {ScreenshotStatus} from './../constants';
-import type {BackendResponse, Save} from './../types.d';
+import type {Admin, BackendResponse, Save} from './../types.d';
 
-async function makeRequest<T>(path: string, includeAuth = false, method: 'GET' | 'POST' | 'DELETE' = 'GET', body: null | unknown = null): Promise<T> {
+async function makeRequest<T>(path: string, includeAuth = false, authRequired = false, method: 'GET' | 'POST' | 'DELETE' = 'GET', body: null | unknown = null): Promise<T> {
 	const fetchOptions: RequestInit = {
 		method: method,
 		headers: {},
 	};
 
 	if (includeAuth) {
-		const auth = getAuthStorage();
-		fetchOptions.headers['Authorization'] = `Bearer ${auth.accessToken}`;
+		try {
+			const auth = getAuthStorage();
+			fetchOptions.headers['Authorization'] = `Bearer ${auth.accessToken}`;
+		} catch (err) {
+			if (authRequired) throw err;
+		}
 	}
 
 	if (body !== null) {
@@ -35,21 +39,29 @@ export async function fetchPresets(): Promise<Save[]> {
 }
 
 export async function deleteSave(id: string) {
-	return await makeRequest(`/saves/delete?id=${id}`, true, 'DELETE');
+	return await makeRequest(`/saves/delete?id=${id}`, true, true, 'DELETE');
 }
 
 export async function makeCloudSave(name: string, data: string, isPreset: boolean): Promise<{save: Save}> {
-	return await makeRequest('/saves/create', true, 'POST', {name, data, isPreset});
+	return await makeRequest('/saves/create', true, true, 'POST', {name, data, isPreset});
 }
 
-export async function requestScreenshot(data: string): Promise<{hash: string}> {
-	return await makeRequest('/screenshot', false, 'POST', {data});
+export async function requestScreenshot(data: string, forceNew = false): Promise<{hash: string}> {
+	return await makeRequest('/screenshot', true, false, 'POST', {data, forceNew});
 }
 
 export async function getScreenshotStatus(hash: string): Promise<{status: ScreenshotStatus}> {
-	return await makeRequest(`/screenshot/status?hash=${hash}`, false);
+	return await makeRequest(`/screenshot/status?hash=${hash}`);
 }
 
 export async function changeSaveName(id: string, name: string) {
-	return await makeRequest(`/saves/edit?id=${id}`, true, 'POST', {name});
+	return await makeRequest(`/saves/edit?id=${id}`, true, true, 'POST', {name});
+}
+
+export async function fetchAdmins(): Promise<Admin[]> {
+	return await makeRequest(`/admins`, true, true);
+}
+
+export async function removeAdmin(id: string) {
+	return await makeRequest(`/admins/remove?id=${id}`, true, true, 'DELETE');
 }

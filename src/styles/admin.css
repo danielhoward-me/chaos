@@ -30,7 +30,7 @@ fieldset {
 		height: calc(100vh - 40px);
 	}
 	.settings-container .col-lg-4 fieldset {
-		height: 50%;
+		height: calc(50vh - 20px);
 	}
 }
 
@@ -86,4 +86,10 @@ fieldset {
 }
 .current-status-active {
 	font-weight: bold;
+}
+
+.admin-profile-picture {
+	border-radius: 50%;
+	height: 50px;
+	margin-right: 10px;
 }
