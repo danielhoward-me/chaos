@@ -65,3 +65,7 @@ export async function fetchAdmins(): Promise<Admin[]> {
 export async function removeAdmin(id: string) {
 	return await makeRequest(`/admins/remove?id=${id}`, true, true, 'DELETE');
 }
+
+export async function addNewAdmin(username: string): Promise<{exists: boolean, alreadyAdmin: boolean}> {
+	return await makeRequest(`/admins/new`, true, true, 'POST', {username});
+}

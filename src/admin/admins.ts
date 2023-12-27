@@ -1,5 +1,5 @@
-import {fetchAdmins, removeAdmin as backendRemoveAdmin} from './../lib/backend';
-import {$, buttonLoading} from './index';
+import {fetchAdmins, removeAdmin as backendRemoveAdmin, addNewAdmin} from './../lib/backend';
+import {$, buttonLoading, createErrorElement} from './index';
 
 import type {Admin} from './../types.d';
 
@@ -14,10 +14,10 @@ const adminsTableBody = $('adminsTableBody');
 const noAdminsMessage = $('noAdminsMessage');
 
 export async function populateAdmins() {
+	const admins = await fetchAdmins();
+
 	noAdminsMessage.classList.add('hidden');
 	adminsTableBody.innerHTML = '';
-
-	const admins = await fetchAdmins();
 
 	if (admins.length === 0) {
 		noAdminsMessage.classList.remove('hidden');
@@ -34,6 +34,7 @@ function makeAdminTableRow(admin: Admin): HTMLTableRowElement {
 	const row = document.createElement('tr');
 
 	const accountField = document.createElement('td');
+	accountField.style.verticalAlign = 'middle';
 	row.appendChild(accountField);
 
 	const profilePicture = document.createElement('img');
@@ -47,6 +48,7 @@ function makeAdminTableRow(admin: Admin): HTMLTableRowElement {
 
 	const actions = document.createElement('td');
 	actions.style.verticalAlign = 'middle';
+	actions.style.textAlign = 'center';
 	row.appendChild(actions);
 
 	const deleteButton = document.createElement('button');
@@ -73,7 +75,19 @@ async function onNewAdminSubmit(ev: Event) {
 	const username = newAdminUsername.value;
 
 	try {
-		await addNewAdmin(username);
+		const {exists, alreadyAdmin} = await addNewAdmin(username);
+
+		if (!exists) {
+			newAdminError.textContent = `There is no user with username ${username} in sso`;
+			buttonLoading(false, newAdminButton);
+			return;
+		}
+
+		if (alreadyAdmin) {
+			newAdminError.textContent = `${username} is already an admin`;
+			buttonLoading(false, newAdminButton);
+			return;
+		}
 	} catch (err) {
 		newAdminError.textContent = 'There was an error when adding a new admin';
 		buttonLoading(false, newAdminButton);
@@ -83,16 +97,25 @@ async function onNewAdminSubmit(ev: Event) {
 	await populateAdmins();
 
 	buttonLoading(false, newAdminButton);
-}
-
-async function addNewAdmin(username: string) {
-	//
+	newAdminUsername.value = '';
 }
 
 async function removeAdmin(id: string, deleteButton: HTMLButtonElement) {
 	buttonLoading(true, deleteButton);
+	deleteButton.parentElement.querySelector('#deleteAdminError')?.remove();
 
-	await backendRemoveAdmin(id);
+	try {
+		await backendRemoveAdmin(id);
+	} catch (err) {
+		console.error(err);
+
+		const errorElemet = createErrorElement(`There was an error when removing the admin`);
+		errorElemet.id = 'deleteAdminError';
+		deleteButton.parentElement.append(errorElemet);
+
+		buttonLoading(false, deleteButton);
+		return;
+	}
 
 	await populateAdmins();
 }

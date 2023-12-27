@@ -57,7 +57,7 @@ fieldset {
 	text-align: center;
 }
 
-.message-container:has(.grey-message:not(.hidden)) {
+.message-container:has(.no-permission:not(.hidden)) {
 	display: flex;
 	justify-content: center;
 	align-items: center;

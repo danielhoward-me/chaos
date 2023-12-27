@@ -13,10 +13,10 @@ const newPresetInput = $<HTMLInputElement>('newPresetInput');
 const newPresetsError = $('newPresetsError');
 
 export async function populatePresets() {
+	const presets = await fetchPresets();
+
 	noPresetsMessage.classList.add('hidden');
 	presetsTableBody.innerHTML = '';
-
-	const presets = await fetchPresets();
 
 	if (presets.length === 0) {
 		noPresetsMessage.classList.remove('hidden');
