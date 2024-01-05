@@ -74,6 +74,10 @@ const canvasLinesId = 'l';
 const canvasStartPointId = 's';
 
 let points: ChaosGamePoint[] = [];
+export function getChaosPoints(): ChaosGamePoint[] {
+	return points;
+}
+
 let totalPlaybackTime = 0;
 let currentPlaybackTime = 0;
 let playing = false;
@@ -308,7 +312,7 @@ function drawStartPoint() {
 	}
 }
 
-function onSeek(seekValue: number) {
+export function onSeek(seekValue: number) {
 	playbackSeek.forEach((seek) => setInputValue(seek, seekValue));
 	currentPlaybackTime = (seekValue / 100) * totalPlaybackTime;
 	updatePlaybackTime();

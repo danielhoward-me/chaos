@@ -4,7 +4,7 @@ body {
 }
 
 .hidden {
-	display: none;
+	display: none !important;
 }
 
 .canvas {
@@ -241,4 +241,45 @@ a.text-muted {
 .vertex-rules-details[disabled] summary a {
 	pointer-events: all;
 	cursor: help;
+}
+
+.error-text {
+	color: #dc3545;
+	font-size: 0.9em;
+}
+
+.saves-container {
+	display: flex;
+	flex-wrap: wrap;
+}
+.saves-container:has(> span) {
+	justify-content: center;
+}
+.saves-container > span {
+	margin: 5px;
+}
+.save-card {
+	margin: 5px;
+	width: calc(50% - 10px);
+	box-shadow: 0 6px 10px rgba(0,0,0,.08), 0 0 6px rgba(0,0,0,.05);
+}
+.save-card:hover {
+	transition: .3s transform cubic-bezier(.155,1.105,.295,1.12), .3s box-shadow;
+	transform: scale(1.05);
+	box-shadow: 0 10px 20px rgba(0,0,0,.12), 0 4px 8px rgba(0,0,0,.06);
+}
+.save-card .button-container {
+	display: flex;
+	align-items: center;
+	position: relative;
+}
+.save-card .delete-button {
+	position: absolute;
+	right: 0;
+}
+.save-card .card-body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	flex-direction: column;
 }

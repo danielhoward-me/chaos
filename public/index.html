@@ -25,7 +25,7 @@
 	<meta property="twitter:image" content="https://chaos.danielhoward.me/static/img/sierpinski-triangle.jpg">
 
 	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
-	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.10.5.min.css">
+	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.11.0.min.css">
 </head>
 <body>
 	<% function playbackSettingsBar() { %>
@@ -54,6 +54,67 @@
 			<i class="bi bi-x-lg"></i>
 		</button>
 		<h3 style="text-align: center;">Settings</h3>
+
+		<div class="settings-stage" style="margin-top: 15px;">
+			<div style="display: flex; flex-direction: column; gap: 5px;">
+				<button id="loginButton" type="button" class="btn btn-primary"><i class="bi bi-cloud-fill"></i> Log in</button>
+				<div id="loginLoading" style="color: #6c757d;" class="hidden">
+					<div class="spinner-border spinner-border-sm" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<span id="loginLoadingText"></span>
+				</div>
+				<div id="loginError" class="error-text hidden"></div>
+				<div id="loggedInView" class="hidden">
+					<div style="display: flex; align-items: center; position: relative;">
+						<div>
+							<img id="profilePicture" style="border-radius: 50%; margin-right: 10px;" width="50" height="50" alt="User Profile Picture"/>
+							<span id="username"></span>
+						</div>
+						<div id="profileButtons" class="btn-group" style="position: absolute; right: 0;">
+							<a id="accountButton" target="_blank" class="btn btn-primary"><i class="bi bi-person"></i></a>
+							<button id="logoutButton" class="btn btn-danger">Log out</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="btn-group" style="width: 100%; margin-bottom: 0.5rem; margin-top: 0.5rem;">
+			<button id="presetSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-sliders"></i> Presets</button>
+			<button id="localSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-floppy"></i> Local Saves</button>
+			<button id="cloudSavesButton" type="button" class="btn btn-outline-primary"><i class="bi bi-cloud"></i> Cloud Saves</button>
+		</div>
+
+		<div id="presetSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<div id="presetsLoading" style="color: #6c757d;">
+				<div class="spinner-border spinner-border-sm" role="status">
+					<span class="visually-hidden">Loading...</span>
+				</div>
+				<span>Fetching presets from the server</span>
+			</div>
+			<div id="presetsError" class="error-text hidden"></div>
+			<div class="saves-container"></div>
+		</div>
+		<div id="localSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<input type="file" class="hidden" id="localSaveFileInput" accept=".json"/>
+			<div style="text-align: right; margin-bottom: 5px;">
+				<button id="uploadLocalSaveButton" type="button" class="btn btn-primary">
+					<div id="uploadLocalSaveLoading" class="spinner-border spinner-border-sm hidden" role="status">
+						<span class="visually-hidden">Loading...</span>
+					</div>
+					<i class="bi bi-upload"></i> Upload local save
+				</button>
+			</div>
+			<div id="localSaveError" class="error-text hidden"></div>
+			<div class="saves-container"></div>
+		</div>
+		<div id="cloudSaves" style="margin-bottom: 0.5rem;" class="settings-stage hidden">
+			<div id="viewCloudSavesRequireLogin" class="text-muted">
+				To view cloud saves, you need log in by clicking the button at the top of the settings box
+			</div>
+			<div class="saves-container"></div>
+		</div>
 
 		<div data-setup-stage="1">
 			<% const shapeTypes = [
@@ -272,24 +333,40 @@
 			</div>
 		</div>
 
-		<br/>
-
-		<div style="text-align: center;">
-			<input type="file" class="hidden" id="configUploadInput" accept=".json"/>
+		<div style="text-align: center; margin-top: 0.5rem;">
 			<div style="margin-bottom: 10px;" id="saveButtons">
-				<div class="btn-group">
-					<button id="downloadConfigButton" type="button" class="btn btn-primary"><i class="bi bi-download"></i> Save</button>
-					<button id="uploadConfigButton" type="button" class="btn btn-primary"><i class="bi bi-download"></i> Load</button>
+				<div class="btn-group" style="width: 100%;">
+					<button id="downloadConfigButton" type="button" class="btn btn-outline-primary"><i class="bi bi-download"></i></button>
+					<button id="saveLocalButton" type="button" class="btn btn-outline-primary"><i class="bi bi-floppy"></i> Save Locally</button>
+					<button id="saveCloudButton" type="button" class="btn btn-outline-primary"><i class="bi bi-cloud"></i> Save to the Cloud</button>
 				</div>
-				<div class="invalid-feedback" id="configError"></div>
+				<div style="margin-top: 5px;">
+					<div id="createSaveContainer" class="settings-stage hidden">
+						<div id="cloudSavesRequireLogin" class="text-muted">
+							To make cloud saves, you need log in by clicking the button at the top of the settings box
+						</div>
+						<form id="createSaveForm" class="input-group  hidden">
+							<span class="input-group-text">
+								Name
+							</span>
+							<input class="form-control" type="text" id="saveNameInput" placeholder="Fractal"/>
+							<button id="createSaveButton" class="btn btn-primary" type="submit">
+								<div id="createSaveLoading" class="spinner-border spinner-border-sm hidden" role="status">
+									<span class="visually-hidden">Loading...</span>
+								</div>
+								Save
+							</button>
+						</form>
+					</div>
+					<span class="error-text hidden" id="createSaveError"></span>
+				</div>
 			</div>
 			<div class="btn-group">
 				<button type="button" class="btn btn-primary" id="openHelpButton"><i class="bi bi-info-circle"></i> Help</button>
 				<button type="button" class="btn btn-danger" id="resetButton"><i class="bi bi-x-square"></i> Reset</button>
 			</div>
 		</div>
-		<br/>
-		<div style="text-align: center;">
+		<div style="text-align: center; margin-top: 10px;">
 			<small class="form-text">
 				<% if (isDevelopment) { %>
 					<span>development</span>
@@ -659,7 +736,7 @@
 
 	<canvas id="canvas" class="canvas"></canvas>
 
-	<div class="zoom">
+	<div id="zoom" class="zoom">
 		<div class="btn-group-vertical">
 			<button class="btn btn-light" id="zoomInButton">
 				<i class="bi bi-zoom-in"></i>

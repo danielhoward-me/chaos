@@ -122,7 +122,7 @@ const helpBox = $('helpBox');
 const toggleHelpBox = makeClassToggler(helpBox, 'closed', true, (isOpen) => {
 	const newHash = isOpen ? (window.location.hash.startsWith('#help') ? window.location.hash : '#help') : '';
 	if (newHash !== window.location.hash) {
-		window.history.pushState(null, null, window.location.pathname + newHash);
+		window.history.pushState(null, null, `${window.location.pathname}${window.location.search}${newHash}`);
 	}
 });
 

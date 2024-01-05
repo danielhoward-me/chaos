@@ -1,5 +1,9 @@
 # Changelog
 
+## [v2.1.0](https://github.com/danielhoward-me/chaos/tree/v2.1.0)
+
+- Add presets, local and cloud saves through a backend and a login system
+
 ## [v2.0.1](https://github.com/danielhoward-me/chaos/tree/v2.0.1)
 
 - Update links to reflect the new repository location

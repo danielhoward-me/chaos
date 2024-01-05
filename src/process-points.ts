@@ -64,7 +64,7 @@ function calculatePoints({vertices, startPoint, pointsCount, lineProportion, ver
 }
 
 function getRandomNumber(min: number, max: number): number {
-	return Math.round(Math.random() * (max - min) + min);
+	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
 function getRandomVertex(vertices: Coordinate[], vertexRules: VertexRule[], oldIndex: number): PointsWorkerRandomVertex | null {

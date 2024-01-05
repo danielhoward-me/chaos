@@ -12,9 +12,6 @@
 
 - [x] Write README
 - [x] Write help menu
-- [x] Add saves feature which allows a user to download and upload configurations
-  - [ ] This could be extended by using `localstorage` to save configurations
-  - [ ] Also allows presets to be created
 - [ ] Vertex rule imrpovments
   - [ ] Update vertex rules to add conditons to each rule using a unicode arrow
   - [ ] Add an OR option to vertex rules
@@ -25,6 +22,20 @@
   - [ ] Allow an image to be downloaded of the shape (could link into the image cache)
 - [ ] Display numbers on grid + change frequency of grid lines as you zoom in/out
 - [ ] Allow user to change the colour of the points, depending on the vertex they were generated from
+
+
+## For release [v2.1.0](https://github.com/danielhoward-me/chaos/blob/main/CHANGELOG.md#v210)
+
+### Bugs
+
+- [x] Fix issue with random number generation not being random
+
+### Features
+
+- [x] Add saves feature which allows a user to download and upload configurations
+  - [x] This could be extended by using `localstorage` to save configurations
+  - [x] Also allows presets to be created
+  - [x] Integrate with a backend and login service to allow for online saves
 
 
 ## For release [v2.0.0](https://github.com/danielhoward-me/chaos/blob/main/CHANGELOG.md#v200)

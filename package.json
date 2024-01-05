@@ -1,6 +1,6 @@
 {
   "name": "chaos-game",
-  "version": "2.0.1",
+  "version": "2.1.0",
   "main": "index.js",
   "repository": "https://github.com/danielhoward-me/chaos",
   "author": "Toffee1347 <danielnhoward93@gmail.com>",
@@ -38,6 +38,6 @@
     "tool": "bash ./dev/run-tool"
   },
   "engines": {
-    "node": "18.x"
+    "node": "20.10.0"
   }
 }

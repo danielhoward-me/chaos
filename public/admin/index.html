@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Chaos Game Visualiser Admin</title>
+
+	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-5.0.2.min.css">
+	<link rel="stylesheet" href="https://static.danielhoward.me/lib/bootstrap-icons-1.11.0.min.css">
+</head>
+<body>
+	<div id="loading" class="center">
+		<div class="spinner-border" role="status" style="height: 15rem; width: 15rem;">
+			<span class="visually-hidden">Loading...</span>
+		</div>
+	</div>
+	<div id="login" class="center hidden">
+		<button id="loginButton" type="button" class="btn btn-primary"><i class="bi bi-cloud-fill"></i> Log in</button>
+	</div>
+	<div id="errorAlert" class="center hidden">
+		<div role="alert" class="alert alert-danger">
+			<h4 class="alert-heading">An error has occured</h4>
+			An error has occured whilst loading the page. Please try again later.
+		</div>
+	</div>
+	<div id="unauthorisedAlert" class="center hidden">
+		<div role="alert" class="alert alert-warning">
+			<h4 class="alert-heading">Unauthorised</h4>
+			You need to login with an admin account in order to view this page.
+		</div>
+	</div>
+	<div id="page" class="hidden">
+		<div class="settings-container">
+			<div class="container">
+				<div class="row">
+					<div class="col-12 col-lg-8">
+						<fieldset style="overflow-y: auto; overflow-x: hidden;">
+							<legend>Presets</legend>
+							<div style="display: flex; align-items: center; float: right;">
+								<span id="newPresetsError" class="error-text" style="margin-right: 5px;"></span>
+								<div class="btn-group">
+									<button id="newPresetButton" type="button" class="btn btn-primary"><i class="bi bi-upload"></i> Upload new preset</button>
+								</div>
+							</div>
+							<input id="newPresetInput" type="file" class="hidden" accept=".json">
+							<table class="table table-striped presets-table" style="table-layout: fixed;">
+								<thead>
+									<tr>
+										<th scope="col" style="width: 20%;">Name</th>
+										<th scope="col" style="width: 40%;">Screenshot</th>
+										<th scope="col" style="width: 40%;">Actions</th>
+									</tr>
+								</thead>
+								<tbody id="presetsTableBody"></tbody>
+							</table>
+							<div id="noPresetsMessage" class="grey-message hidden">
+								There aren't currently any presets saved.
+							</div>
+						</fieldset>
+					</div>
+					<div class="col-12 col-lg-4">
+						<fieldset>
+							<legend>Screenshots</legend>
+							<h3 style="text-align: center;">Screenshot Status</h3>
+
+							<form id="screenshotStatusForm">
+								<div class="input-group">
+									<span class="input-group-text">Hash</span>
+									<input required class="form-control" type="text" id="screenshotStatusInput" placeholder="c286733bfae4fbaeea7d3f9a907949f8"/>
+									<button type="submit" id="screenshotStatusButton" class="btn btn-primary"><i class="bi bi-search"></i> Lookup</button>
+								</div>
+								<span id="screenshotStatusError" class="error-text" style="display: block; text-align: center;"></span>
+							</form>
+
+							<div style="margin-top: 10px; text-align: center; color: lightgray;">
+								<div id="screenshotStatusContainer">
+									<span id="screenshotStatusNotFound">Not Found</span>
+									<i class="bi bi-arrow-right"></i>
+									<span id="screenshotInQueue">In Queue</span>
+									<i class="bi bi-arrow-right"></i>
+									<span id="screenshotStatusGenerating">Generating</span>
+									<i class="bi bi-arrow-right"></i>
+									<span id="screenshotStatusGenerated">Generated</span>
+								</div>
+								<span id="screenshotStatusFailed">Failed</span>
+							</div>
+
+							<h3 style="margin-top: 25px; text-align: center;">New Screenshots</h3>
+
+							<div style="text-align: center; margin-top: 10px;">
+								<input id="generateScreenshotUpload" type="file" class="hidden" accept=".json">
+								<button id="generateScreenshotButton" type="button" class="btn btn-primary"><i class="bi bi-camera"></i> Request new screenshot</button>
+								<div style="display: block; text-align: center; margin-top: 10px;">
+									<span id="generateScreenshotHash" class="text-muted"></span>
+									<span id="generateScreenshotError" class="error-text"></span>
+								</div>
+							</div>
+						</fieldset>
+						<fieldset class="message-container">
+							<legend>Admins</legend>
+							<div id="adminSsoMessage" class="grey-message no-permission hidden">
+								You need to be an admin on sso to view admins.
+							</div>
+							<div id="adminListContainer" class="hidden">
+								<form id="newAdminForm">
+									<div class="input-group">
+										<span class="input-group-text">Username</span>
+										<input required class="form-control" type="text" id="newAdminUsername" placeholder="Rumpelstiltskin"/>
+										<button type="submit" id="newAdminButton" class="btn btn-primary"><i class="bi bi-plus-lg"></i></button>
+									</div>
+									<span id="newAdminError" class="error-text" style="display: block; text-align: center;"></span>
+								</form>
+
+								<table class="table table-striped">
+									<thead>
+										<tr>
+											<th scope="col">Username</th>
+											<th scope="col">Actions</th>
+										</tr>
+									</thead>
+									<tbody id="adminsTableBody"></tbody>
+								</table>
+								<div id="noAdminsMessage" class="grey-message hidden">
+									There aren't currently any admins.
+								</div>
+							</div>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
