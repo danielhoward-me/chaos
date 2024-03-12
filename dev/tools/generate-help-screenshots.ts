@@ -226,7 +226,8 @@ async function main() {
 		const totalFrameCount = Math.round(gif.fps * (gif.length/1000));
 
 		const encoder = new GIFEncoder(gif.clip.width, gif.clip.height);
-		encoder.createReadStream().pipe(fs.createWriteStream(`${resolvePath(OUTPUT_DIR)}/${gif.filename}.gif`));
+		const fileSteam = fs.createWriteStream(`${resolvePath(OUTPUT_DIR)}/${gif.filename}.gif`);
+		encoder.createReadStream().pipe(fileSteam);
 		encoder.start();
 		encoder.setRepeat(0);
 		encoder.setDelay(delta);

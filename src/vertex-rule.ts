@@ -34,7 +34,7 @@ const valueEqualEquators = ['=', '≠'];
 const valueEqualEquatorsRegex = new RegExp(valueEqualEquators.join('|'));
 const singleValueEquators = ['<', '>', '≤', '≥'];
 const singleValueEquatorsRegex = new RegExp(singleValueEquators.join('|'));
-const allowedEquatorsRegex = new RegExp(`${valueSetEquatorsRegex.source}|${valueEqualEquatorsRegex.source}|${singleValueEquatorsRegex.source}`);
+const allowedEquatorsRegex = new RegExp([valueSetEquatorsRegex.source, valueEqualEquatorsRegex.source, singleValueEquatorsRegex.source].join('|'));
 
 const rightNumberRegex = /[-+±]?\d+/;
 const valueSetRegex = new RegExp(createSpacedRegexText(
